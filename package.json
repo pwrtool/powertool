@@ -1,14 +1,29 @@
 {
-  "name": "factor",
+  "name": "powertool",
   "version": "1.0.0",
-  "description": "",
+  "description": "Automate every aspect of your workflow.",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "templates"
+  ],
   "bin": {
-    "factor": "./index.js"
+    "stencildrop": "./index.js"
   },
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "test": "vitest",
+    "bin": "ts-node bin/cli.ts"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "FireSquid6",
+  "license": "LGPL-3.0-or-later",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6",
+    "vitest": "^0.34.1"
+  }
 }
