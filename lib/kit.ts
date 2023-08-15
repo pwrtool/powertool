@@ -43,7 +43,6 @@ export class ToolRunner {
 }
 /**
  * Wraps a ToolRunner and allows you to add tools and run them
- * @extends ParentClassNameHereIfAny
  */
 export class Powertool {
   private toolRunner = new ToolRunner();
@@ -82,7 +81,11 @@ export class IO {
   private prompter = inquirer.createPromptModule();
 
   constructor() {}
-
+  /*
+   * Prompts the user with a question
+   * @param question - The question to ask the user
+   * @return - The answer the user gave
+   */
   async prompt<T>(question: string): Promise<T> {
     const answer: string = await this.prompter([
       {
@@ -103,6 +106,12 @@ export class IO {
     return Promise.reject("Answer could not be parsed to specified type");
   }
 
+  /**
+   * Prompts the user with a series of choices
+   * @param question - The question to ask the user
+   * @param choices - The choices to give the user
+   * @return - The choice the user selected
+   */
   async select<T>(question: string, choices: string[]): Promise<T> {
     const answer: string = await this.prompter([
       {
@@ -123,23 +132,48 @@ export class IO {
     return Promise.reject("Answer could not be parsed to specified type");
   }
 
-  async out(message: string) {
+  /**
+   * Outputs a message to the console
+   * @param message - The message to output
+   * @return void
+   */
+  out(message: string) {
     log(message);
   }
 
-  async success(message: string) {
+  /**
+   * Outputs a message to the console in green and bold text
+   * @param message - The message to output
+   * @return void
+   */
+  success(message: string) {
     log(chalk.green.bold(message));
   }
 
-  async warn(message: string) {
+  /**
+   * Outputs a message to the console in yellow and bold text
+   * @param message - The message to output
+   * @return void
+   */
+  warn(message: string) {
     log(chalk.yellow.bold(message));
   }
 
-  async header(message: string) {
-    log(chalk.bold.underline(message));
+  /**
+   * Outputs a message to the console in bold blue text with an underline
+   * @param message - The message to output
+   * @return void
+   */
+  header(message: string) {
+    log(chalk.bold.underline.bold(message));
   }
 
-  async error(message: string) {
+  /**
+   * Outputs a message to the console in red and bold text
+   * @param message - The message to output
+   * @return void
+   */
+  error(message: string) {
     log(chalk.red.bold(message));
   }
 }
