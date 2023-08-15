@@ -2,19 +2,17 @@
   "name": "powertool",
   "version": "1.0.0",
   "description": "Automate every aspect of your workflow.",
-  "main": "index.js",
   "files": [
-    "index.js",
-    "templates"
+    "lib",
+    "bin"
   ],
   "bin": {
-    "stencildrop": "./index.js"
+    "ptrun": "bin/run.ts"
   },
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "test": "vitest",
-    "bin": "ts-node bin/cli.ts"
+    "test": "vitest"
   },
   "author": "FireSquid6",
   "license": "LGPL-3.0-or-later",
