@@ -88,6 +88,7 @@ export class IO {
       {
         type: "input",
         name: "q",
+        prefx: "",
         message: `${chalk.blue.bold(question)}`,
       },
     ]).then((answers) => {
@@ -100,6 +101,46 @@ export class IO {
     }
 
     return Promise.reject("Answer could not be parsed to specified type");
+  }
+
+  async select<T>(question: string, choices: string[]): Promise<T> {
+    const answer: string = await this.prompter([
+      {
+        type: "list",
+        name: "q",
+        message: `${chalk.blue.bold(question)}`,
+        choices: choices,
+      },
+    ]).then((answers) => {
+      return answers.q;
+    });
+
+    const answerParsed = answer as T;
+    if (answerParsed !== undefined) {
+      return answerParsed;
+    }
+
+    return Promise.reject("Answer could not be parsed to specified type");
+  }
+
+  async out(message: string) {
+    log(message);
+  }
+
+  async success(message: string) {
+    log(chalk.green.bold(message));
+  }
+
+  async warn(message: string) {
+    log(chalk.yellow.bold(message));
+  }
+
+  async header(message: string) {
+    log(chalk.bold.underline(message));
+  }
+
+  async error(message: string) {
+    log(chalk.red.bold(message));
   }
 }
 
