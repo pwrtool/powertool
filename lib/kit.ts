@@ -95,7 +95,7 @@ export class IO {
     });
 
     const answerParsed = answer as T;
-    if (answerParsed === undefined) {
+    if (answerParsed !== undefined) {
       return answerParsed;
     }
 
