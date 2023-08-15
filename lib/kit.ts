@@ -4,8 +4,10 @@ interface Tool {
   function: () => void;
 }
 
-class ToolRunner {
+export class ToolRunner {
   private tools: Tool[] = [];
+
+  constructor() {}
 
   public addTool(tool: Tool) {
     this.tools.push(tool);
@@ -21,8 +23,10 @@ class ToolRunner {
   }
 }
 
-class Powertool {
+export class Powertool {
   private toolRunner = new ToolRunner();
+
+  constructor() {}
 
   public addTool(tool: Tool) {
     this.toolRunner.addTool(tool);

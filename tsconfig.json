@@ -7,6 +7,6 @@
     "preserveConstEnums": true,
     "sourceMap": true
   },
-  "include": ["lib/**/*.ts", "bin/**/*.ts", "kitExample/**/*.ts"],
+  "include": ["index.ts"],
   "exclude": ["node_modules"]
 }
