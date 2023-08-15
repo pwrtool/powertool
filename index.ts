@@ -1,3 +1,3 @@
-import { powertool } from "./lib/kit";
+import { powertool, io } from "./lib/kit";
 
-export { powertool };
+export { powertool, io };
