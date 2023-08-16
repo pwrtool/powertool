@@ -2,14 +2,26 @@
   "name": "powertool",
   "version": "1.0.0",
   "description": "Automate every aspect of your workflow.",
+  "tags": [
+    "automation",
+    "workflow",
+    "tool",
+    "powertool",
+    "package",
+    "toolbox",
+    "scripts"
+  ],
   "files": [
     "lib",
-    "bin"
+    "bin",
+    "index.js",
+    "index.ts"
   ],
   "bin": {
     "ptrun": "bin/run.js",
     "powertool": "bin/powertool.js"
   },
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
