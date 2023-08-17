@@ -3,6 +3,7 @@
     "module": "NodeNext",
     "noImplicitAny": true,
     "removeComments": true,
+    "declaration": true,
     "preserveConstEnums": true,
     "sourceMap": true
   },

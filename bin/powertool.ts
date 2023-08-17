@@ -13,8 +13,11 @@ program
     );
   });
 
-program.command("component <name>").action((name) => {
-  console.log(`Creating component ${name}`);
-});
+program
+  .command("install <kit>")
+  .description("Install a tool from the PowerTool registry")
+  .action((kit: string) => {
+    console.log("kit");
+  });
 
 program.parse();
