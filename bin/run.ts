@@ -55,4 +55,10 @@ if (kitFile === undefined) {
 }
 
 io.header(`\nRunning ${kit} ${tool}...`);
-spawn("node", [kitFile], { stdio: "inherit" });
+spawn("node", [kitFile], { stdio: "inherit" }).on("exit", (code) => {
+  if (code === 0) {
+    io.success(`\nFinished running ${kit} ${tool}!\n`);
+  } else {
+    io.error(`\nFailed to run ${kit} ${tool} 😦\n`);
+  }
+});
