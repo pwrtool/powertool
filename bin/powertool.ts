@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { program } from "commander";
+import { ensureApplicationFilesExist } from "../lib/core.js";
 
 program
   .name("powertool")
@@ -17,7 +18,8 @@ program
   .command("install <kit>")
   .description("Install a tool from the PowerTool registry")
   .action((kit: string) => {
-    console.log("kit");
+    ensureApplicationFilesExist();
+    console.log(kit);
   });
 
 program.parse();
