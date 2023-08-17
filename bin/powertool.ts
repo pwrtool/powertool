@@ -22,4 +22,20 @@ program
     console.log(kit);
   });
 
+program
+  .command("uninstall <kit>")
+  .description("Uninstall a tool from the PowerTool registry")
+  .action((kit: string) => {
+    ensureApplicationFilesExist();
+    console.log(kit);
+  });
+
+program
+  .command("list")
+  .description("List all installed kits and tools")
+  .action(() => {
+    ensureApplicationFilesExist();
+    console.log("list");
+  });
+
 program.parse();
