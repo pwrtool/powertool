@@ -1,13 +1,14 @@
 /**
- * @file Handles everything a developer needs to write their own powertool kits.
+ * @file Handles everything a developer needs to write their own powertool kits. This file should have no external dependencies.
  * @author FireSquid6 <jonathandeiss2006@gmail.com>
  * @copyright Jonathan Deiss 2023
  * @license GPL-3.0
  */
-import inquirer from "inquirer";
-import chalk from "chalk";
-
-const log = console.log;
+import * as rl from "readline";
+const readline = rl.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 /**
  * Each "Tool" is its own script
@@ -78,8 +79,6 @@ export const powertool = new Powertool();
  * Useful for getting user input and outputting text
  */
 export class IO {
-  private prompter = inquirer.createPromptModule();
-
   constructor() {}
   /*
    * Prompts the user with a question
@@ -87,16 +86,7 @@ export class IO {
    * @return - The answer the user gave
    */
   async prompt<T>(question: string): Promise<T> {
-    const answer: string = await this.prompter([
-      {
-        type: "input",
-        name: "q",
-        prefx: "",
-        message: `${chalk.blue.bold(question)}`,
-      },
-    ]).then((answers) => {
-      return answers.q;
-    });
+    const answer: string = await this.input(`\x1b[37;1m${question}: \x1b[0m`);
 
     const answerParsed = answer as T;
     if (answerParsed !== undefined) {
@@ -106,31 +96,17 @@ export class IO {
     return Promise.reject("Answer could not be parsed to specified type");
   }
 
-  /**
-   * Prompts the user with a series of choices
-   * @param question - The question to ask the user
-   * @param choices - The choices to give the user
-   * @return - The choice the user selected
-   */
-  async select<T>(question: string, choices: string[]): Promise<T> {
-    const answer: string = await this.prompter([
-      {
-        type: "list",
-        name: "q",
-        message: `${chalk.blue.bold(question)}`,
-        choices: choices,
-      },
-    ]).then((answers) => {
-      return answers.q;
+  private async input(message: string): Promise<string> {
+    return new Promise<string>((resolve) => {
+      readline.question(message, (answer) => {
+        readline.close();
+        resolve(answer);
+      });
     });
-
-    const answerParsed = answer as T;
-    if (answerParsed !== undefined) {
-      return answerParsed;
-    }
-
-    return Promise.reject("Answer could not be parsed to specified type");
   }
+
+  // This article was very helpful:
+  // https://notes.burke.libbey.me/ansi-escape-codes/
 
   /**
    * Outputs a message to the console
@@ -138,7 +114,7 @@ export class IO {
    * @return void
    */
   out(message: string) {
-    log(message);
+    console.log(message);
   }
 
   /**
@@ -147,7 +123,7 @@ export class IO {
    * @return void
    */
   success(message: string) {
-    log(chalk.green.bold(message));
+    console.log("\x1b[32;1m%s\x1b[0m", message);
   }
 
   /**
@@ -156,7 +132,7 @@ export class IO {
    * @return void
    */
   bold(message: string) {
-    log(chalk.bold(message));
+    console.log("\x1b[37;1m%s\x1b[0m", message);
   }
 
   /**
@@ -165,7 +141,7 @@ export class IO {
    * @return void
    */
   warn(message: string) {
-    log(chalk.yellow.bold(message));
+    console.log("\x1b[33;1m%s\x1b[0m", message);
   }
 
   /**
@@ -174,7 +150,7 @@ export class IO {
    * @return void
    */
   header(message: string) {
-    log(chalk.bold.underline.bold(message));
+    console.log("\x1b[34;1;4m%s\x1b[0m", message);
   }
 
   /**
@@ -183,7 +159,7 @@ export class IO {
    * @return void
    */
   error(message: string) {
-    log(chalk.red.bold(message));
+    console.log("\x1b[31;1m%s\x1b[0m", message);
   }
 }
 

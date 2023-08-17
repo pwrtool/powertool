@@ -7,5 +7,5 @@
     "preserveConstEnums": true,
     "sourceMap": true
   },
-  "include": ["experiments/**/*", "index.ts", "lib/**/*", "bin/**/*"]
+  "include": ["experimental/**/*", "index.ts", "lib/**/*", "bin/**/*"]
 }

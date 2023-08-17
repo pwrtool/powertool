@@ -1,4 +1,8 @@
 node_modules
+
+# Sometimes I gotta test some stuff in a new file
+experimental
+
 *.js
 *.d.ts
 *.js.map
