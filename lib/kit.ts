@@ -151,6 +151,15 @@ export class IO {
   }
 
   /**
+   * Outputs a message to the console in blue and bold text
+   * @param message - The message to output
+   * @return void
+   */
+  bold(message: string) {
+    log(chalk.bold(message));
+  }
+
+  /**
    * Outputs a message to the console in yellow and bold text
    * @param message - The message to output
    * @return void

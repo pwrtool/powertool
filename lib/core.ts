@@ -55,7 +55,7 @@ export function ensureApplicationFilesExist() {
     process.exit(1);
   }
 
-  io.success("Initialized PowerTool Config! 🎉");
+  io.success("Initialized PowerTool Config! 🎉\n");
 }
 
 export function getConfig(): Config {
