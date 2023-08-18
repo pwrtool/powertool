@@ -1,9 +1,10 @@
 import {
-  io,
   getConfig,
   getInstalled,
   ensureApplicationFilesExist,
 } from "../index.js";
+import { io } from "../kit/index.js";
+
 import { spawn } from "child_process";
 io.out("\n");
 ensureApplicationFilesExist();
