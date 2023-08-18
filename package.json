@@ -1,6 +1,6 @@
 {
   "name": "powertool",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "Automate every aspect of your workflow.",
   "tags": [
     "automation",
@@ -14,7 +14,9 @@
   "files": [
     "lib",
     "bin",
+    "kit",
     "index.js",
+    "index.d.ts",
     "index.ts"
   ],
   "bin": {

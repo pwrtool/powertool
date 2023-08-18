@@ -18,6 +18,6 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "powertool": "^1.0.1"
+    "powertool": "^1.0.2"
   }
 }

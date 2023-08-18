@@ -1,4 +1,4 @@
-import { ToolRunner, Powertool } from "../lib/kit";
+import { ToolRunner, Powertool } from "../kit";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 describe("ToolRunner", () => {

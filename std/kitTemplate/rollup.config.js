@@ -6,7 +6,7 @@ export default {
   input: "kit.ts",
   output: {
     format: "cjs",
-    file: "index.js",
+    file: "index.cjs",
   },
   plugins: [nodeResolve(), commonjs(), json()],
 };

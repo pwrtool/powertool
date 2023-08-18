@@ -1,5 +1,5 @@
 import YAML from "yaml";
-import { io } from "./kit.js";
+import { io } from "../kit/index.js";
 import * as fs from "fs";
 import os from "os";
 import { fileURLToPath } from "url";
