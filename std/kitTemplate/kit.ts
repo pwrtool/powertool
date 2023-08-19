@@ -1,4 +1,7 @@
-import { io } from "powertool/kit";
+import { io, thisFile, thisDir } from "powertool/kit";
+
+console.log(thisFile);
+console.log(thisDir);
 
 console.log("Hello World");
 

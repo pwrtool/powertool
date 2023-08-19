@@ -5,6 +5,12 @@
  * @license GPL-3.0
  */
 import * as rl from "readline";
+import path from "path";
+import { fileURLToPath } from "url";
+
+export const thisFile: string = fileURLToPath(import.meta.url);
+export const thisDir: string = path.dirname(thisFile);
+
 /**
  * Each "Tool" is its own script
  * @property name - The name of the tool. This is what you type in the command line to run it.
@@ -37,6 +43,7 @@ export class ToolRunner {
     tool.function();
   }
 }
+
 /**
  * Wraps a ToolRunner and allows you to add tools and run them
  */
