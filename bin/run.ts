@@ -2,7 +2,7 @@ import {
   getConfig,
   getInstalled,
   ensureApplicationFilesExist,
-} from "../index.js";
+} from "../lib/core.js";
 import { io } from "../kit/index.js";
 
 import { spawn } from "child_process";
