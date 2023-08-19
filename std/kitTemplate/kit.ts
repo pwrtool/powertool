@@ -1,4 +1,4 @@
-import { io, thisFile, thisDir, powertool } from "powertool/kit";
+import { io, powertool } from "powertool/kit";
 
 powertool.addTool({
   name: "say-hello",
