@@ -7,9 +7,11 @@
 import * as rl from "readline";
 import path from "path";
 import { fileURLToPath } from "url";
+import { getConfig } from "../index.js";
 
 export const thisFile: string = fileURLToPath(import.meta.url);
 export const thisDir: string = path.dirname(thisFile);
+export const config = getConfig();
 
 /**
  * Each "Tool" is its own script
@@ -204,3 +206,15 @@ export class IO {
 }
 
 export const io = new IO();
+
+/**
+ * Returns the direcotry where the powertool was called from. This is typically provided by the first argument in the command line.
+ * @return - The absolute path to the directory, or undefined if the directory is not provided
+ */
+export function getCallDirectory(): string | undefined {
+  if (process.argv.length < 3) {
+    return undefined;
+  }
+
+  return process.argv[2];
+}
