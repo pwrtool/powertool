@@ -1,10 +1,11 @@
-import { io, thisFile, thisDir } from "powertool/kit";
+import { io, thisFile, thisDir, powertool } from "powertool/kit";
 
-console.log(thisFile);
-console.log(thisDir);
-
-console.log("Hello World");
-
-io.error("Hello World");
+powertool.addTool({
+  name: "say-hello",
+  description: "Says hello",
+  function: () => {
+    io.out("Hello!");
+  },
+});
 
 process.exit(0);

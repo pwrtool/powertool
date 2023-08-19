@@ -27,11 +27,7 @@ describe("Powertool", () => {
   beforeEach(() => {
     process.argv = ["", ""];
     tool = new Powertool();
-    tool.addTool({
-      name: "Test",
-      description: "Does a test",
-      function: func,
-    });
+    tool.tool("Test", "Does a test", func);
   });
 
   it("should run a tool", () => {

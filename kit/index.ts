@@ -26,7 +26,17 @@ interface Tool {
  * Hidden class that runs and adds tools
  */
 export class ToolRunner {
-  private tools: Tool[] = [];
+  private tools: Tool[] = [
+    {
+      name: "help",
+      description: "Prints information about the powertool",
+      function: () => {
+        for (const tool of this.tools) {
+          io.out(`\x1b[34;1m${tool.name}\x1b[0m - ${tool.description}`);
+        }
+      },
+    },
+  ];
 
   constructor() {}
 
@@ -57,8 +67,12 @@ export class Powertool {
    * @param tool - the tool to ad to the tool runner
    * @returns void
    */
-  public addTool(tool: Tool) {
-    this.toolRunner.addTool(tool);
+  public tool(name: string, description: string, func: () => void) {
+    this.toolRunner.addTool({
+      name,
+      description,
+      function: func,
+    });
   }
 
   /**
