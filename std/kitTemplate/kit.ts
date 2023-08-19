@@ -8,4 +8,6 @@ powertool.addTool({
   },
 });
 
+powertool.run();
+
 process.exit(0);
