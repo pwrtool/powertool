@@ -5,11 +5,6 @@
  * @license GPL-3.0
  */
 import * as rl from "readline";
-const readline = rl.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
 /**
  * Each "Tool" is its own script
  * @property name - The name of the tool. This is what you type in the command line to run it.
@@ -81,7 +76,7 @@ export const powertool = new Powertool();
 export class IO {
   constructor() {}
   /*
-   * Prompts the user with a question
+   * Prompts the user with a question. If the question cannot be parsed, it returns false.
    * @param question - The question to ask the user
    * @return - The answer the user gave
    */
@@ -96,8 +91,32 @@ export class IO {
     return Promise.reject("Answer could not be parsed to specified type");
   }
 
+  /**
+   * Prompts the user with a yes or no question. Returns true if the user answers yes, false if the user answers no.
+   * @param question - The question to ask the user
+   * @return - The answer the user gave
+   */
+  async dichotomous(question: string): Promise<boolean> {
+    const answer: string = await this.input(
+      `\x1b[37;1m${question} (y/n): \x1b[0m`
+    ).then((value: string) => value.toLowerCase());
+
+    const yes_answers = ["y", "yes", "t", "true"];
+    yes_answers.forEach((yes_answer) => {
+      if (answer === yes_answer) {
+        return true;
+      }
+    });
+
+    return false;
+  }
+
   private async input(message: string): Promise<string> {
     return new Promise<string>((resolve) => {
+      const readline = rl.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
       readline.question(message, (answer) => {
         readline.close();
         resolve(answer);
