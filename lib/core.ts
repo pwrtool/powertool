@@ -1,12 +1,7 @@
 import YAML from "yaml";
-import { io } from "../kit/index.js";
+import { io } from "./kit.js";
 import * as fs from "fs";
 import os from "os";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 type Config = {
   aliases: Alias[];
@@ -30,77 +25,86 @@ type InstalledTool = {
   description: string;
 };
 
-export function ensureApplicationFilesExist() {
-  const kitsDir = `${os.homedir()}/.powertool/kits`;
+export class ApplicationFiles {
+  configPath = `${os.homedir}/.powertool/config.yaml`;
+  installedPath = `${os.homedir}/.powertool/installed.json`;
+  tempDir = `${os.homedir}/.powertool/temp`;
+  kitsDir = `${os.homedir}/.powertool/kits`;
+  defaultConfig = {
+    aliases: [
+      {
+        name: "rcomp",
+        kit: "firesquid6/std",
+        tool: "react-component",
+      },
+    ],
+  };
 
-  if (
-    fs.existsSync(configPath) &&
-    fs.existsSync(installedPath) &&
-    fs.existsSync(kitsDir)
-  ) {
-    return;
-  }
-  io.warn(".powertool directory not found, initializing...");
+  constructor() {
+    this.clearTemp();
 
-  try {
-    const configDir = `${os.homedir()}/.powertool`;
-    fs.mkdirSync(configDir, { recursive: true });
-    fs.mkdirSync(kitsDir, { recursive: true });
+    if (
+      fs.existsSync(this.configPath) &&
+      fs.existsSync(this.installedPath) &&
+      fs.existsSync(this.kitsDir)
+    ) {
+      return;
+    }
+    io.warn(".powertool directory not found, initializing...");
 
-    initInstalled();
-    initConfig();
-  } catch (e) {
-    io.error(e);
-    io.error("Failed to initialize PowerTool config 😦");
-    process.exit(1);
-  }
+    try {
+      const configDir = `${os.homedir()}/.powertool`;
+      fs.mkdirSync(configDir, { recursive: true });
+      fs.mkdirSync(this.kitsDir, { recursive: true });
 
-  io.success("Initialized PowerTool Config! 🎉\n");
-}
+      this.initInstalled();
+      this.initConfig();
+    } catch (e) {
+      io.error(e);
+      io.error("Failed to initialize PowerTool config 😦");
+      process.exit(1);
+    }
 
-export function getConfig(): Config {
-  const file = fs.readFileSync(configPath, "utf8");
-  const config = YAML.parse(file) as Config;
-
-  if (config === undefined) {
-    throw new Error(
-      "Config file could not be typecasted. Have you made an error in your config file?"
-    );
-  }
-
-  return config;
-}
-
-export function getInstalled(): Installed[] {
-  const file = fs.readFileSync(installedPath, "utf8");
-  const installed = JSON.parse(file) as Installed[];
-
-  if (installed === undefined) {
-    throw new Error(
-      "Installed file could not be typecasted. Have you made an error in your installed file?"
-    );
+    io.success("Initialized PowerTool Config! 🎉\n");
   }
 
-  return installed;
-}
+  getConfig(): Config {
+    const file = fs.readFileSync(this.configPath, "utf8");
+    const config = YAML.parse(file) as Config;
 
-function initConfig() {
-  const config = YAML.stringify(defaultConfig);
-  fs.writeFileSync(configPath, config);
-}
+    if (config === undefined) {
+      throw new Error(
+        "Config file could not be typecasted. Have you made an error in your config file?"
+      );
+    }
 
-function initInstalled() {
-  fs.writeFileSync(installedPath, JSON.stringify([]));
-}
+    return config;
+  }
 
-const configPath = `${os.homedir}/.powertool/config.yaml`;
-const installedPath = `${os.homedir}/.powertool/installed.json`;
-const defaultConfig = {
-  aliases: [
-    {
-      name: "rcomp",
-      kit: "firesquid6/std",
-      tool: "react-component",
-    },
-  ],
-};
+  getInstalled(): Installed[] {
+    const file = fs.readFileSync(this.installedPath, "utf8");
+    const installed = JSON.parse(file) as Installed[];
+
+    if (installed === undefined) {
+      throw new Error(
+        "Installed file could not be typecasted. Have you made an error in your installed file?"
+      );
+    }
+
+    return installed;
+  }
+
+  clearTemp() {
+    fs.rmSync(this.tempDir, { recursive: true });
+    fs.mkdirSync(this.tempDir, { recursive: true });
+  }
+
+  private initConfig() {
+    const config = YAML.stringify(this.defaultConfig);
+    fs.writeFileSync(this.configPath, config);
+  }
+
+  private initInstalled() {
+    fs.writeFileSync(this.installedPath, JSON.stringify([]));
+  }
+}

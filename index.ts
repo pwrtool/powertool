@@ -1,7 +1,3 @@
-import {
-  getConfig,
-  getInstalled,
-  ensureApplicationFilesExist,
-} from "./lib/core.js";
+import { io, Powertool } from "./lib/kit.js";
 
-export { getConfig, getInstalled, ensureApplicationFilesExist };
+export { Powertool, io };

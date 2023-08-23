@@ -7,11 +7,9 @@
 import * as rl from "readline";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getConfig } from "../index.js";
 
 export const thisFile: string = fileURLToPath(import.meta.url);
 export const thisDir: string = path.dirname(thisFile);
-export const config = getConfig();
 
 /**
  * Each "Tool" is its own script

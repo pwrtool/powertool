@@ -1,32 +1,81 @@
-import chalk from "chalk";
+import { io } from "../lib/kit.js";
 import { program } from "commander";
-import { ensureApplicationFilesExist } from "../lib/core.js";
+import { spawn } from "child_process";
+import { ApplicationFiles } from "../lib/core.js";
+
+const files = new ApplicationFiles();
 
 program
-  .name("powertool")
+  .name("pt")
   .description("Automate every aspect of your workflow")
   .version("0.0.1")
   .action(() => {
     console.log(
-      chalk.blue.bold(
+      io.bold(
         "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptrun' command to run an installed tool.\n\n"
       )
     );
   });
 
 program
+  .command("run <kit> <tool>")
+  .description("Run a tool from an installed kit")
+  .action((kit: string, tool: string) => {
+    console.log(kit, tool);
+  });
+
+program
+  .command("qrun <alias>")
+  .description(
+    "Run a tool from an installed kit using an alias you have defined"
+  )
+  .action((alias: string) => {
+    console.log(alias);
+  });
+
+program
+  .command("template <template>")
+  .description("Copies all files from a template into your directory")
+  .action((template: string) => {
+    console.log(template);
+  });
+
+program.command("q").description;
+
+program
+  .command("info <kit>")
+  .description("Get information about an installed kit")
+  .action((kit: string) => {
+    console.log(kit);
+  });
+
+program
   .command("install <kit>")
   .description("Install a tool from the PowerTool registry")
-  .action((kit: string) => {
-    ensureApplicationFilesExist();
-    console.log(kit);
+  .action(async (kit: string) => {
+    // todo: check if the user entered <some-github-user>/<some-repo>
+    // todo: check if kit is already installed
+    // todo: check if the repo is real
+
+    const installDir = `${files.kitsDir}/${kit.replace("/", "-")}`;
+    console.log(installDir);
+    const repo = `https://github.com/${kit}.git`;
+
+    io.header(`\n 🧪 Cloning repository ${repo}...`);
+    await awaitableSpawn("git", ["clone", repo, files.tempDir]);
+
+    io.header(`\n 📜 Running install script...`);
+    await awaitableSpawn("bash", [`${files.tempDir}/install.sh`, installDir]);
+
+    io.success(`\n ✔️ ${kit} has been installed!`);
+
+    files.clearTemp();
   });
 
 program
   .command("uninstall <kit>")
   .description("Uninstall a tool from the PowerTool registry")
   .action((kit: string) => {
-    ensureApplicationFilesExist();
     console.log(kit);
   });
 
@@ -34,8 +83,21 @@ program
   .command("list")
   .description("List all installed kits and tools")
   .action(() => {
-    ensureApplicationFilesExist();
     console.log("list");
   });
 
 program.parse();
+
+function awaitableSpawn(command: string, args: string[]) {
+  return new Promise<void>((resolve, reject) => {
+    const process = () => spawn(command, args, { stdio: "inherit" });
+
+    process().on("close", (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
+  });
+}
