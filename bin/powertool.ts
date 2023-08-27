@@ -1,6 +1,6 @@
 import { io } from "../lib/kit.js";
+import { awaitableSpawn } from "../lib/core.js";
 import { program } from "commander";
-import { spawn } from "child_process";
 import { ApplicationFiles } from "../lib/core.js";
 
 const files = new ApplicationFiles();
@@ -64,6 +64,8 @@ program
     io.header(`\n 🧪 Cloning repository ${repo}...`);
     await awaitableSpawn("git", ["clone", repo, files.tempDir]);
 
+    // todo: check if there's an install.sh file and throw if it doesn't exist
+
     io.header(`\n 📜 Running install script...`);
     await awaitableSpawn("bash", [`${files.tempDir}/install.sh`, installDir]);
 
@@ -87,17 +89,3 @@ program
   });
 
 program.parse();
-
-function awaitableSpawn(command: string, args: string[]) {
-  return new Promise<void>((resolve, reject) => {
-    const process = () => spawn(command, args, { stdio: "inherit" });
-
-    process().on("close", (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject();
-      }
-    });
-  });
-}

@@ -1,4 +1,5 @@
 import YAML from "yaml";
+import { spawn } from "child_process";
 import { io } from "./kit.js";
 import * as fs from "fs";
 import os from "os";
@@ -107,4 +108,39 @@ export class ApplicationFiles {
   private initInstalled() {
     fs.writeFileSync(this.installedPath, JSON.stringify([]));
   }
+}
+
+export function findKitFile(
+  kit: string,
+  applicationFiles: ApplicationFiles
+): string {
+  let kitFile: string;
+  const installed = applicationFiles.getInstalled();
+
+  installed.find((installedKit) => {
+    if (installedKit.kit === kit) {
+      const kitPath = installedKit.path;
+      kitFile = `${kitPath}/index.js`;
+    }
+  });
+
+  return kitFile;
+}
+
+export async function runTool(filename: string) {
+  await awaitableSpawn("node", [filename]);
+}
+
+export async function awaitableSpawn(command: string, args: string[]) {
+  return new Promise<void>((resolve, reject) => {
+    const process = () => spawn(command, args, { stdio: "inherit" });
+
+    process().on("close", (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
+  });
 }

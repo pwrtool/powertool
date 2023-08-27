@@ -216,3 +216,11 @@ export function getCallDirectory(): string | undefined {
 
   return process.argv[2];
 }
+
+export function exitWithFailure() {
+  process.exit(1);
+}
+
+export function exitWithSuccess() {
+  process.exit(0);
+}
