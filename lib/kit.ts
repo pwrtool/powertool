@@ -201,6 +201,51 @@ export class IO {
   error(message: string) {
     console.log("\x1b[31;1m%s\x1b[0m", message);
   }
+
+  /**
+   * Exports a message to the console in a custom color, bold, underline, and/or italic
+   * @param message - The message to output
+   * @param color - The color to output the message in
+   * @param bold - Whether or not to bold the message
+   * @param underline - Whether or not to underline the message
+   * @param italic - Whether or not to italicize the message
+   * @return void
+   */
+  custom(
+    message: string,
+    color: COLORS = COLORS.RESET,
+    bold: boolean = false,
+    underline: boolean = false,
+    italic: boolean = false
+  ) {
+    let output = color + message + COLORS.RESET;
+
+    if (bold) {
+      output = "\x1b[1m" + output;
+    }
+
+    if (underline) {
+      output = "\x1b[4m" + output;
+    }
+
+    if (italic) {
+      output = "\x1b[3m" + output;
+    }
+
+    console.log(output);
+  }
+}
+
+export enum COLORS {
+  BLACK = "\x1b[30m",
+  RED = "\x1b[31m",
+  GREEN = "\x1b[32m",
+  YELLOW = "\x1b[33m",
+  BLUE = "\x1b[34m",
+  MAGENTA = "\x1b[35m",
+  CYAN = "\x1b[36m",
+  WHITE = "\x1b[37m",
+  RESET = "\x1b[0m",
 }
 
 export const io = new IO();
@@ -229,3 +274,8 @@ export function exitWithFailure() {
 export function exitWithSuccess() {
   process.exit(0);
 }
+
+/**
+ * Gets the config object from the config file at ~/.powertool/config.yaml
+ */
+export function getConfigObject(): any {}

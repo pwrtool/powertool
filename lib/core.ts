@@ -110,10 +110,42 @@ export class ApplicationFiles {
   }
 }
 
-export function findKitFile(
-  kit: string,
-  applicationFiles: ApplicationFiles
-): string {
+export async function runTool(kit: string, tool: string) {
+  // todo: add error handling for when a kit or tool is not found
+  io.header(`\n 🔎 Looking for ${kit}...`);
+  const applicationFiles = new ApplicationFiles();
+  const kitFile = findKitFile(kit, applicationFiles);
+
+  io.header(`\n 🚀 Running ${kit}/${tool}...`);
+  const exitCode = await runKitFile(kitFile, tool);
+
+  if (exitCode === ExitCode.Success) {
+    io.success(`\n ✅ ${kit}/${tool} ran successfully!`);
+  } else {
+    io.error(`\n ❌ ${kit}/${tool} failed to run!`);
+  }
+
+  process.exit(0);
+}
+
+export async function awaitableSpawn(
+  command: string,
+  args: string[]
+): Promise<ExitCode> {
+  return new Promise<ExitCode>((resolve, reject) => {
+    const process = () => spawn(command, args, { stdio: "inherit" });
+
+    process().on("close", (code) => {
+      if (code === 0) {
+        resolve(ExitCode.Success);
+      } else {
+        reject(ExitCode.Failure);
+      }
+    });
+  });
+}
+
+function findKitFile(kit: string, applicationFiles: ApplicationFiles): string {
   let kitFile: string;
   const installed = applicationFiles.getInstalled();
 
@@ -127,20 +159,11 @@ export function findKitFile(
   return kitFile;
 }
 
-export async function runTool(filename: string) {
-  await awaitableSpawn("node", [filename]);
+enum ExitCode {
+  Success = 0,
+  Failure = 1,
 }
 
-export async function awaitableSpawn(command: string, args: string[]) {
-  return new Promise<void>((resolve, reject) => {
-    const process = () => spawn(command, args, { stdio: "inherit" });
-
-    process().on("close", (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject();
-      }
-    });
-  });
+async function runKitFile(filename: string, tool: string) {
+  return await awaitableSpawn("node", [filename, tool]);
 }
