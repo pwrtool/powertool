@@ -1,3 +1,7 @@
-import { io, Powertool } from "./lib/kit.js";
-
-export { Powertool, io };
+export {
+  io,
+  powertool,
+  exitWithFailure,
+  exitWithSuccess,
+  getCallDirectory,
+} from "./lib/kit.js";
