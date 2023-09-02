@@ -1,4 +1,3 @@
-import YAML from "yaml";
 import { spawn } from "child_process";
 import { io } from "./kit.js";
 import * as fs from "fs";
@@ -27,7 +26,7 @@ type InstalledTool = {
 };
 
 export class ApplicationFiles {
-  configPath = `${os.homedir}/.powertool/config.yaml`;
+  configPath = `${os.homedir}/.powertool/config.json`;
   installedPath = `${os.homedir}/.powertool/installed.json`;
   tempDir = `${os.homedir}/.powertool/temp`;
   kitsDir = `${os.homedir}/.powertool/kits`;
@@ -71,7 +70,7 @@ export class ApplicationFiles {
 
   getConfig(): Config {
     const file = fs.readFileSync(this.configPath, "utf8");
-    const config = YAML.parse(file) as Config;
+    const config = JSON.parse(file) as Config;
 
     if (config === undefined) {
       throw new Error(
@@ -101,7 +100,7 @@ export class ApplicationFiles {
   }
 
   private initConfig() {
-    const config = YAML.stringify(this.defaultConfig);
+    const config = JSON.stringify(this.defaultConfig);
     fs.writeFileSync(this.configPath, config);
   }
 
