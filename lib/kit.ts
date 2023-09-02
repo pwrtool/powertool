@@ -22,6 +22,12 @@ interface Tool {
   description: string;
   function: () => void;
 }
+
+/**
+ * A class that handles copying and moving files local to the powertool
+ */
+export class LocalFiles {}
+
 /**
  * Hidden class that runs and adds tools
  */
