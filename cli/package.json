@@ -32,11 +32,10 @@
   "author": "FireSquid6",
   "license": "LGPL-3.0-or-later",
   "dependencies": {
+    "@pwrtool/kit": "^1.0.0",
     "commander": "^11.0.0"
   },
   "devDependencies": {
-    "@types/inquirer": "^9.0.3",
-    "@types/prompt-sync": "^4.2.0",
     "typescript": "^5.1.6",
     "vitest": "^0.34.1"
   }

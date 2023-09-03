@@ -1,3 +1,6 @@
+⚠️ Powertool is still in development. Check back later to start using it!
+
+
 # What is powertool?
 You'll need the following two definitions before proceeding:  
 
@@ -18,6 +21,7 @@ Powertool is:
 You'll need the following dependencies to use powertool:
 - node.js
 - git
+- rollup
 - An operating system that can run bash scripts.
 
 Most tools will be built in node. If you're using a tool built in python, rust, or lua, you'll need that language installed as well.
@@ -62,4 +66,11 @@ echo "hello world!"
 of course, this example will not implement multiple tools and will have no user input. The real magic happens when we introduce a broader programming language.
 
 # Building kits
-You could theoretically use any language to build a kit, although the most common way to build a kit is with node and rollup.
+You could theoretically use any language to build a kit, although the most common way to build a kit is with typescript, node, and rollup.
+
+To start building a kit, do the following:
+- create an empty git project
+- run `pwrtl run pwrtl/std-kit-node`
+- 
+
+

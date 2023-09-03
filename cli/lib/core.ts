@@ -1,5 +1,5 @@
 import { spawn } from "child_process";
-import { io } from "./kit.js";
+import { io } from "@pwrtool/kit";
 import * as fs from "fs";
 import os from "os";
 

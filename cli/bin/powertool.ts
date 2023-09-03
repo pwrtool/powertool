@@ -1,4 +1,4 @@
-import { io } from "../lib/kit.js";
+import { io } from "@pwrtool/kit";
 import { awaitableSpawn } from "../lib/core.js";
 import { program } from "commander";
 import { ApplicationFiles } from "../lib/core.js";
