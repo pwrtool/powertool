@@ -1,6 +1,6 @@
 {
-  "name": "powertool",
-  "version": "1.0.5",
+  "name": "@pwrtool/cli",
+  "version": "1.0.0",
   "description": "Automate every aspect of your workflow.",
   "tags": [
     "automation",
@@ -13,14 +13,11 @@
   ],
   "files": [
     "lib",
-    "bin",
-    "kit",
-    "index.js",
-    "index.d.ts",
-    "index.ts"
+    "bin"
   ],
   "bin": {
-    "ptrun": "bin/run.js",
+    "pwrtool": "bin/powertool.js",
+    "pwrtl": "bin/powertool.js",
     "powertool": "bin/powertool.js"
   },
   "main": "index.js",

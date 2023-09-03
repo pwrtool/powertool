@@ -111,17 +111,21 @@ export class ApplicationFiles {
 
 export async function runTool(kit: string, tool: string) {
   // todo: add error handling for when a kit or tool is not found
-  io.header(`\n 🔎 Looking for ${kit}...`);
-  const applicationFiles = new ApplicationFiles();
-  const kitFile = findKitFile(kit, applicationFiles);
+  try {
+    io.header(`\n 🔎 Looking for ${kit}...`);
+    const applicationFiles = new ApplicationFiles();
+    const kitFile = findKitFile(kit, applicationFiles);
 
-  io.header(`\n 🚀 Running ${kit}/${tool}...`);
-  const exitCode = await runKitFile(kitFile, tool);
+    io.header(`\n 🚀 Running ${kit}/${tool}...`);
+    const exitCode = await runKitFile(kitFile, tool);
 
-  if (exitCode === ExitCode.Success) {
-    io.success(`\n ✅ ${kit}/${tool} ran successfully!`);
-  } else {
-    io.error(`\n ❌ ${kit}/${tool} failed to run!`);
+    if (exitCode === ExitCode.Success) {
+      io.success(`\n ✅ ${kit}/${tool} ran successfully!`);
+    } else {
+      io.error(`\n ❌ ${kit}/${tool} failed to run!`);
+    }
+  } catch (e) {
+    io.error(e);
   }
 
   process.exit(0);
@@ -151,9 +155,13 @@ function findKitFile(kit: string, applicationFiles: ApplicationFiles): string {
   installed.find((installedKit) => {
     if (installedKit.kit === kit) {
       const kitPath = installedKit.path;
-      kitFile = `${kitPath}/index.js`;
+      kitFile = `${kitPath}/run.sh`;
     }
   });
+
+  if (fs.existsSync(kitFile) === false || kitFile === undefined) {
+    throw new Error(`\n❌ Kit ${kit}'s run.sh file could not be found!`);
+  }
 
   return kitFile;
 }
@@ -164,5 +172,5 @@ enum ExitCode {
 }
 
 async function runKitFile(filename: string, tool: string) {
-  return await awaitableSpawn("node", [filename, tool]);
+  return await awaitableSpawn(filename, [tool, process.cwd()]);
 }
