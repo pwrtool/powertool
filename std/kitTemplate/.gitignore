@@ -1,3 +1,0 @@
-*.js
-*.cjs
-!rollup.config.js
