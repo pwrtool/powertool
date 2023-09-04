@@ -55,6 +55,7 @@ export class ApplicationFiles {
     try {
       const configDir = `${os.homedir()}/.powertool`;
       fs.mkdirSync(configDir, { recursive: true });
+      fs.mkdirSync(this.tempDir, { recursive: true });
       fs.mkdirSync(this.kitsDir, { recursive: true });
 
       this.initInstalled();
@@ -95,6 +96,9 @@ export class ApplicationFiles {
   }
 
   clearTemp() {
+    if (fs.existsSync(this.tempDir) === false) {
+      return;
+    }
     fs.rmSync(this.tempDir, { recursive: true });
     fs.mkdirSync(this.tempDir, { recursive: true });
   }
