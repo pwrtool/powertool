@@ -1,31 +1,14 @@
 {
-  "name": "@pwrtool/kit",
-  "version": "1.0.0",
-  "description": "Node package used for building kits in powertool",
-  "tags": [
-    "automation",
-    "workflow",
-    "tool",
-    "powertool",
-    "package",
-    "toolbox",
-    "scripts"
-  ],
-  "files": [
-    "lib/main.ts",
-    "lib/main.js"
-  ],
-  "main": "lib/main.js",
+  "name": "powertool",
+  "module": "index.ts",
   "type": "module",
-  "types": "lib/main.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "test": "vitest"
-  },
-  "author": "FireSquid6",
-  "license": "LGPL-3.0-or-later",
   "devDependencies": {
-    "typescript": "^5.1.6",
-    "vitest": "^0.34.1"
+    "bun-types": "^1.0.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "readline": "^1.3.0"
   }
 }
