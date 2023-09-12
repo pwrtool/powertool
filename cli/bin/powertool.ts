@@ -1,3 +1,5 @@
+#!/usr/bin/env bun
+
 import { io } from "@pwrtool/kit";
 import { awaitableSpawn } from "../lib/core.js";
 import { program } from "commander";

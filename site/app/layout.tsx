@@ -1,3 +1,4 @@
+import AuthProvider from "@/components/AuthProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import "./globals.css";
@@ -21,9 +22,11 @@ export default function RootLayout({
       <body
         className={`${inter.className} h-screen flex flex-col justify-between`}
       >
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
