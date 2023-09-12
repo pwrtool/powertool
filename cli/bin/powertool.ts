@@ -1,4 +1,5 @@
 import { io } from "@pwrtool/kit";
+import fs from "fs";
 import { awaitableSpawn } from "../lib/core.js";
 import { program } from "commander";
 import { ApplicationFiles } from "../lib/core.js";
@@ -6,13 +7,13 @@ import { ApplicationFiles } from "../lib/core.js";
 const files = new ApplicationFiles();
 
 program
-  .name("pwrtl")
+  .name("pwrtool")
   .description("Automate every aspect of your workflow")
   .version("0.0.1")
   .action(() => {
     console.log(
       io.bold(
-        "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptrun' command to run an installed tool.\n\n"
+        "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptrun' command to run an installed tool.\n"
       )
     );
   });
@@ -25,19 +26,12 @@ program
   });
 
 program
-  .command("qrun <alias>")
+  .command("arun <alias>")
   .description(
     "Run a tool from an installed kit using an alias you have defined"
   )
   .action((alias: string) => {
     console.log(alias);
-  });
-
-program
-  .command("template <template>")
-  .description("Copies all files from a template into your directory")
-  .action((template: string) => {
-    console.log(template);
   });
 
 program
@@ -56,27 +50,41 @@ program
     // todo: check if the repo is real
 
     const installDir = `${files.kitsDir}/${kit.replace("/", "-")}`;
-    console.log(installDir);
     const repo = `https://github.com/${kit}.git`;
 
-    io.header(`\n 🧪 Cloning repository ${repo}...`);
-    await awaitableSpawn("git", ["clone", repo, files.tempDir]);
+    try {
+      io.header(`\n 🧪 Cloning repository ${repo}...`);
+      await awaitableSpawn("git", ["clone", repo, files.tempDir]);
 
-    // todo: check if there's an install.sh file and throw if it doesn't exist
+      // todo: check if there's an install.sh file and throw if it doesn't exist
 
-    io.header(`\n 📜 Running install script...`);
-    await awaitableSpawn("bash", [`${files.tempDir}/install.sh`, installDir]);
+      io.header(`\n 📜 Running install script...`);
+      await awaitableSpawn("bash", [`${files.tempDir}/install.sh`, installDir]);
 
-    io.success(`\n ✅️ ${kit} has been installed!`);
-
-    files.clearTemp();
+      io.success(`\n ✅️ ${kit} has been installed!`);
+      files.clearTemp();
+    } catch (e) {
+      io.error(e);
+    }
   });
 
 program
   .command("uninstall <kit>")
   .description("Uninstall a tool from your system")
   .action((kit: string) => {
-    console.log(kit);
+    io.out(`\n 🗑️ Uninstalling ${kit}...`);
+    const kitDir = `${files.kitsDir}/${kit.replace("/", "-")}`;
+
+    try {
+      if (fs.existsSync(kitDir) === false) {
+        throw `\n ❌️ ${kit} is not installed!`;
+      }
+
+      fs.rmdirSync(kitDir, { recursive: true });
+      io.success(`\n ✅️ ${kit} has been uninstalled!`);
+    } catch (e) {
+      io.error(e);
+    }
   });
 
 program
@@ -84,6 +92,15 @@ program
   .description("List all installed kits and tools")
   .action(() => {
     console.log("list");
+  });
+
+program
+  .command("test-install")
+  .description(
+    "Installs ./install.sh as a kit to the test-kit directory. You can then run `powertool run test-kit <tool>` to test your kit. This is primarily useful for developing kits"
+  )
+  .action(() => {
+    console.log("test-install");
   });
 
 program.parse();

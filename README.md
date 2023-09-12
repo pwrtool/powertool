@@ -13,16 +13,18 @@ Powertool is:
   - node.js (stable)
   - python (planned)
   - rust (planned)
-  - lua (planned)
   - Anything you'd like if you're willing to build a library for it.
 - A website to find and publish kits (coming soon!)
 
 # How do I use powertool?
 You'll need the following dependencies to use powertool:
-- node.js
 - git
-- rollup
-- An operating system that can run bash scripts.
+- An operating system that can run bash files
+  - Mac and Linux should work just fine. If you're on Windows, try using either Git Bash or WSL
+- Other dependencies will vary based on the kit you're using. In general, have the following installed:
+  - node
+  - python
+  - rust
 
 Most tools will be built in node. If you're using a tool built in python, rust, or lua, you'll need that language installed as well.
 ```
