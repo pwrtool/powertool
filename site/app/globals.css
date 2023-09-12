@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+article {
+  @apply prose;
+}
+
+nav {
+  @apply flex flex-row text-xl;
+}
+
+header a {
+  @apply m-2 text-accent hover:text-accent-focus transition-all;
+}
+
+section {
+  @apply mx-auto mb-32 mt-16;
+}
+
+nav a {
+  @apply m-2 text-accent hover:text-accent-focus transition-all;
+}
+
+main {
+  @apply m-4;
+}
+
+#tagline {
+  @apply text-5xl text-center;
+}
+
+#tagline p {
+  @apply m-4;
+}
