@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { GithubProvider } from "@/components/GithubProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,9 +24,11 @@ export default function RootLayout({
         className={`${inter.className} h-screen flex flex-col justify-between`}
       >
         <AuthProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <GithubProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </GithubProvider>
         </AuthProvider>
       </body>
     </html>
