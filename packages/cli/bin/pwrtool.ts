@@ -1,9 +1,8 @@
-#!/usr/bin/env bun
-
 import { io } from "@pwrtool/kit";
-import { awaitableSpawn } from "../lib/core.js";
+import fs from "fs";
+import { awaitableSpawn } from "../";
 import { program } from "commander";
-import { ApplicationFiles } from "../lib/core.js";
+import { ApplicationFiles } from "../";
 
 const files = new ApplicationFiles();
 
@@ -65,7 +64,7 @@ program
       io.success(`\n ✅️ ${kit} has been installed!`);
       files.clearTemp();
     } catch (e) {
-      io.error(e);
+      io.error(e as string);
     }
   });
 
@@ -84,7 +83,7 @@ program
       fs.rmdirSync(kitDir, { recursive: true });
       io.success(`\n ✅️ ${kit} has been uninstalled!`);
     } catch (e) {
-      io.error(e);
+      io.error(e as string);
     }
   });
 

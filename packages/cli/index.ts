@@ -61,7 +61,7 @@ export class ApplicationFiles {
       this.initInstalled();
       this.initConfig();
     } catch (e) {
-      io.error(e);
+      io.error(e as string);
       io.error("Failed to initialize PowerTool config 😦");
       process.exit(1);
     }
@@ -129,7 +129,7 @@ export async function runTool(kit: string, tool: string) {
       io.error(`\n ❌ ${kit}/${tool} failed to run!`);
     }
   } catch (e) {
-    io.error(e);
+    io.error(e as string);
   }
 
   process.exit(0);
@@ -153,7 +153,7 @@ export async function awaitableSpawn(
 }
 
 function findKitFile(kit: string, applicationFiles: ApplicationFiles): string {
-  let kitFile: string;
+  let kitFile: string = "";
   const installed = applicationFiles.getInstalled();
 
   installed.find((installedKit) => {
@@ -163,7 +163,7 @@ function findKitFile(kit: string, applicationFiles: ApplicationFiles): string {
     }
   });
 
-  if (fs.existsSync(kitFile) === false || kitFile === undefined) {
+  if (kitFile === "" || fs.existsSync(kitFile) === false) {
     throw new Error(`\n❌ Kit ${kit}'s run.sh file could not be found!`);
   }
 

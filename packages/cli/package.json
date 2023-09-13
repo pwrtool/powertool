@@ -1,5 +1,5 @@
 {
-  "name": "powertool",
+  "name": "pt",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
@@ -8,7 +8,12 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
+  "bin": {
+    "pwrtool": "./bin/pwrtool.ts",
+    "ptx": "./bin/ptx.ts"
+  },
   "dependencies": {
-    "readline": "^1.3.0"
+    "@pwrtool/kit": "^1.0.0",
+    "commander": "^11.0.0"
   }
 }
