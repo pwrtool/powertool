@@ -1,5 +1,4 @@
 import CallToAction from "@/components/CallToAction";
-import SessionUser from "@/components/SessionUser";
 import Features from "@/components/Features";
 import Tagline from "@/components/Tagline";
 
@@ -9,7 +8,6 @@ export default function Home() {
       <Tagline />
       <Features />
       <CallToAction />
-      <SessionUser />
     </main>
   );
 }

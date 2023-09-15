@@ -7,11 +7,15 @@ article {
 }
 
 nav {
-  @apply flex flex-row text-xl;
+  @apply flex flex-row text-xl items-center justify-center;
+}
+
+a {
+  @apply transition-all;
 }
 
 header a {
-  @apply m-2 text-accent hover:text-accent-focus transition-all;
+  @apply m-2 text-primary hover:text-primary-focus;
 }
 
 section {
@@ -19,7 +23,7 @@ section {
 }
 
 nav a {
-  @apply m-2 text-accent hover:text-accent-focus transition-all;
+  @apply m-2 text-accent hover:text-accent-focus;
 }
 
 main {
@@ -32,4 +36,9 @@ main {
 
 #tagline p {
   @apply m-4;
+}
+
+.no-summary {
+  list-style: none;
+  cursor: pointer;
 }
