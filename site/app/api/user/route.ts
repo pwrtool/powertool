@@ -25,15 +25,31 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const doc = {
-      id: id,
-      username,
-      repos_url,
-      avatar_url,
-    };
     const users = db.collection("users");
+    const doc = await users.findOne({ id: id });
 
-    users.insertOne(doc);
+    if (doc !== null) {
+      users.updateOne(
+        {
+          _id: doc._id,
+        },
+        {
+          $set: {
+            id,
+            username,
+            repos_url,
+            avatar_url,
+          },
+        }
+      );
+    } else {
+      users.insertOne({
+        id,
+        username,
+        repos_url,
+        avatar_url,
+      });
+    }
   } catch (e) {
     return NextResponse.json(
       { error: "Error inserting user into database" },

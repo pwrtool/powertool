@@ -2,6 +2,7 @@ import { MongoClient } from "mongodb";
 
 const uri = process.env.MONGO_URI || "";
 
+// don't know what any of this shit does I copied it form the docs
 const options = {};
 
 declare global {
