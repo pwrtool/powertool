@@ -53,8 +53,10 @@ export class ToolRunner {
 
   public runTool(name: string) {
     const tool = this.tools.find((tool) => tool.name === name);
-    if (!tool) {
-      throw new Error(`Tool ${name} not found`);
+    if (tool === undefined) {
+      io.error(`Tool ${name} not found`);
+      exitWithFailure();
+      return;
     }
 
     tool.function();
@@ -102,6 +104,11 @@ export const powertool = new Powertool();
  * Useful for getting user input and outputting text
  */
 export class IO {
+  private lineReader = rl.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
   constructor() {}
   /*
    * Prompts the user with a question. If the question cannot be parsed, it returns false.
@@ -130,23 +137,21 @@ export class IO {
     ).then((value: string) => value.toLowerCase());
 
     const yes_answers = ["y", "yes", "t", "true"];
+    let flag = false;
     yes_answers.forEach((yes_answer) => {
       if (answer === yes_answer) {
-        return true;
+        console.log("answer is good");
+        flag = true;
+        return;
       }
     });
 
-    return false;
+    return Promise.resolve(flag);
   }
 
   private async input(message: string): Promise<string> {
     return new Promise<string>((resolve) => {
-      const readline = rl.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-      });
-      readline.question(message, (answer) => {
-        readline.close();
+      this.lineReader.question(message, (answer) => {
         resolve(answer);
       });
     });

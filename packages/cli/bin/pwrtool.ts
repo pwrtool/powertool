@@ -1,4 +1,4 @@
-import { io } from "@pwrtool/kit";
+import { io } from "../io";
 import fs from "fs";
 import { awaitableSpawn } from "../";
 import { program } from "commander";
