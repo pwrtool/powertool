@@ -12,6 +12,9 @@ import { fileURLToPath } from "url";
 export const thisFile: string = fileURLToPath(import.meta.url);
 export const thisDir: string = path.dirname(thisFile);
 
+/** @constant List of names that can't be used for a tool */
+const BANNED_NAMES: string[] = ["help", "test"];
+
 /**
  * Each "Tool" is its own script
  * @property name - The name of the tool. This is what you type in the command line to run it.
@@ -48,6 +51,15 @@ export class ToolRunner {
   constructor() {}
 
   public addTool(tool: Tool) {
+    if (BANNED_NAMES.includes(tool.name)) {
+      throw new Error(
+        `Tool name ${
+          tool.name
+        } cannot be used. Sowwy :(\nDon't name your tools anything in:\n${BANNED_NAMES.join(
+          ", "
+        )}`
+      );
+    }
     this.tools.push(tool);
   }
 
@@ -315,6 +327,7 @@ export class Config {
     return value;
   }
 }
+
 /**
  * A class that handles command line arguments. An example command would be:
  * `pwrtool cooluser/kit tool property=value name=JonDoe`
@@ -343,5 +356,14 @@ export class CliArgs {
     }
 
     return value as T;
+  }
+
+  /**
+   * Checks if a key exists in the command line arguments
+   * @param key - The name of the key to check
+   * @return true if the key exists, false if it does not
+   */
+  public has(key: string): boolean {
+    return this.args.has(key);
   }
 }
