@@ -21,7 +21,7 @@ export const thisDir: string = path.dirname(thisFile);
 interface Tool {
   name: string;
   description: string;
-  function: () => void;
+  function: () => Promise<void> | void;
 }
 
 /**
@@ -51,7 +51,7 @@ export class ToolRunner {
     this.tools.push(tool);
   }
 
-  public runTool(name: string) {
+  public async runTool(name: string) {
     const tool = this.tools.find((tool) => tool.name === name);
     if (tool === undefined) {
       io.error(`Tool ${name} not found`);
@@ -59,7 +59,8 @@ export class ToolRunner {
       return;
     }
 
-    tool.function();
+    await tool.function();
+    exitWithSuccess();
   }
 }
 
