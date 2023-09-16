@@ -4,7 +4,7 @@
  * @copyright Jonathan Deiss 2023
  * @license GPL-3.0
  */
-import * as rl from "readline";
+import * as rl from "node:readline";
 import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";

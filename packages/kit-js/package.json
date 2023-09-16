@@ -1,0 +1,26 @@
+{
+  "name": "@pwrtool/kit",
+  "module": "index.ts",
+  "type": "module",
+  "version": "2.0.0",
+  "scripts": {
+    "test": "vitest --watch"
+  },
+  "files": [
+    "index.ts",
+    "lib",
+    "README.md",
+    "tsconfig.json",
+    "package.json"
+  ],
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "readline": "^1.3.0",
+    "vitest": "^0.34.4"
+  }
+}

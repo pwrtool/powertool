@@ -1,6 +1,7 @@
 {
-  "name": "pt",
+  "name": "@pwrtool/cli",
   "module": "index.ts",
+  "version": "0.0.0",
   "type": "module",
   "devDependencies": {
     "bun-types": "latest"
@@ -13,7 +14,6 @@
     "ptx": "./bin/ptx.ts"
   },
   "dependencies": {
-    "@pwrtool/kit": "^1.0.0",
     "commander": "^11.0.0"
   }
 }

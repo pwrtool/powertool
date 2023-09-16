@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
-import { io } from "@pwrtool/kit";
 import * as fs from "fs";
 import os from "os";
+import { io } from "./io";
 
 type Config = {
   aliases: Alias[];
