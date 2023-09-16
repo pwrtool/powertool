@@ -26,10 +26,11 @@ type InstalledTool = {
 };
 
 export class ApplicationFiles {
-  configPath = `${os.homedir}/.powertool/config.json`;
-  installedPath = `${os.homedir}/.powertool/installed.json`;
-  tempDir = `${os.homedir}/.powertool/temp`;
-  kitsDir = `${os.homedir}/.powertool/kits`;
+  configDir = `${os.homedir()}/.powertool`;
+  configPath = `${os.homedir()}/.powertool/config.json`;
+  installedPath = `${os.homedir()}/.powertool/installed.json`;
+  tempDir = `${os.homedir()}/.powertool/temp`;
+  kitsDir = `${os.homedir()}/.powertool/kits`;
   defaultConfig = {
     aliases: [
       {
@@ -53,8 +54,7 @@ export class ApplicationFiles {
     io.warn(".powertool directory not found, initializing...");
 
     try {
-      const configDir = `${os.homedir()}/.powertool`;
-      fs.mkdirSync(configDir, { recursive: true });
+      fs.mkdirSync(this.configDir, { recursive: true });
       fs.mkdirSync(this.tempDir, { recursive: true });
       fs.mkdirSync(this.kitsDir, { recursive: true });
 

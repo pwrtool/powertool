@@ -298,12 +298,6 @@ export class Config {
     for (const key in globalConfigJson) {
       this.config.set(key, globalConfigJson[key]);
     }
-
-    const configPath = path.join(thisDir, ".ptconfig.json");
-    const config = require(configPath);
-    for (const key in config) {
-      this.config.set(key, config[key]);
-    }
   }
 
   /**
@@ -341,12 +335,12 @@ export class CliArgs {
    * @param  key - The name of the key to get
    * @return the value of the key
    */
-  public get(key: string): string {
+  public get<T>(key: string): T {
     const value = this.args.get(key);
     if (!value) {
       throw new Error(`Argument ${key} not found`);
     }
 
-    return value;
+    return value as T;
   }
 }
