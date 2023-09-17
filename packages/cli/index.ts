@@ -26,13 +26,14 @@ type InstalledTool = {
 };
 
 export class ApplicationFiles {
-  configDir = `${os.homedir()}/.powertool`;
-  configPath = `${os.homedir()}/.powertool/config.json`;
+  configDir = `${os.homedir()}/.config/powertool`;
+  configPath = `${os.homedir()}/.config/powertool/config.json`;
+  dataDir = `${os.homedir()}/.powertool/`;
   installedPath = `${os.homedir()}/.powertool/installed.json`;
   tempDir = `${os.homedir()}/.powertool/temp`;
   kitsDir = `${os.homedir()}/.powertool/kits`;
   defaultConfig = {
-    aliases: [
+    actions: [
       {
         name: "rcomp",
         kit: "firesquid6/std",
@@ -46,6 +47,7 @@ export class ApplicationFiles {
 
     if (
       fs.existsSync(this.configPath) &&
+      fs.existsSync(this.dataDir) &&
       fs.existsSync(this.installedPath) &&
       fs.existsSync(this.kitsDir)
     ) {
@@ -104,6 +106,8 @@ export class ApplicationFiles {
   }
 
   private initConfig() {
+    fs.mkdirSync(this.configDir, { recursive: true });
+
     const config = JSON.stringify(this.defaultConfig);
     fs.writeFileSync(this.configPath, config);
   }

@@ -13,25 +13,9 @@ program
   .action(() => {
     console.log(
       io.bold(
-        "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptrun' command to run an installed tool.\n"
+        "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptx <kit> <tool>' command to run an installed tool.\n"
       )
     );
-  });
-
-program
-  .command("run <kit> <tool>")
-  .description("Run a tool from an installed kit")
-  .action((kit: string, tool: string) => {
-    console.log(kit, tool);
-  });
-
-program
-  .command("arun <alias>")
-  .description(
-    "Run a tool from an installed kit using an alias you have defined"
-  )
-  .action((alias: string) => {
-    console.log(alias);
   });
 
 program
