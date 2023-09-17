@@ -117,7 +117,7 @@ export class ApplicationFiles {
   }
 }
 
-export async function runTool(kit: string, tool: string) {
+export async function runTool(kit: string, tool: string, parameters: string[]) {
   // todo: add error handling for when a kit or tool is not found
   try {
     io.header(`\n 🔎 Looking for ${kit}...`);
@@ -125,7 +125,7 @@ export async function runTool(kit: string, tool: string) {
     const kitFile = findKitFile(kit, applicationFiles);
 
     io.header(`\n 🚀 Running ${kit}/${tool}...`);
-    const exitCode = await runKitFile(kitFile, tool);
+    const exitCode = await runKitFile(kitFile, tool, parameters);
 
     if (exitCode === ExitCode.Success) {
       io.success(`\n ✅ ${kit}/${tool} ran successfully!`);
@@ -179,6 +179,10 @@ enum ExitCode {
   Failure = 1,
 }
 
-async function runKitFile(filename: string, tool: string) {
-  return await awaitableSpawn(filename, [tool, process.cwd()]);
+async function runKitFile(
+  filename: string,
+  tool: string,
+  parameters: string[]
+) {
+  return await awaitableSpawn(filename, [tool, ...parameters]);
 }
