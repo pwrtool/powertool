@@ -295,7 +295,11 @@ export class Config {
   private config: Map<string, any> = new Map<string, string>();
 
   constructor() {
-    const globalConfig = path.join(os.homedir(), ".powertool", "config.json");
+    const globalConfig = path.join(
+      os.homedir(),
+      ".config/powertool",
+      "config.json"
+    );
     const globalConfigJson = require(globalConfig);
     for (const key in globalConfigJson) {
       this.config.set(key, globalConfigJson[key]);
