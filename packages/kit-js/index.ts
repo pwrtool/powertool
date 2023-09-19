@@ -276,17 +276,6 @@ export enum COLORS {
 export const io = new IO();
 
 /**
- * Returns the direcotry where the powertool was called from. This is typically provided by the first argument in the command line.
- * @return - The absolute path to the directory, or undefined if the directory is not provided
- */
-export function getCallDirectory(): string | undefined {
-  if (process.argv.length < 3) {
-    return undefined;
-  }
-
-  return process.argv[2];
-}
-/**
  * Exits the program with process.exit(1) in case you're like me and always forget whether to use 0 or 1
  */
 export function exitWithFailure() {
