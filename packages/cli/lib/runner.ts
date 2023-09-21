@@ -42,7 +42,10 @@ export async function awaitableSpawn(
   });
 }
 
-function findKitFile(kit: string, applicationFiles: ApplicationFiles): string {
+export function findKitFile(
+  kit: string,
+  applicationFiles: ApplicationFiles
+): string {
   let kitFile: string = "";
   const installed = applicationFiles.getInstalled();
 
@@ -60,7 +63,7 @@ function findKitFile(kit: string, applicationFiles: ApplicationFiles): string {
   return kitFile;
 }
 
-async function runKitFile(
+export async function runKitFile(
   filename: string,
   tool: string,
   parameters: string[]
@@ -68,7 +71,7 @@ async function runKitFile(
   return await awaitableSpawn(filename, [tool, ...parameters]);
 }
 
-enum ExitCode {
+export enum ExitCode {
   Success = 0,
   Failure = 1,
 }
