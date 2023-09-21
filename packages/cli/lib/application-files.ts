@@ -94,14 +94,14 @@ export class ApplicationFiles {
     fs.mkdirSync(this.tempDir, { recursive: true });
   }
 
-  private initConfig() {
+  initConfig() {
     fs.mkdirSync(this.configDir, { recursive: true });
 
     const config = JSON.stringify(this.defaultConfig);
     fs.writeFileSync(this.configPath, config);
   }
 
-  private initInstalled() {
+  initInstalled() {
     fs.writeFileSync(this.installedPath, JSON.stringify([]));
   }
 }
