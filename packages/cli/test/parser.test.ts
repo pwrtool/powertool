@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { usefulArgs, getParameters, getKit } from "../parser";
+import { usefulArgs, getParameters, getKit } from "../lib/parser";
 
 const originalArgv = process.argv;
 

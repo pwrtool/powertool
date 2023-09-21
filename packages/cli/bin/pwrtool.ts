@@ -1,8 +1,8 @@
-import { io } from "../io";
+import { io } from "..";
 import fs from "fs";
-import { awaitableSpawn } from "../";
+import { awaitableSpawn } from "..";
 import { program } from "commander";
-import { ApplicationFiles } from "../";
+import { ApplicationFiles } from "..";
 
 const files = new ApplicationFiles();
 

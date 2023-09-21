@@ -1,6 +1,4 @@
-import { io } from "../io";
-import { usefulArgs, getKit } from "../parser";
-import { runTool } from "..";
+import { runTool, usefulArgs, getKit, io } from "..";
 
 // due to the weird nature of this command, the commander package is not used. We instead just parse the command line arguments like real men.
 

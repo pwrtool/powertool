@@ -1,4 +1,4 @@
-import { pipe } from "../pipe";
+import { pipe } from "../lib/pipe";
 import { describe, it, expect } from "vitest";
 
 describe("pipe", () => {
