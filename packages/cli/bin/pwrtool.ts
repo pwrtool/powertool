@@ -1,49 +1,6 @@
 import { io } from "..";
-import fs from "fs";
-import { awaitableSpawn } from "..";
 import { program } from "commander";
-import { ApplicationFiles } from "..";
-
-const files = new ApplicationFiles();
-
-async function install(kit: string) {
-  // todo: check if the user entered <some-github-user>/<some-repo>
-  // todo: if the kit is already installed, remove it and reinstall it
-  // todo: check if the repo is real
-
-  const installDir = `${files.kitsDir}/${kit.replace("/", "-")}`;
-  const repo = `https://github.com/${kit}.git`;
-
-  try {
-    io.header(`\n 🧪 Cloning repository ${repo}...`);
-    await awaitableSpawn("git", ["clone", repo, files.tempDir]);
-
-    // todo: check if there's an install.sh file and throw if it doesn't exist
-
-    io.header(`\n 📜 Running install script...`);
-    await awaitableSpawn("bash", [`${files.tempDir}/install.sh`, installDir]);
-
-    io.success(`\n ✅️ ${kit} has been installed!`);
-    files.clearTemp();
-  } catch (e) {
-    io.error(e as string);
-  }
-}
-
-async function uninstall(kit: string) {
-  const kitDir = `${files.kitsDir}/${kit.replace("/", "-")}`;
-
-  try {
-    if (fs.existsSync(kitDir) === false) {
-      throw `\n ❌️ ${kit} is not installed!`;
-    }
-
-    fs.rmdirSync(kitDir, { recursive: true });
-    io.success(`\n ✅️ ${kit} has been uninstalled!`);
-  } catch (e) {
-    io.error(e as string);
-  }
-}
+import { install, uninstall } from "..";
 
 program
   .name("pwrtool")
