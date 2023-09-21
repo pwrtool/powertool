@@ -323,14 +323,15 @@ export class Config {
   }
 
   /**
-   * Gets a value from the config. Throws an error if the value does not exist
+   * Gets a value from the config. If the value does not exist, it returns the provided default value. If no d
    * @param key - The name of the key to get
+   * @param notfound - The default value to return if the key does not exist
    * @return - The value of the config key
    */
-  public get(key: string): any {
+  public get(key: string, notfound: string): any {
     const value = this.config.get(key);
     if (!value) {
-      throw new Error(`Config key ${key} not found`);
+      return notfound;
     }
 
     return value;
@@ -354,14 +355,14 @@ export class CliArgs {
   }
 
   /**
-   * Gets a value from the command line arguments. Throws an error if the value does not exist
+   * Gets a value from the command line arguments. Returns not found if the argument does not exist.
    * @param  key - The name of the key to get
    * @return the value of the key
    */
-  public get<T>(key: string): T {
+  public get<T>(key: string, notfound: T): T {
     const value = this.args.get(key);
     if (!value) {
-      throw new Error(`Argument ${key} not found`);
+      return notfound;
     }
 
     return value as T;
