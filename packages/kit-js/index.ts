@@ -14,6 +14,8 @@ export const thisDir: string = path.dirname(thisFile);
 
 /** @constant List of names that can't be used for a tool */
 const BANNED_NAMES: string[] = ["help", "test"];
+/** @constant list of characters that can't be used in the name of a tool*/
+const BANNED_CHARACRERS: string[] = [" ", "\n", "\t", "\r"];
 
 /**
  * Each "Tool" is its own script
@@ -60,7 +62,21 @@ export class ToolRunner {
         )}`
       );
     }
-    this.tools.push(tool);
+
+    for (const char of BANNED_CHARACRERS) {
+      if (tool.name.includes(char)) {
+        throw new Error(
+          `Tool name ${
+            tool.name
+          } cannot be used. Sowwy :(\nDon't use any of these characters in your tool name:\n${BANNED_CHARACRERS.join(
+            ", "
+          )}`
+        );
+      }
+    }
+
+    // check if tool name contains a space
+    if (tool.name.includes(" ")) this.tools.push(tool);
   }
 
   public async runTool(name: string) {
