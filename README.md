@@ -2,9 +2,9 @@ We're still building the early tools, but stay tuned for more to come!
 
 
 # What is powertool?
-You'll need the following two definitions before proceeding:  
+You'll need the following two definitions before proceeding:
 
-`tool` - a script or part of a script that automates a repetitive task  
+`tool` - a script or part of a script that automates a repetitive task
 `kit` - a collection of tools that can be installed together
 
 Powertool is:
@@ -30,6 +30,7 @@ Most tools will be built in node. If you're using a tool built in python, rust, 
 ```
 npm install -g @powertool/pwrtl
 ```
+
 
 # How does a powertool kit actually work?
 It's incredibly simple to automate things with powertool. If you can write code to do it, you can probably write code to do it.
