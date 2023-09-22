@@ -38,7 +38,7 @@ export class LocalFiles {}
  * Hidden class that runs and adds tools
  */
 export class ToolRunner {
-  private tools: Tool[] = [
+  tools: Tool[] = [
     {
       name: "help",
       description: "Prints information about the powertool",
