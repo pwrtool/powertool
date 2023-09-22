@@ -49,10 +49,23 @@ export class ToolRunner {
       },
     },
   ];
+  defaultTool: Tool | null = null;
 
   constructor() {}
 
+  public setDefaultTool(tool: Tool) {
+    this.checkTool(tool);
+
+    this.defaultTool = tool;
+  }
+
   public addTool(tool: Tool) {
+    this.checkTool(tool);
+
+    this.tools.push(tool);
+  }
+
+  private checkTool(tool: Tool): boolean {
     if (BANNED_NAMES.includes(tool.name)) {
       throw new Error(
         `Tool name ${
@@ -75,13 +88,18 @@ export class ToolRunner {
       }
     }
 
-    // check if tool name contains a space
-    if (tool.name.includes(" ")) this.tools.push(tool);
+    return true;
   }
 
   public async runTool(name: string) {
     const tool = this.tools.find((tool) => tool.name === name);
     if (tool === undefined) {
+      if (this.defaultTool !== null) {
+        await this.defaultTool.function();
+        exitWithSuccess();
+        return;
+      }
+
       io.error(`Tool ${name} not found`);
       exitWithFailure();
       return;
