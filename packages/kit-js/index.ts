@@ -13,9 +13,30 @@ export const thisFile: string = fileURLToPath(import.meta.url);
 export const thisDir: string = path.dirname(thisFile);
 
 /** @constant List of names that can't be used for a tool */
-const BANNED_NAMES: string[] = ["help", "test"];
+const BANNED_NAMES: string[] = ["help", "test", "bun", "run", "node", "index"];
 /** @constant list of characters that can't be used in the name of a tool*/
-const BANNED_CHARACRERS: string[] = [" ", "\n", "\t", "\r"];
+const BANNED_CHARACRERS: string[] = [
+  " ",
+  "\n",
+  "\t",
+  "\r",
+  ".",
+  "{",
+  "}",
+  "[",
+  "]",
+  "(",
+  ")",
+  "<",
+  ">",
+  "/",
+  "\\",
+  "|",
+  "?",
+  "*",
+  "=",
+  "+",
+];
 
 /**
  * Each "Tool" is its own script
@@ -91,7 +112,7 @@ export class ToolRunner {
     return true;
   }
 
-  public async runTool(name: string) {
+  public async runTool(name: string | undefined) {
     const tool = this.tools.find((tool) => tool.name === name);
     if (tool === undefined) {
       if (this.defaultTool !== null) {
@@ -136,12 +157,7 @@ export class Powertool {
    * @return void
    */
   public run() {
-    if (process.argv.length < 3) {
-      throw new Error("No tool name provided");
-    }
-
-    const toolName = process.argv[2];
-    this.toolRunner.runTool(toolName);
+    this.toolRunner.runTool(findTool());
   }
 }
 
@@ -394,4 +410,26 @@ export class CliArgs {
   public has(key: string): boolean {
     return this.args.has(key);
   }
+}
+
+export function findTool(): string | undefined {
+  const args = process.argv;
+  let toolName = undefined;
+  for (let i = 0; i < args.length; i++) {
+    const arg: string = args[i];
+    if (
+      arg.includes(".") ||
+      arg.includes("=") ||
+      arg === "node" ||
+      arg === "bun" ||
+      arg === "run"
+    ) {
+      continue;
+    }
+
+    toolName = arg;
+    break;
+  }
+
+  return toolName;
 }
