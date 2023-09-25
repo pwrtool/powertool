@@ -15,6 +15,13 @@ program
   });
 
 program
+  .command("hello")
+  .description("Says hello. I needed this when making sure bunx works properly")
+  .action(() => {
+    io.out("hello world!")
+  });
+
+program
   .command("install <kit>")
   .description("Install a tool from Github to your system")
   .action(async (kit: string) => {
