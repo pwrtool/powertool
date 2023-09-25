@@ -1,6 +1,5 @@
 We're still building the early tools, but stay tuned for more to come!
 
-
 # What is powertool?
 You'll need the following two definitions before proceeding:
 

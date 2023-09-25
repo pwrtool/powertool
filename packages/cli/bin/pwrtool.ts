@@ -1,6 +1,6 @@
 import { io } from "..";
 import { program } from "commander";
-import { install, uninstall } from "..";
+import { install, uninstall, testInstall } from "..";
 
 program
   .name("pwrtool")
@@ -12,13 +12,6 @@ program
         "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptx <kit> <tool>' command to run an installed tool.\n"
       )
     );
-  });
-
-program
-  .command("info <kit>")
-  .description("Get information about an installed kit")
-  .action((kit: string) => {
-    console.log(kit);
   });
 
 program
@@ -47,10 +40,10 @@ program
 program
   .command("test-install")
   .description(
-    "Installs ./install.sh as a kit to the test-kit directory. You can then run `powertool run test-kit <tool>` to test your kit. This is primarily useful for developing kits"
+    "Installs ./install.sh as a kit to the test-kit directory. You can then run `ptx bench/test <tool>` to test your kit. This is primarily useful for developing kits"
   )
-  .action(() => {
-    console.log("test-install");
+  .action(async () => {
+    await testInstall();
   });
 
 program.parse();
