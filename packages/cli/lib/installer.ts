@@ -15,6 +15,7 @@ export async function install(kit: string) {
   try {
     io.header(`\n 🧪 Cloning repository ${repo}...`);
     await awaitableSpawn("git", ["clone", repo, files.tempDir]);
+    io.success("Repo cloned successfully!")
 
     // todo: check if there's an install.sh file and throw if it doesn't exist
 
@@ -24,7 +25,8 @@ export async function install(kit: string) {
     io.success(`\n ✅️ ${kit} has been installed!`);
     files.clearTemp();
   } catch (e) {
-    io.error(e as string);
+    io.error("❌️ Something bad happened...")
+    io.out(e as string);
   }
 }
 
@@ -33,13 +35,14 @@ export async function uninstall(kit: string) {
 
   try {
     if (fs.existsSync(kitDir) === false) {
-      throw `\n ❌️ ${kit} is not installed!`;
+      throw `❌️ ${kit} is not installed!`;
     }
 
     fs.rmdirSync(kitDir, { recursive: true });
     io.success(`\n ✅️ ${kit} has been uninstalled!`);
   } catch (e) {
-    io.error(e as string);
+    io.error("❌️ Something went wrong...")
+    io.out(e as string);
   }
 }
 

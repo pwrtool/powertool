@@ -1,3 +1,4 @@
+#!/bin/env node
 import { runTool, usefulArgs, getKit, io } from "..";
 
 // due to the weird nature of this command, the commander package is not used. We instead just parse the command line arguments like real men.

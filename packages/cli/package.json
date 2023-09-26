@@ -1,7 +1,7 @@
 {
   "name": "@pwrtool/cli",
   "module": "index.ts",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -16,8 +16,8 @@
     "typescript": "^5.0.0"
   },
   "bin": {
-    "pwrtool": "./bin/pwrtool.ts",
-    "ptx": "./bin/ptx.ts"
+    "pwrtool": "bin/pwrtool.ts",
+    "ptx": "bin/ptx.ts"
   },
   "dependencies": {
     "commander": "^11.0.0"

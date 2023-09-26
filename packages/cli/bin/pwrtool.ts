@@ -1,3 +1,4 @@
+#!/bin/node
 import { io } from "..";
 import { program } from "commander";
 import { install, uninstall, testInstall } from "..";
