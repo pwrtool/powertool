@@ -51,11 +51,6 @@ interface Tool {
 }
 
 /**
- * A class that handles copying and moving files local to the powertool
- */
-export class LocalFiles {}
-
-/**
  * Hidden class that runs and adds tools
  */
 export class ToolRunner {
@@ -433,3 +428,5 @@ export function findTool(): string | undefined {
 
   return toolName;
 }
+
+// get call directory function
