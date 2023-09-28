@@ -6,7 +6,7 @@ Read more in the docs (oops, I haven't made them yet).
 # Wait what?
 Powertool uses runstrings. Here is an example:
 ```txt
-tool:my-tool;from:/home/firesquid/source/mycoolprojet;arg1:hello|arg2:23;
+tool:my-tool;from:/home/firesquid/source/mycoolprojet;args:[arg1:hello|arg2:23];
 ```
 
 When the cli runs the kit, these are passed as  
