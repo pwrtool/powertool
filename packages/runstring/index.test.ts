@@ -1,4 +1,4 @@
-import { ParsedRunstring, generateRunstring } from ".";
+import { ParsedRunstring, generateRunstring, parseRunstring } from ".";
 import { describe, test, expect } from "bun:test";
 
 describe("generateRunstring", () => {
@@ -43,5 +43,43 @@ describe("generateRunstring", () => {
     expect(generateRunstring(runstring)).toEqual(
       "tool:test;from:/some/path/;args:[a:coolarg,c:23,];autoAnswer:t;answers:[y,dothethng,nah,]"
     );
+  });
+});
+
+describe("parseRunstring", () => {
+  test("should deal with no answers", () => {
+    const runstring =
+      "tool:test;from:/some/sort/of/path;args:[a:coolarg,c:23,];autoAnswer:f;answers:[]";
+    const parsed = parseRunstring(runstring);
+
+    expect(parsed.tool).toEqual("test");
+    expect(parsed.from).toEqual("/some/sort/of/path");
+    expect(parsed.arguments.get("a")).toEqual("coolarg");
+    expect(parsed.arguments.get("c")).toEqual("23");
+    expect(parsed.autoAnswer).toEqual(false);
+    expect(parsed.answers).toEqual([]);
+  });
+  test("should deal with no args", () => {
+    const runstring =
+      "tool:test;from:/some/sort/of/path;args:[];autoAnswer:f;answers:[]";
+    const parsed = parseRunstring(runstring);
+
+    expect(parsed.tool).toEqual("test");
+    expect(parsed.from).toEqual("/some/sort/of/path");
+    expect(parsed.arguments.size).toEqual(0);
+    expect(parsed.autoAnswer).toEqual(false);
+    expect(parsed.answers).toEqual([]);
+  });
+  test("should deal with answers", () => {
+    const runstring =
+      "tool:test;from:/some/path/;args:[a:coolarg,c:23,];autoAnswer:t;answers:[y,dothethng,nah,]";
+    const parsed = parseRunstring(runstring);
+
+    expect(parsed.tool).toEqual("test");
+    expect(parsed.from).toEqual("/some/path/");
+    expect(parsed.arguments.get("a")).toEqual("coolarg");
+    expect(parsed.arguments.get("c")).toEqual("23");
+    expect(parsed.autoAnswer).toEqual(true);
+    expect(parsed.answers).toEqual(["y", "dothethng", "nah"]);
   });
 });
