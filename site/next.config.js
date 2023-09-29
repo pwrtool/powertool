@@ -16,6 +16,9 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    mdxRs: true,
+  },
 
   async headers() {
     return [
