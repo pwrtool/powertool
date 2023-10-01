@@ -3,7 +3,7 @@ import AuthButton from "./AuthButton";
 
 export default function Header() {
   return (
-    <header className="bg-base-200 p-4 text-2xl align-middle font-bold flex flex-row">
+    <header className="bg-base-200 p-4 text-2xl align-middle font-bold flex flex-row h-[6rem]">
       <Link href="/" className="text-4xl">
         Powertool
       </Link>

@@ -6,7 +6,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { GithubProvider } from "@/components/GithubProvider";
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,13 +20,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} h-screen flex flex-col justify-between`}
-      >
+      <body className={`${inter.className}`}>
         <AuthProvider>
           <GithubProvider>
             <Header />
-            <main>{children}</main>
+            <div className="min-h-[calc(100vh-14rem)]">{children}</div>
             <Footer />
           </GithubProvider>
         </AuthProvider>

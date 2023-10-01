@@ -1,5 +1,7 @@
+const withMarkdoc = require("@markdoc/next.js");
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = withMarkdoc()({
   images: {
     remotePatterns: [
       {
@@ -20,6 +22,8 @@ const nextConfig = {
     mdxRs: true,
   },
 
+  pageExtensions: ["tsx", "md", "mdx"],
+
   async headers() {
     return [
       /*       {
@@ -33,6 +37,6 @@ const nextConfig = {
       }, */
     ];
   },
-};
+});
 
 module.exports = nextConfig;

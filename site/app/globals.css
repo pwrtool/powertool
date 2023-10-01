@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 article {
-  @apply prose;
+  @apply prose m-4;
 }
 
 nav {
