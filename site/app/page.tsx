@@ -4,7 +4,7 @@ import Tagline from "@/components/Tagline";
 
 export default function Home() {
   return (
-    <main>
+    <main className="m-4">
       <Tagline />
       <Features />
       <CallToAction />

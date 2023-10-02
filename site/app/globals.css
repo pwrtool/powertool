@@ -26,10 +26,6 @@ nav a {
   @apply m-2 text-accent hover:text-accent-focus;
 }
 
-main {
-  @apply m-4;
-}
-
 #tagline {
   @apply text-5xl text-center;
 }
