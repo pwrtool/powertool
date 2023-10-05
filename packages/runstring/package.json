@@ -1,7 +1,8 @@
 {
-  "name": "runstring",
+  "name": "@pwrtool/runstring",
   "module": "index.ts",
   "type": "module",
+  "version": "1.0.0",
   "devDependencies": {
     "bun-types": "latest"
   },
