@@ -1,3 +1,4 @@
+// why do I exist?
 import { runTool, awaitableSpawn } from "./lib/runner";
 import { io } from "./lib/io";
 import { usefulArgs, getParameters, getKit } from "./lib/parser";

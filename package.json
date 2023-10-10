@@ -20,6 +20,7 @@
     "ptx": "bin/ptx.ts"
   },
   "dependencies": {
+    "@pwrtool/fancy-out": "^1.0.0",
     "commander": "^11.0.0"
   }
 }

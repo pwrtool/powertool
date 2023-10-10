@@ -1,6 +1,6 @@
 import os from "os";
 import * as fs from "fs";
-import { io } from "./io";
+import { FancyOut } from "@pwrtool/fancy-out";
 
 type Installed = {
   kit: string;
@@ -42,7 +42,7 @@ export class ApplicationFiles {
     ) {
       return;
     }
-    io.warn(".powertool directory not found, initializing...");
+    FancyOut.warn(".powertool directory not found, initializing...");
 
     try {
       fs.mkdirSync(this.configDir, { recursive: true });
@@ -52,12 +52,12 @@ export class ApplicationFiles {
       this.initInstalled();
       this.initConfig();
     } catch (e) {
-      io.error(e as string);
-      io.error("Failed to initialize PowerTool config 😦");
+      FancyOut.error(e as string);
+      FancyOut.error("Failed to initialize PowerTool config 😦");
       process.exit(1);
     }
 
-    io.success("Initialized PowerTool Config! 🎉\n");
+    FancyOut.success("Initialized PowerTool Config! 🎉\n");
   }
 
   getConfig(): object {
@@ -66,7 +66,7 @@ export class ApplicationFiles {
 
     if (config === undefined) {
       throw new Error(
-        "Config file could not be typecasted. Have you made an error in your config file?"
+        "Config file could not be typecasted. Have you made an error in your config file?",
       );
     }
 
@@ -79,7 +79,7 @@ export class ApplicationFiles {
 
     if (installed === undefined) {
       throw new Error(
-        "Installed file could not be typecasted. Have you made an error in your installed file?"
+        "Installed file could not be typecasted. Have you made an error in your installed file?",
       );
     }
 

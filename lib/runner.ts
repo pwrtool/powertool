@@ -1,25 +1,25 @@
 import { ApplicationFiles } from "./application-files";
-import { io } from "./io";
 import { spawn } from "child_process";
 import * as fs from "fs";
+import { FancyOut } from "@pwrtool/fancy-out";
 
 export async function runTool(kit: string, tool: string, parameters: string[]) {
   // todo: add error handling for when a kit or tool is not found
   try {
-    io.header(`\n 🔎 Looking for ${kit}...`);
+    FancyOut.header(`\n 🔎 Looking for ${kit}...`);
     const applicationFiles = new ApplicationFiles();
     const kitFile = findKitFile(kit, applicationFiles);
 
-    io.header(`\n 🚀 Running ${kit}/${tool}...`);
+    FancyOut.header(`\n 🚀 Running ${kit}/${tool}...`);
     const exitCode = await runKitFile(kitFile, tool, parameters);
 
     if (exitCode === ExitCode.Success) {
-      io.success(`\n ✅ ${kit}/${tool} ran successfully!`);
+      FancyOut.success(`\n ✅ ${kit}/${tool} ran successfully!`);
     } else {
-      io.error(`\n ❌ ${kit}/${tool} failed to run!`);
+      FancyOut.error(`\n ❌ ${kit}/${tool} failed to run!`);
     }
   } catch (e) {
-    io.error(e as string);
+    FancyOut.error(e as string);
   }
 
   process.exit(0);
@@ -27,7 +27,7 @@ export async function runTool(kit: string, tool: string, parameters: string[]) {
 
 export async function awaitableSpawn(
   command: string,
-  args: string[]
+  args: string[],
 ): Promise<ExitCode> {
   return new Promise<ExitCode>((resolve, reject) => {
     const process = () => spawn(command, args, { stdio: "inherit" });
@@ -44,7 +44,7 @@ export async function awaitableSpawn(
 
 export function findKitFile(
   kit: string,
-  applicationFiles: ApplicationFiles
+  applicationFiles: ApplicationFiles,
 ): string {
   let kitFile: string = "";
   const installed = applicationFiles.getInstalled();
@@ -66,7 +66,7 @@ export function findKitFile(
 export async function runKitFile(
   filename: string,
   tool: string,
-  parameters: string[]
+  parameters: string[],
 ) {
   return await awaitableSpawn(filename, [tool, ...parameters]);
 }

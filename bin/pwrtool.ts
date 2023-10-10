@@ -1,7 +1,7 @@
 #!/bin/node
-import { io } from "..";
 import { program } from "commander";
 import { install, uninstall, testInstall } from "..";
+import { FancyOut } from "@pwrtool/fancy-out";
 
 program
   .name("pwrtool")
@@ -9,7 +9,7 @@ program
   .version("0.0.1")
   .action(() => {
     console.log(
-      io.bold(
+      FancyOut.bold(
         "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptx <kit> <tool>' command to run an installed tool.\n",
       ),
     );
@@ -19,7 +19,7 @@ program
   .command("hello")
   .description("Says hello. I needed this when making sure bunx works properly")
   .action(() => {
-    io.out("hello world!");
+    FancyOut.out("hello world!");
   });
 
 program
@@ -33,7 +33,7 @@ program
   .command("update <kit>")
   .description("uninstalls and reinstalls a kit to ensure it is up to date")
   .action(async (kit: string) => {
-    io.bold("Uninstalling and reinstalling kit.");
+    FancyOut.bold("Uninstalling and reinstalling kit.");
     uninstall(kit);
     await install(kit);
   });
@@ -52,7 +52,7 @@ program
   )
   .action(async () => {
     await testInstall();
-    io.out("Run `ptx bench/test <tool>` to test your kit");
+    FancyOut.out("Run `ptx bench/test <tool>` to test your kit");
   });
 
 program.parse();
