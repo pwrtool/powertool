@@ -10,8 +10,8 @@ program
   .action(() => {
     console.log(
       io.bold(
-        "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptx <kit> <tool>' command to run an installed tool.\n"
-      )
+        "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptx <kit> <tool>' command to run an installed tool.\n",
+      ),
     );
   });
 
@@ -19,7 +19,7 @@ program
   .command("hello")
   .description("Says hello. I needed this when making sure bunx works properly")
   .action(() => {
-    io.out("hello world!")
+    io.out("hello world!");
   });
 
 program
@@ -48,10 +48,11 @@ program
 program
   .command("test-install")
   .description(
-    "Installs ./install.sh as a kit to the test-kit directory. You can then run `ptx bench/test <tool>` to test your kit. This is primarily useful for developing kits"
+    "Installs ./install.sh as a kit to the test-kit directory. You can then run `ptx bench/test <tool>` to test your kit. This is primarily useful for developing kits",
   )
   .action(async () => {
     await testInstall();
+    io.out("Run `ptx bench/test <tool>` to test your kit");
   });
 
 program.parse();
