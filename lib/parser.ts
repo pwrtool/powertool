@@ -1,3 +1,6 @@
+import { ParsedRunstring } from "@pwrtool/runstring";
+
+// DEPRECATED
 export function usefulArgs(): string[] {
   for (let i = 0; i < process.argv.length; i++) {
     if (process.argv[i].includes("ptx.ts") || process.argv[i] === "ptx") {
@@ -8,8 +11,7 @@ export function usefulArgs(): string[] {
   return [];
 }
 
-// todo: make this work with users specifying an action file
-// todo: make this deal with an idiot specifying only the kit or only the tool
+// DEPRECATED
 export function getKit(args: string[]): {
   kit: string;
   tool: string;
@@ -30,4 +32,17 @@ export function getParameters(args: string[]): string[] {
   }
 
   return params;
+}
+
+export function parseArgs(args: string[]): [ParsedRunstring, string] {
+  let kit = "";
+  const runstring: ParsedRunstring = {
+    tool: "",
+    from: process.cwd(),
+    arguments: new Map<string, string>(),
+    answers: [],
+    autoAnswer: false,
+  };
+
+  return [runstring, kit];
 }
