@@ -50,4 +50,25 @@ describe("parser", () => {
       "",
     ]);
   });
+  test("should deal with a bun run call", () => {
+    expect(
+      parseArgs([
+        "bun",
+        "run",
+        "../long/path/to/thing",
+        "me/mykit",
+        "mytool",
+        "arg1=val1",
+      ]),
+    ).toEqual([
+      {
+        tool: "mytool",
+        from: process.cwd(),
+        arguments: new Map([["arg1", "val1"]]),
+        answers: [],
+        autoAnswer: false,
+      },
+      "me/mykit",
+    ]);
+  });
 });
