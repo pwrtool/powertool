@@ -2,6 +2,7 @@ import { ApplicationFiles } from "./application-files";
 import { spawn } from "child_process";
 import * as fs from "fs";
 import { FancyOut } from "@pwrtool/fancy-out";
+import { ParsedRunstring, generateRunstring } from "@pwrtool/runstring";
 
 export async function runTool(kit: string, tool: string, parameters: string[]) {
   // todo: add error handling for when a kit or tool is not found
@@ -63,12 +64,10 @@ export function findKitFile(
   return kitFile;
 }
 
-export async function runKitFile(
-  filename: string,
-  tool: string,
-  parameters: string[],
-) {
-  return await awaitableSpawn(filename, [tool, ...parameters]);
+export async function runKitFile(filename: string, runstring: ParsedRunstring) {
+  const arg = generateRunstring(runstring);
+
+  return await awaitableSpawn(filename, [arg]);
 }
 
 export enum ExitCode {
