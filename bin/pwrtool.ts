@@ -1,6 +1,6 @@
 #!/bin/node
 import { program } from "commander";
-import { install, uninstall, testInstall } from "..";
+import { install, uninstall, testInstall } from "../lib/installer";
 import { FancyOut } from "@pwrtool/fancy-out";
 
 program
