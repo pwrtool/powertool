@@ -3,8 +3,6 @@
 # set "FROM" to be the cwd
 FROM=$(pwd)
 
-echo $FROM
-
 
 # cd to this file
 cd $(dirname $0)
