@@ -83,4 +83,26 @@ describe("parser", () => {
       "",
     ]);
   });
+  test("should deal with custom from", () => {
+    expect(
+      parseArgs([
+        "bun",
+        "run",
+        "../exec/ptx.ts",
+        "!FROM=/hello/world/",
+        "me/mykit",
+        "coolTool",
+        "arg1=2",
+      ]),
+    ).toEqual([
+      {
+        tool: "coolTool",
+        from: "/hello/world/",
+        arguments: new Map([["arg1", "2"]]),
+        answers: [],
+        autoAnswer: false,
+      },
+      "me/mykit",
+    ]);
+  });
 });

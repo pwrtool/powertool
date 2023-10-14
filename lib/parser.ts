@@ -15,7 +15,9 @@ export function parseArgs(args: string[]): [ParsedRunstring, string] {
       continue;
     }
 
-    if (args[i].includes("=")) {
+    if (args[i].includes("!FROM=")) {
+      runstring.from = args[i].replace("!FROM=", "");
+    } else if (args[i].includes("=")) {
       const [key, value] = args[i].split("=");
       runstring.arguments.set(key, value);
     } else if (isKit(args[i])) {
