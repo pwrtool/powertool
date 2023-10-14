@@ -11,10 +11,14 @@ export function parseArgs(args: string[]): [ParsedRunstring, string] {
   };
 
   for (let i = 0; i < args.length; i++) {
+    if (i <= 2 && (args[i] === "bun" || args[i] === "run")) {
+      continue;
+    }
+
     if (args[i].includes("=")) {
       const [key, value] = args[i].split("=");
       runstring.arguments.set(key, value);
-    } else if (args[i].includes("/")) {
+    } else if (isKit(args[i])) {
       kit = args[i];
     } else if (isTool(args[i])) {
       runstring.tool = args[i];
@@ -26,4 +30,12 @@ export function parseArgs(args: string[]): [ParsedRunstring, string] {
 
 function isTool(word: string): boolean {
   return !(word.includes(".") || word.includes("/") || word === "ptx");
+}
+
+function isKit(word: string): boolean {
+  return (
+    word.includes("/") &&
+    !word.includes(".") &&
+    !word.includes("../exec/ptx.ts")
+  );
 }

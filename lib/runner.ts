@@ -1,30 +1,7 @@
 import { ApplicationFiles } from "./application-files";
 import { spawn } from "child_process";
 import * as fs from "fs";
-import { FancyOut } from "@pwrtool/fancy-out";
 import { ParsedRunstring, generateRunstring } from "@pwrtool/runstring";
-
-export async function runTool(kit: string, tool: string, parameters: string[]) {
-  // todo: add error handling for when a kit or tool is not found
-  try {
-    FancyOut.header(`\n 🔎 Looking for ${kit}...`);
-    const applicationFiles = new ApplicationFiles();
-    const kitFile = findKitFile(kit, applicationFiles);
-
-    FancyOut.header(`\n 🚀 Running ${kit}/${tool}...`);
-    const exitCode = await runKitFile(kitFile, tool, parameters);
-
-    if (exitCode === ExitCode.Success) {
-      FancyOut.success(`\n ✅ ${kit}/${tool} ran successfully!`);
-    } else {
-      FancyOut.error(`\n ❌ ${kit}/${tool} failed to run!`);
-    }
-  } catch (e) {
-    FancyOut.error(e as string);
-  }
-
-  process.exit(0);
-}
 
 export async function awaitableSpawn(
   command: string,

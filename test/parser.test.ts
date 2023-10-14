@@ -71,4 +71,16 @@ describe("parser", () => {
       "me/mykit",
     ]);
   });
+  test("should deal with an empty call", () => {
+    expect(parseArgs(["bun", "run", "../exec/ptx.ts"])).toEqual([
+      {
+        tool: "",
+        from: process.cwd(),
+        arguments: new Map(),
+        answers: [],
+        autoAnswer: false,
+      },
+      "",
+    ]);
+  });
 });
