@@ -9,11 +9,11 @@ const files = new ApplicationFiles();
 export async function install(kit: string) {
   // todo: check if the user entered <some-github-user>/<some-repo>
 
-  const installDir = `${files.kitsDir}/${kit.replace("/", "-")}`;
+  const installDir = `${files.kitsDir}/${kit.replace("/", ">")}`;
   const repo = `https://github.com/${kit}.git`;
 
   try {
-    FancyOut.header(`\n 🧪 Cloning repository ${repo}...`);
+    FancyOut.header(`\n 🧙 cloning repository ${repo}...`);
     await awaitableSpawn("git", ["clone", repo, files.tempDir]);
     FancyOut.success("Repo cloned successfully!");
 
@@ -31,7 +31,7 @@ export async function install(kit: string) {
 }
 
 export async function uninstall(kit: string) {
-  const kitDir = `${files.kitsDir}/${kit.replace("/", "-")}`;
+  const kitDir = `${files.kitsDir}/${kit.replace("/", ">")}`;
 
   try {
     if (fs.existsSync(kitDir) === false) {
@@ -46,18 +46,21 @@ export async function uninstall(kit: string) {
   }
 }
 
-export async function testInstall(dir: string = ""): Promise<void> {
-  const kitDir = path.join(process.cwd(), dir);
-  const installDir = `${files.kitsDir}/bench-test`;
+export async function testInstall(): Promise<void> {
+  const kitDir = path.join(process.cwd());
+  fs.rmdirSync(`${files.kitsDir}/bench>test`, { recursive: true });
 
   FancyOut.header(`🔍 Searching for local install.sh`);
+  FancyOut.out("📂 Using kit directory: " + kitDir);
+  const installDir = `${files.kitsDir}/bench>test`;
   if (!fs.existsSync(path.join(kitDir, "install.sh"))) {
     FancyOut.error("❌ No install.sh file was found");
 
     return Promise.reject();
   }
+  FancyOut.out("✅️ Found install.sh file");
 
-  FancyOut.header(`📜 Running install script in ${dir}`);
+  FancyOut.header(`📜 Running install script in ${kitDir}`);
   try {
     await awaitableSpawn("bash", [`${kitDir}/install.sh`, installDir]);
   } catch (e) {

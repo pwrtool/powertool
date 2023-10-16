@@ -2,6 +2,8 @@ import { ApplicationFiles } from "./application-files";
 import { spawn } from "child_process";
 import * as fs from "fs";
 import { ParsedRunstring, generateRunstring } from "@pwrtool/runstring";
+import { FancyOut } from "@pwrtool/fancy-out";
+import path from "node:path";
 
 export async function awaitableSpawn(
   command: string,
@@ -24,18 +26,15 @@ export function findKitFile(
   kit: string,
   applicationFiles: ApplicationFiles,
 ): string {
-  let kitFile: string = "";
-  const installed = applicationFiles.getInstalled();
+  let kitFile: string = path.join(
+    applicationFiles.kitsDir,
+    kit.replace("/", ">"),
+    "run.sh",
+  );
 
-  installed.find((installedKit) => {
-    if (installedKit.kit === kit) {
-      const kitPath = installedKit.path;
-      kitFile = `${kitPath}/run.sh`;
-    }
-  });
-
-  if (kitFile === "" || fs.existsSync(kitFile) === false) {
-    throw new Error(`\n❌ Kit ${kit}'s run.sh file could not be found!`);
+  if (fs.existsSync(kitFile) === false) {
+    FancyOut.error(`❌️ ${kitFile} was not found!`);
+    process.exit(1);
   }
 
   return kitFile;

@@ -18,7 +18,6 @@ export class ApplicationFiles {
   configDir = `${os.homedir()}/.config/powertool`;
   configPath = `${os.homedir()}/.config/powertool/config.json`;
   dataDir = `${os.homedir()}/.powertool/`;
-  installedPath = `${os.homedir()}/.powertool/installed.json`;
   tempDir = `${os.homedir()}/.powertool/temp`;
   kitsDir = `${os.homedir()}/.powertool/kits`;
   defaultConfig = {
@@ -37,7 +36,6 @@ export class ApplicationFiles {
     if (
       fs.existsSync(this.configPath) &&
       fs.existsSync(this.dataDir) &&
-      fs.existsSync(this.installedPath) &&
       fs.existsSync(this.kitsDir)
     ) {
       return;
@@ -49,7 +47,6 @@ export class ApplicationFiles {
       fs.mkdirSync(this.tempDir, { recursive: true });
       fs.mkdirSync(this.kitsDir, { recursive: true });
 
-      this.initInstalled();
       this.initConfig();
     } catch (e) {
       FancyOut.error(e as string);
@@ -73,19 +70,6 @@ export class ApplicationFiles {
     return config;
   }
 
-  getInstalled(): Installed[] {
-    const file = fs.readFileSync(this.installedPath, "utf8");
-    const installed = JSON.parse(file) as Installed[];
-
-    if (installed === undefined) {
-      throw new Error(
-        "Installed file could not be typecasted. Have you made an error in your installed file?",
-      );
-    }
-
-    return installed;
-  }
-
   clearTemp() {
     if (fs.existsSync(this.tempDir) === false) {
       return;
@@ -99,9 +83,5 @@ export class ApplicationFiles {
 
     const config = JSON.stringify(this.defaultConfig);
     fs.writeFileSync(this.configPath, config);
-  }
-
-  initInstalled() {
-    fs.writeFileSync(this.installedPath, JSON.stringify([]));
   }
 }

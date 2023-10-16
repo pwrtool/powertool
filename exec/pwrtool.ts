@@ -2,15 +2,20 @@ import { program } from "commander";
 import { install, uninstall, testInstall } from "../lib/installer";
 import { FancyOut } from "@pwrtool/fancy-out";
 
+for (const argument of process.argv) {
+  if (argument.includes("!FROM=")) {
+    const dir = argument.split("=")[1];
+    process.chdir(dir);
+  }
+}
+
 program
   .name("pwrtool")
   .description("Automate every aspect of your workflow")
   .version("0.0.1")
   .action(() => {
-    console.log(
-      FancyOut.bold(
-        "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptx <kit> <tool>' command to run an installed tool.\n",
-      ),
+    FancyOut.bold(
+      "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptx <kit> <tool>' command to run an installed tool.\n",
     );
   });
 
