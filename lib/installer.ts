@@ -60,7 +60,7 @@ export async function testInstall(): Promise<void> {
   }
   FancyOut.out("✅️ Found install.sh file");
 
-  FancyOut.header(`📜 Running install script in ${kitDir}`);
+  FancyOut.header(`\n📜 Running install script in ${kitDir}`);
   try {
     await awaitableSpawn("bash", [`${kitDir}/install.sh`, installDir]);
   } catch (e) {

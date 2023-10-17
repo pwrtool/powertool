@@ -1,6 +1,7 @@
 import { program } from "commander";
 import { install, uninstall, testInstall } from "../lib/installer";
 import { FancyOut } from "@pwrtool/fancy-out";
+import { getKitInfo, outputKitInfo } from "../lib/info";
 
 for (const argument of process.argv) {
   if (argument.includes("!FROM=")) {
@@ -19,12 +20,6 @@ program
     );
   });
 
-program
-  .command("hello")
-  .description("Says hello. I needed this when making sure bunx works properly")
-  .action(() => {
-    FancyOut.out("hello world!");
-  });
 
 program
   .command("install <kit>")
@@ -59,4 +54,17 @@ program
     FancyOut.out("Run `ptx bench/test <tool>` to test your kit");
   });
 
+program
+  .command("info <kit>")
+  .description("Get information about a kit from its ptinfo.yaml file")
+  .action((kit: string) => {
+    const info = getKitInfo(kit);
+    if (typeof info === "string") {
+      FancyOut.error(info);
+      process.exit(1);
+    }
+    outputKitInfo(info, kit);
+  });
+
 program.parse();
+
