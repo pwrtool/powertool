@@ -63,7 +63,14 @@ program
       FancyOut.error(info);
       process.exit(1);
     }
-    outputKitInfo(info, kit);
+
+    try {
+      outputKitInfo(info, kit);
+    }
+    catch (e) {
+      FancyOut.error("Kit failed to be parsed");
+      process.exit(1);
+    }
   });
 
 program.parse();
