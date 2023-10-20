@@ -16,7 +16,7 @@ type InstalledTool = {
 
 export class ApplicationFiles {
   configDir = `${os.homedir()}/.config/powertool`;
-  configPath = `${os.homedir()}/.config/powertool/config.json`;
+  configPath = `${os.homedir()}/.config/powertool/config.yaml`;
   dataDir = `${os.homedir()}/.powertool/`;
   tempDir = `${os.homedir()}/.powertool/temp`;
   kitsDir = `${os.homedir()}/.powertool/kits`;
