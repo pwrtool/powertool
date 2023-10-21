@@ -3,11 +3,6 @@ import * as fs from "fs";
 import { FancyOut } from "@pwrtool/fancy-out";
 import YAML from "yaml";
 
-type InstalledTool = {
-  name: string;
-  description: string;
-};
-
 export class ApplicationFiles {
   configDir = `${os.homedir()}/.config/powertool`;
   configPath = `${os.homedir()}/.config/powertool/config.yaml`;
