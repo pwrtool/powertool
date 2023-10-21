@@ -3,13 +3,6 @@ import * as fs from "fs";
 import { FancyOut } from "@pwrtool/fancy-out";
 import YAML from "yaml";
 
-type Installed = {
-  kit: string;
-  version: string;
-  path: string;
-  tools: InstalledTool[];
-};
-
 type InstalledTool = {
   name: string;
   description: string;
