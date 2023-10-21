@@ -1,6 +1,7 @@
 import os from "os";
 import * as fs from "fs";
 import { FancyOut } from "@pwrtool/fancy-out";
+import YAML from "yaml";
 
 type Installed = {
   kit: string;
@@ -59,7 +60,7 @@ export class ApplicationFiles {
 
   getConfig(): object {
     const file = fs.readFileSync(this.configPath, "utf8");
-    const config = JSON.parse(file);
+    const config = YAML.parse(file);
 
     if (config === undefined) {
       throw new Error(
@@ -81,7 +82,7 @@ export class ApplicationFiles {
   initConfig() {
     fs.mkdirSync(this.configDir, { recursive: true });
 
-    const config = JSON.stringify(this.defaultConfig);
+    const config = YAML.stringify(this.defaultConfig);
     fs.writeFileSync(this.configPath, config);
   }
 }

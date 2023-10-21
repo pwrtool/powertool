@@ -70,6 +70,5 @@ export async function testInstall(): Promise<void> {
   }
 
   FancyOut.success("✅️ No errors found in install script!");
-  FancyOut.out("Run your kit with: `ptx bench/test <tool> <args>`");
   return Promise.resolve();
 }
