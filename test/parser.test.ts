@@ -105,4 +105,25 @@ describe("parser", () => {
       "me/mykit",
     ]);
   });
+  test("should deal with a test run", () => {
+    expect(
+      parseArgs([
+        "bun",
+        "run",
+        "../exec/pwrtool.ts",
+        "test-install",
+        "mytool",
+        "arg1=val1",
+      ]),
+    ).toEqual([
+      {
+        tool: "mytool",
+        from: process.cwd(),
+        arguments: new Map([["arg1", "val1"]]),
+        answers: [],
+        autoAnswer: false,
+      },
+      "",
+    ]);
+  });
 });

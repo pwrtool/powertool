@@ -2,6 +2,7 @@ import { program } from "commander";
 import { install, uninstall, testInstall } from "../lib/installer";
 import { FancyOut } from "@pwrtool/fancy-out";
 import { getKitInfo, outputKitInfo } from "../lib/info";
+import { parseArgs } from "../lib/parser";
 
 for (const argument of process.argv) {
   if (argument.includes("!FROM=")) {
@@ -19,7 +20,6 @@ program
       "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptx <kit> <tool>' command to run an installed tool.\n",
     );
   });
-
 
 program
   .command("install <kit>")
@@ -66,12 +66,10 @@ program
 
     try {
       outputKitInfo(info, kit);
-    }
-    catch (e) {
+    } catch (e) {
       FancyOut.error("Kit failed to be parsed");
       process.exit(1);
     }
   });
 
 program.parse();
-
