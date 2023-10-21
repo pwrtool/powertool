@@ -2,7 +2,6 @@ import { program } from "commander";
 import { install, uninstall, testInstall } from "../lib/installer";
 import { FancyOut } from "@pwrtool/fancy-out";
 import { getKitInfo, outputKitInfo } from "../lib/info";
-import { parseArgs } from "../lib/parser";
 
 for (const argument of process.argv) {
   if (argument.includes("!FROM=")) {
