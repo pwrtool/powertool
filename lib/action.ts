@@ -1,24 +1,34 @@
 type Action = {
-  name: string;
-  steps: ActionStep[];
+  description: string;
+  steps: Step[];
 };
 
-interface ActionStep {
-  name: string;
+interface Step {
+  description: string;
 }
 
-interface KitStep extends ActionStep {
-  name: string;
+interface KitStep extends Step {
+  description: string;
   kit: string;
   args: ActionArg[];
   answers: string[];
 }
 
-interface ShellStep extends ActionStep {
-  command: string;
+interface SwitchStep extends Step {
+  description: string;
+  conditions: SwitchCondition[];
 }
+
+type SwitchCondition = {
+  key: string;
+  value: string;
+  comparison: string;
+  steps: Step[];
+};
 
 type ActionArg = {
   key: string;
   value: string;
 };
+
+// function parseActionFile(fileData: string): Action {  }
