@@ -1,13 +1,15 @@
-type Action = {
-  description: string;
+import YAML from "yaml";
+
+interface Action {
   steps: Step[];
-};
+  scratch: Map<string, string>;
+}
 
 interface Step {
   description: string;
 }
 
-interface KitStep extends Step {
+interface ToolStep extends Step {
   description: string;
   kit: string;
   args: ActionArg[];
@@ -31,4 +33,59 @@ type ActionArg = {
   value: string;
 };
 
-// function parseActionFile(fileData: string): Action {  }
+export function parseActionFile(fileData: string): Action {
+  // icky gross. There's probably a better way to do this
+  const parsed: any = YAML.parse(fileData);
+  const action: Action = {
+    steps: [],
+    scratch: new Map<string, string>(),
+  };
+
+  if (parsed.steps === undefined) {
+    throw new Error("action file has no steps");
+  }
+
+  for (const step of parsed.steps) {
+    action.steps.push(parseStep(step));
+  }
+
+  return action;
+}
+
+function parseStep(step: any): Step {
+  switch (step.step) {
+    case "run":
+      return parseRunStep(step);
+    case "switch":
+      return parseSwitchStep(step);
+    case undefined:
+      throw new Error("step type is undefined");
+    default:
+      throw new Error(`unknown step type: ${step.step}`);
+  }
+}
+
+function parseRunStep(step: any): ToolStep {
+  const parsedStep: ToolStep = {
+    description: step.description,
+    kit: step.kit,
+    args: [],
+    answers: [],
+  };
+
+  return parsedStep;
+}
+
+function parseSwitchStep(step: any): SwitchStep {
+  const parsedStep: SwitchStep = {
+    description: step.description,
+    conditions: [],
+  };
+
+  return parsedStep;
+}
+
+// function runKitStep(step: KitStep): void {  }
+//
+// function runSwitchStep(step: SwitchStep): void {  }
+// function runAction(action: Action): void {  }
