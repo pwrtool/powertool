@@ -73,6 +73,15 @@ function parseRunStep(step: any): ToolStep {
     answers: [],
   };
 
+  if (step.args !== undefined) {
+    for (const arg of step.args) {
+      parsedStep.args.push({
+        key: arg.key,
+        value: arg.value,
+      });
+    }
+  }
+
   return parsedStep;
 }
 
@@ -81,6 +90,15 @@ function parseSwitchStep(step: any): SwitchStep {
     description: step.description,
     conditions: [],
   };
+
+  for (const condition of step.conditions) {
+    parsedStep.conditions.push({
+      key: condition.key,
+      value: condition.value,
+      comparison: condition.comparison,
+      steps: [],
+    });
+  }
 
   return parsedStep;
 }
