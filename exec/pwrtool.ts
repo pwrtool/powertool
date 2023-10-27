@@ -16,7 +16,7 @@ program
   .version("0.0.1")
   .action(() => {
     FancyOut.bold(
-      "\n\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptx <kit> <tool>' command to run an installed tool.\n",
+      "\nWelcome to PowerTool! Run `powertool --help` to see available commands.\nYou can also use the 'ptx <kit> <tool>' command to run an installed tool.\n",
     );
   });
 
