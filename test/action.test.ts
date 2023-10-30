@@ -90,6 +90,22 @@ steps:
       this: step has no description
 `;
 
+const example6 = `
+---
+steps:
+  - step: run
+    kit: me/no-tool
+    description: default
+    answers:
+      - idk
+    args:
+      this:
+        - you shouldn't
+        - put
+        - lists
+        - in args. This throws an error
+`;
+
 describe("parseActionFile", () => {
   it("parses a simple action", () => {
     expect(parseActionFile(example1)).toEqual({
