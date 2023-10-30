@@ -19,6 +19,13 @@ const example2 = `
 whatever: 123
 `;
 
+const example3 = `
+---
+steps:
+  - step: switch
+    description: Does a thingy
+`;
+
 describe("parseActionFile", () => {
   it("parses a simple action", () => {
     expect(parseActionFile(example1)).toEqual({
@@ -47,4 +54,5 @@ describe("parseActionFile", () => {
   // parses scratch
   // throws error when bad args or questions are passed
   // parses switch steps
+  // parses steps without a description
 });
