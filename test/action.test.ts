@@ -2,8 +2,8 @@ import { parseActionFile } from "../lib/action";
 import { describe, it, expect } from "bun:test";
 
 const example1 = `
----
-steps:
+--- 
+steps: 
   - step: run
     description: Runs a cool tool
     kit: me/hello
@@ -61,6 +61,33 @@ steps:
               - idk
             args:
               foo: bar
+`;
+
+const example4 = `
+---
+scratch:
+  foo: bar
+steps:
+  - step: run
+    description: Runs a cool tool
+    kit: me/hello
+    tool: say-hello
+    answers:
+      - idk
+    args:
+      foo: bar
+`;
+
+const example5 = `
+---
+steps:
+  - step: run
+    kit: me/no-description
+    tool: default
+    answers:
+      - idk
+    args:
+      this: step has no description
 `;
 
 describe("parseActionFile", () => {
