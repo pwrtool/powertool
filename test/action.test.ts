@@ -24,6 +24,43 @@ const example3 = `
 steps:
   - step: switch
     description: Does a thingy
+    conditions:
+      - condition: =
+        key: foo
+        value: bar
+        steps:
+          - step: run
+            description: Runs a cool tool
+            kit: me/hello
+            tool: say-hello
+            answers:
+              - idk
+            args:
+              foo: bar
+      - condition: !=
+        key: foo
+        value: bar
+        steps:
+          - step: run
+            description: Runs a cool tool
+            kit: me/hello
+            tool: say-hello
+            answers:
+              - idk
+            args:
+              foo: bar
+      - condition: =
+        key: 1
+        value: 1
+        steps:
+          - step: run
+            description: Runs a cool tool
+            kit: me/hello
+            tool: say-hello
+            answers:
+              - idk
+            args:
+              foo: bar
 `;
 
 describe("parseActionFile", () => {
