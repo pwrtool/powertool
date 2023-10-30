@@ -12,6 +12,7 @@ interface Step {
 interface ToolStep extends Step {
   description: string;
   kit: string;
+  tool: string;
   args: ActionArg[];
   answers: string[];
 }
@@ -69,16 +70,33 @@ function parseRunStep(step: any): ToolStep {
   const parsedStep: ToolStep = {
     description: step.description,
     kit: step.kit,
+    tool: step.tool,
     args: [],
     answers: [],
   };
 
   if (step.args !== undefined) {
-    for (const arg of step.args) {
-      parsedStep.args.push({
-        key: arg.key,
-        value: arg.value,
-      });
+    try {
+      const entries = Object.entries(step.args);
+      for (let i = 0; i < entries.length; i++) {
+        const arg = entries[i];
+        parsedStep.args.push({
+          key: arg[0] as string,
+          value: arg[1] as string,
+        });
+      }
+    } catch (e) {
+      throw "failed to parse args";
+    }
+  }
+
+  if (step.answers !== undefined) {
+    try {
+      for (const answer of step.answers) {
+        parsedStep.answers.push(answer);
+      }
+    } catch (e) {
+      throw "failed to parse answers";
     }
   }
 

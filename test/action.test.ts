@@ -22,6 +22,7 @@ whatever: 123
 describe("parseActionFile", () => {
   it("parses a simple action", () => {
     expect(parseActionFile(example1)).toEqual({
+      scratch: new Map<string, string>(),
       steps: [
         {
           description: "Runs a cool tool",
