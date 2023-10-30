@@ -43,4 +43,8 @@ describe("parseActionFile", () => {
   it("throws an error if there are no steps", () => {
     expect(() => parseActionFile(example2)).toThrow("action file has no steps");
   });
+
+  // parses scratch
+  // throws error when bad args or questions are passed
+  // parses switch steps
 });

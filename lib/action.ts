@@ -25,9 +25,18 @@ interface SwitchStep extends Step {
 type SwitchCondition = {
   key: string;
   value: string;
-  comparison: string;
+  comparison: COMPARISONS;
   steps: Step[];
 };
+
+enum COMPARISONS {
+  EQUALS = "=",
+  NOT_EQUALS = "!=",
+  GREATER_THAN = ">",
+  LESS_THAN = "<",
+  GREATER_THAN_OR_EQUAL = ">=",
+  LESS_THAN_OR_EQUAL = "<=",
+}
 
 type ActionArg = {
   key: string;
