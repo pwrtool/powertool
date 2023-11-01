@@ -66,22 +66,6 @@ steps:
       this: step has no description
 `;
 
-const example6 = `
----
-steps:
-  - step: run
-    kit: me/no-tool
-    description: default
-    answers:
-      - idk
-    args:
-      this:
-        - you shouldn't
-        - put
-        - lists
-        - in args. This throws an error
-`;
-
 describe("parseActionFile", () => {
   it("parses a simple action", () => {
     expect(parseActionFile(example1)).toEqual({
@@ -161,9 +145,24 @@ describe("parseActionFile", () => {
       ],
     });
   });
+  it("deals with steps without a description", () => {
+    expect(parseActionFile(example5)).toEqual({
+      scratch: new Map<string, string>(),
+      steps: [
+        {
+          kit: "me/no-description",
+          tool: "default",
+          answers: ["idk"],
+          args: [
+            {
+              key: "this",
+              value: "step has no description",
+            },
+          ],
+        },
+      ],
+    });
+  });
 
-  // parses scratch
   // throws error when bad args or questions are passed
-  // parses switch steps
-  // parses steps without a description
 });
