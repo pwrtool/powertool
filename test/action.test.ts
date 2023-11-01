@@ -25,33 +25,9 @@ steps:
   - step: switch
     description: Does a thingy
     conditions:
-      - condition: =
+      - comparison: =
         key: foo
         value: bar
-        steps:
-          - step: run
-            description: Runs a cool tool
-            kit: me/hello
-            tool: say-hello
-            answers:
-              - idk
-            args:
-              foo: bar
-      - condition: !=
-        key: foo
-        value: bar
-        steps:
-          - step: run
-            description: Runs a cool tool
-            kit: me/hello
-            tool: say-hello
-            answers:
-              - idk
-            args:
-              foo: bar
-      - condition: =
-        key: 1
-        value: 1
         steps:
           - step: run
             description: Runs a cool tool
@@ -125,6 +101,42 @@ describe("parseActionFile", () => {
         },
       ],
     });
+  });
+  it("parses a switch statement", () => {
+    const expected = {
+      scratch: new Map<string, string>(),
+      steps: [
+        {
+          description: "Does a thingy",
+          conditions: [
+            {
+              key: "foo",
+              value: "bar",
+              comparison: "=",
+              steps: [
+                {
+                  description: "Runs a cool tool",
+                  kit: "me/hello",
+                  tool: "say-hello",
+                  answers: ["idk"],
+                  args: [
+                    {
+                      key: "foo",
+                      value: "bar",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = parseActionFile(example3);
+    // @ts-ignore
+    console.log(result.steps[0].conditions);
+    expect(Bun.deepEquals(result, expected)).toBeTrue();
   });
 
   it("throws an error if there are no steps", () => {

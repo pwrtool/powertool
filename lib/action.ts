@@ -119,11 +119,17 @@ function parseSwitchStep(step: any): SwitchStep {
   };
 
   for (const condition of step.conditions) {
+    const unparsedSteps = condition.steps;
+    const parsedSteps: Step[] = [];
+    for (const unparsedStep of unparsedSteps) {
+      parsedSteps.push(parseStep(unparsedStep));
+    }
+
     parsedStep.conditions.push({
       key: condition.key,
       value: condition.value,
       comparison: condition.comparison,
-      steps: [],
+      steps: parsedSteps,
     });
   }
 
