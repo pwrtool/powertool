@@ -51,6 +51,18 @@ export function parseActionFile(fileData: string): Action {
     scratch: new Map<string, string>(),
   };
 
+  if (parsed.scratch !== undefined) {
+    try {
+      const entries = Object.entries(parsed.scratch);
+      for (let i = 0; i < entries.length; i++) {
+        const scratch = entries[i];
+        action.scratch.set(scratch[0] as string, scratch[1] as string);
+      }
+    } catch (e) {
+      throw "failed to parse scratch";
+    }
+  }
+
   if (parsed.steps === undefined) {
     throw new Error("action file has no steps");
   }

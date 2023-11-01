@@ -142,6 +142,25 @@ describe("parseActionFile", () => {
   it("throws an error if there are no steps", () => {
     expect(() => parseActionFile(example2)).toThrow("action file has no steps");
   });
+  it("parses scratch", () => {
+    expect(parseActionFile(example4)).toEqual({
+      scratch: new Map([["foo", "bar"]]),
+      steps: [
+        {
+          description: "Runs a cool tool",
+          kit: "me/hello",
+          tool: "say-hello",
+          answers: ["idk"],
+          args: [
+            {
+              key: "foo",
+              value: "bar",
+            },
+          ],
+        },
+      ],
+    });
+  });
 
   // parses scratch
   // throws error when bad args or questions are passed
