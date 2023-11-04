@@ -1,5 +1,6 @@
-import { parseActionFile } from "../lib/action";
-import { describe, it, expect } from "bun:test";
+import { parseActionFile, runKitStep, KitRunner } from "../lib/action";
+import { describe, it, expect, mock } from "bun:test";
+import { ParsedRunstring } from "@pwrtool/runstring";
 
 const example1 = `
 --- 
@@ -163,6 +164,22 @@ describe("parseActionFile", () => {
       ],
     });
   });
+});
 
-  // throws error when bad args or questions are passed
+describe("runKitStep", () => {
+  it("it runs a step", async () => {
+    const mockKitRunner = mock((kit: string, runstring: ParsedRunstring) => {
+      return new Map<string, string>();
+    });
+
+    runKitStep(
+      {
+        kit: "me/hello",
+        tool: "say-hello",
+        args: [],
+        answers: [],
+      },
+      mockKitRunner,
+    );
+  });
 });

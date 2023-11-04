@@ -1,15 +1,16 @@
 import YAML from "yaml";
+import { ParsedRunstring } from "@pwrtool/runstring";
 
-interface Action {
+export interface Action {
   steps: Step[];
   scratch: Map<string, string>;
 }
 
-interface Step {
+export interface Step {
   description: string;
 }
 
-interface ToolStep extends Step {
+export interface ToolStep extends Step {
   description: string;
   kit: string;
   tool: string;
@@ -17,12 +18,12 @@ interface ToolStep extends Step {
   answers: string[];
 }
 
-interface SwitchStep extends Step {
+export interface SwitchStep extends Step {
   description: string;
   conditions: SwitchCondition[];
 }
 
-type SwitchCondition = {
+export type SwitchCondition = {
   key: string;
   value: string;
   comparison: COMPARISONS;
@@ -148,7 +149,17 @@ function parseSwitchStep(step: any): SwitchStep {
   return parsedStep;
 }
 
-// function runKitStep(step: KitStep): void {  }
-//
+export interface KitRunner {
+  runKit: (kit: string, runstring: ParsedRunstring) => Map<string, string>;
+}
+
+const kitRunner: KitRunner = {
+  runKit: (kit: string, runstring: ParsedRunstring) => {
+    return new Map<string, string>();
+  },
+};
+
+export function runKitStep(step: Step, kitRunner: KitRunner): void { }
+
 // function runSwitchStep(step: SwitchStep): void {  }
 // function runAction(action: Action): void {  }
