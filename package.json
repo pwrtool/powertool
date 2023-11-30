@@ -9,7 +9,8 @@
   },
   "devDependencies": {
     "bun-types": "latest",
-    "mock-argv": "^3.0.0"
+    "mock-argv": "^3.0.0",
+    "typedoc": "^0.25.3"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -20,7 +21,7 @@
   },
   "dependencies": {
     "@pwrtool/fancy-out": "^1.0.0",
-    "@pwrtool/runstring": "^1.0.0",
+    "@pwrtool/runstring": "^2.0.0",
     "commander": "^11.0.0",
     "yaml": "^2.3.3"
   }

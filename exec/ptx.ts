@@ -15,8 +15,7 @@ if (kit === "") {
 const kitFile = findKitFile(kit, files);
 
 FancyOut.header(
-  `Running the ${
-    runstring.tool === "" ? "default" : runstring.tool
+  `Running the ${runstring.tool === "" ? "default" : runstring.tool
   } tool from ${kit}`,
 );
 

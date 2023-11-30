@@ -43,7 +43,7 @@ export function findKitFile(
 export async function runKitFile(filename: string, runstring: ParsedRunstring) {
   const arg = generateRunstring(runstring);
 
-  return await awaitableSpawn(filename, [arg]);
+  return await awaitableSpawn(filename, [`'${arg}'`]);
 }
 
 export enum ExitCode {
