@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/pwrtool/powertool"
+	pt "github.com/pwrtool/powertool/core"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -21,7 +21,7 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number of pt",
 	Long:  "Prints the version number of the powertool cli",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("pt v0.0.1")
+		fmt.Printf("Using powertool version %v\n", pt.Version)
 	},
 }
 
