@@ -3,3 +3,5 @@ go 1.21.3
 use ./cli
 
 use ./core
+
+use ./
