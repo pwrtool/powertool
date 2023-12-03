@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/pwrtool/powertool"
 	"github.com/spf13/cobra"
 	"os"
 )
