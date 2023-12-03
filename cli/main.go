@@ -1,37 +1,26 @@
 package main
 
 import (
-	"fmt"
-	pt "github.com/pwrtool/powertool/core"
-	"github.com/spf13/cobra"
+	"github.com/fatih/color"
+	//pt "github.com/pwrtool/powertool/core"
+	"github.com/urfave/cli"
+	"log"
 	"os"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "pt",
-	Short: "Automate everything everywhere",
-	Long:  "The CLI frontend for powertool. See full documentation at https://powertool.dev",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello, world!")
-	},
-}
-
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Print the version number of pt",
-	Long:  "Prints the version number of the powertool cli",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Using powertool version %v\n", pt.Version)
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(versionCmd)
-}
-
 func main() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Print(err)
-		os.Exit(1)
+	c := color.New(color.FgHiWhite).Add(color.Bold)
+
+	app := &cli.App{
+		Name:  "pt",
+		Usage: "The cli wrapper for powertool",
+		Action: func(*cli.Context) error {
+			c.Println("Welcome to powertool! Run pt --help for more information")
+			return nil
+		},
+	}
+
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
 	}
 }
