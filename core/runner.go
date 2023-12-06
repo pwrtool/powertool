@@ -28,7 +28,15 @@ func RunShFile(filepath string, rundata Rundata) error {
 }
 
 func FindKitShFile(kit string) string {
-	filepath := filepath.Join(GetPowertoolDirectory(), kit+"/"+"run.sh")
+	filepath := filepath.Join(FindKitFolder(kit), "run.sh")
+	if _, err := os.Stat(filepath); err == nil {
+		return filepath
+	}
+	return ""
+}
+
+func FindKitFolder(kit string) string {
+	filepath := filepath.Join(GetPowertoolDirectory(), kit)
 	if _, err := os.Stat(filepath); err == nil {
 		return filepath
 	}
