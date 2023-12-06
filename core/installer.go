@@ -1,13 +1,16 @@
 package core
 
-func InstallKit() {
+func InstallKit(kit string) error {
 
+	return nil
 }
 
-func UninstallKit() {
+func UninstallKit(kit string) error {
 
+	return nil
 }
 
-func UpdateKit() {
+func UpdateKit(kit string) error {
 
+	return nil
 }
