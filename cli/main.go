@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/alecthomas/kong"
+	pt "github.com/pwrtool/powertool/core"
 )
+
+var Version = "0.0.1"
 
 var CLI struct {
 	X struct {
@@ -14,6 +17,19 @@ var CLI struct {
 	Install struct {
 		Kit string `arg:"" help:"Kit to install."`
 	} `cmd:"" help:"Installs a specified kit"`
+	Uninstall struct {
+		Kit string `arg:"" help:"Kit to uninstall."`
+	} `cmd:"" help:"Uninstalls a specified kit"`
+	Update struct {
+		Kit string `arg:"" help:"Kit to update."`
+	} `cmd:"" help:"Updates a specified kit"`
+	Info struct {
+		Kit string `arg:"" help:"Kit to get info on."`
+	} `cmd:"" help:"Gets info on a specified kit"`
+	List struct {
+	} `cmd:"" help:"Lists all installed kits"`
+	Version struct {
+	} `cmd:"" help:"Prints the version of powertool"`
 }
 
 func main() {
@@ -28,6 +44,9 @@ func main() {
 	case "install":
 		kit := CLI.Install.Kit
 		fmt.Println("install", kit)
+	case "version":
+		fmt.Println("Running Powertool Version:", pt.Version)
+		fmt.Println("Running CLI Version", Version)
 	default:
 		fmt.Println("Command not found")
 	}
