@@ -30,6 +30,11 @@ var CLI struct {
 	} `cmd:"" help:"Lists all installed kits"`
 	Version struct {
 	} `cmd:"" help:"Prints the version of powertool"`
+	TestInstall struct {
+	} `cmd:"" help:"Installs the current working directory as if it were a kit"`
+	TestRun struct {
+		Tool string `arg:"" help:"Tool to run."`
+	} `cmd:"" help:"Runs the current working directory as if it were a kit"`
 }
 
 func main() {
