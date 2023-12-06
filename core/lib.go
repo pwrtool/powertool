@@ -10,4 +10,5 @@ type Rundata struct {
 	MockInputs   []string // If a kit requires user input but is being automated, it can pull from this MockInputs array
 	RunDirectory string
 	Config       map[string]string
+	Silent       bool
 }

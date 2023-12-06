@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/alecthomas/kong"
 	pt "github.com/pwrtool/powertool/core"
+	"log"
+	"os"
 )
 
 var Version = "0.0.1"
@@ -15,7 +17,7 @@ var CLI struct {
 		Silent bool   `name:"silent" short:"s" help:"Runs powertool with no extra output" default:"0" optional:""`
 	} `cmd:"" help:"Runs a specified powertool"`
 	Install struct {
-		Kit string `arg:"" help:"Kit to install."`
+		KitUrl string `arg:"" help:"Url of the kit to install."`
 	} `cmd:"" help:"Installs a specified kit"`
 	Uninstall struct {
 		Kit string `arg:"" help:"Kit to uninstall."`
@@ -38,17 +40,38 @@ var CLI struct {
 }
 
 func main() {
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatalln("Error getting current working directory")
+	}
+
 	ctx := kong.Parse(&CLI)
 	switch ctx.Command() {
 	case "x <kit> <tool>":
 		kit := CLI.X.Kit
 		tool := CLI.X.Tool
 		slient := CLI.X.Silent
+
 		fmt.Println("Running:", kit, tool)
 		fmt.Println("Silent:", slient)
-	case "install":
-		kit := CLI.Install.Kit
-		fmt.Println("install", kit)
+
+		err := pt.RunKit(kit, pt.Rundata{
+			Tool:         tool,
+			Arguments:    map[string]string{},
+			Automated:    false,
+			MockInputs:   []string{},
+			RunDirectory: cwd,
+			Silent:       slient,
+		})
+		if err != nil {
+			log.Fatalln("Error running kit:", err)
+		}
+	case "install <kit-url>":
+		kitUrl := CLI.Install.KitUrl
+		err := pt.InstallKit(kitUrl)
+		if err != nil {
+			log.Fatalln("Error installing kit:", err)
+		}
 	case "version":
 		fmt.Println("Running Powertool Version:", pt.Version)
 		fmt.Println("Running CLI Version", Version)

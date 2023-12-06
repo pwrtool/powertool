@@ -43,8 +43,12 @@ func GetTempDirectory() string {
 }
 
 func EnsureTempDirectory() {
-	if _, err := os.Stat(GetTempDirectory()); os.IsNotExist(err) {
-		os.RemoveAll(GetTempDirectory())
-		os.MkdirAll(GetTempDirectory(), 0755)
+	os.RemoveAll(GetTempDirectory())
+	os.MkdirAll(GetTempDirectory(), 0755)
+}
+
+func EnsureDirectory(dir string) {
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		os.MkdirAll(dir, 0755)
 	}
 }

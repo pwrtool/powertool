@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,9 +11,13 @@ import (
 
 func RunKit(kit string, rundata Rundata) error {
 	filepath := FindKitShFile(kit)
-	RunShFile(filepath, rundata)
 
-	return nil
+	if filepath == "" {
+		return errors.New("Could not find run.sh file for kit: " + kit)
+	}
+	err := RunShFile(filepath, rundata)
+
+	return err
 }
 
 func RunShFile(filepath string, rundata Rundata) error {
@@ -43,8 +48,20 @@ func FindKitFolder(kit string) string {
 	return ""
 }
 
-func Execute(script string, command []string) (bool, error) {
+func GitClone(url string, folder string) error {
+	cmd := exec.Command("git", "clone", url, folder)
 
+	err := cmd.Run()
+	cmd.Output()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Execute(script string, command []string) (bool, error) {
 	cmd := &exec.Cmd{
 		Path:   script,
 		Args:   command,
