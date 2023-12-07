@@ -80,7 +80,7 @@ func main() {
 		fmt.Println("Running Powertool Version:", pt.Version)
 		fmt.Println("Running CLI Version", Version)
 	default:
-		fmt.Println("Command not found")
+		fmt.Println("Command not found. Try running 'pt --help' for a list of commands")
 	}
 
 }
