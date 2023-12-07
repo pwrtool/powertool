@@ -31,6 +31,10 @@ func GetConfigFilepath() string {
 	return homedir + "/" + powertoolConfigFile
 }
 
+func GetConfig() map[string]interface{} {
+	return map[string]interface{}{}
+}
+
 func EnsureConfigFile() {
 	filepath := GetConfigFilepath()
 	if _, err := os.Stat(filepath); os.IsNotExist(err) {
