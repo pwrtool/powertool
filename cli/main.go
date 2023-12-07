@@ -49,13 +49,17 @@ func main() {
 		tool := CLI.X.Tool
 		slient := CLI.X.Silent
 
+		args := getArguments(os.Args, tool)
+
 		err := pt.RunKit(kit, pt.Rundata{
 			Tool:         tool,
-			Arguments:    []pt.Argument{},
-			Automated:    false,
-			MockInputs:   []string{},
+			Arguments:    args,
 			RunDirectory: cwd,
 			Silent:       slient,
+
+			// the cli never wants to set these. They are only used when powertool is being automated by something else
+			MockInputs: []string{},
+			Automated:  false,
 		})
 		if err != nil {
 			log.Fatalln("Error running kit:", err)
