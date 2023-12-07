@@ -28,7 +28,7 @@ func getArguments(cliArgs []string, tool string) []pt.Argument {
 		}
 	}
 
-	return []pt.Argument{}
+	return args
 }
 
 func parseArg(arg string) (string, interface{}) {
