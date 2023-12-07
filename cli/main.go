@@ -51,7 +51,7 @@ func main() {
 
 		err := pt.RunKit(kit, pt.Rundata{
 			Tool:         tool,
-			Arguments:    map[string]string{},
+			Arguments:    []pt.Argument{},
 			Automated:    false,
 			MockInputs:   []string{},
 			RunDirectory: cwd,
