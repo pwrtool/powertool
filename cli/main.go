@@ -22,9 +22,6 @@ var CLI struct {
 	Uninstall struct {
 		Kit string `arg:"" help:"Kit to uninstall."`
 	} `cmd:"" help:"Uninstalls a specified kit"`
-	Update struct {
-		Kit string `arg:"" help:"Kit to update."`
-	} `cmd:"" help:"Updates a specified kit"`
 	Info struct {
 		Kit string `arg:"" help:"Kit to get info on."`
 	} `cmd:"" help:"Gets info on a specified kit"`
@@ -52,9 +49,6 @@ func main() {
 		tool := CLI.X.Tool
 		slient := CLI.X.Silent
 
-		fmt.Println("Running:", kit, tool)
-		fmt.Println("Silent:", slient)
-
 		err := pt.RunKit(kit, pt.Rundata{
 			Tool:         tool,
 			Arguments:    map[string]string{},
@@ -71,6 +65,12 @@ func main() {
 		err := pt.InstallKit(kitUrl)
 		if err != nil {
 			log.Fatalln("Error installing kit:", err)
+		}
+	case "uninstall <kit>":
+		kit := CLI.Uninstall.Kit
+		err := pt.UninstallKit(kit)
+		if err != nil {
+			log.Fatalln("Error uninstalling kit:", err)
 		}
 	case "version":
 		fmt.Println("Running Powertool Version:", pt.Version)

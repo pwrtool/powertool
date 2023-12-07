@@ -48,19 +48,6 @@ func FindKitFolder(kit string) string {
 	return ""
 }
 
-func GitClone(url string, folder string) error {
-	cmd := exec.Command("git", "clone", url, folder)
-
-	err := cmd.Run()
-	cmd.Output()
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func Execute(script string, command []string) (bool, error) {
 	cmd := &exec.Cmd{
 		Path:   script,
