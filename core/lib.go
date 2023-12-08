@@ -9,7 +9,6 @@ type Rundata struct {
 	Automated    bool     // If this is true, then the tool should not ask for user input
 	MockInputs   []string // If a kit requires user input but is being automated, it can pull from this MockInputs array
 	RunDirectory string
-	Config       map[string]interface{}
 	Silent       bool
 }
 

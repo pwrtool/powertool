@@ -56,7 +56,6 @@ func main() {
 			Arguments:    args,
 			RunDirectory: cwd,
 			Silent:       slient,
-			Config:       pt.GetConfig(),
 
 			// the cli never wants to set these. They are only used when powertool is being automated by something else
 			MockInputs: []string{},

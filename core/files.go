@@ -5,8 +5,6 @@ import (
 )
 
 const powertoolDirectory = ".powertool"
-const powertoolConfigFile = ".config/powertool/config.yaml"
-const localConfigFilename = ".ptconfig.yaml"
 
 func GetPowertoolDirectory() string {
 	homedir, err := os.UserHomeDir()
@@ -18,25 +16,6 @@ func GetPowertoolDirectory() string {
 
 func EnsurePowertoolDirectory() {
 	filepath := GetPowertoolDirectory()
-	if _, err := os.Stat(filepath); os.IsNotExist(err) {
-		os.MkdirAll(filepath, 0755)
-	}
-}
-
-func GetConfigFilepath() string {
-	homedir, err := os.UserHomeDir()
-	if err != nil {
-		panic(err)
-	}
-	return homedir + "/" + powertoolConfigFile
-}
-
-func GetConfig() map[string]interface{} {
-	return map[string]interface{}{}
-}
-
-func EnsureConfigFile() {
-	filepath := GetConfigFilepath()
 	if _, err := os.Stat(filepath); os.IsNotExist(err) {
 		os.MkdirAll(filepath, 0755)
 	}
