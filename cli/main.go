@@ -8,6 +8,18 @@ import (
 	"os"
 )
 
+func testInstall(cwd string) error {
+	script := cwd + "/install.sh"
+	installFolder := pt.GetPowertoolDirectory() + "/bench/test"
+	if _, err := os.Stat(script); err == nil {
+		pt.Execute(script, []string{script, installFolder})
+	} else {
+		log.Fatalln("Install script not found")
+		return err
+	}
+	return nil
+}
+
 var Version = "0.0.1"
 
 var CLI struct {
@@ -24,9 +36,7 @@ var CLI struct {
 	} `cmd:"" help:"Uninstalls a specified kit"`
 	Info struct {
 		Kit string `arg:"" help:"Kit to get info on."`
-	} `cmd:"" help:"Gets info on a specified kit"`
-	List struct {
-	} `cmd:"" help:"Lists all installed kits"`
+	} `cmd:"" help:"Prints the README of a specified kit."`
 	Version struct {
 	} `cmd:"" help:"Prints the version of powertool"`
 	TestInstall struct {
@@ -79,6 +89,42 @@ func main() {
 	case "version":
 		fmt.Println("Running Powertool Version:", pt.Version)
 		fmt.Println("Running CLI Version", Version)
+	case "info <kit>":
+		kit := CLI.Info.Kit
+		folder := pt.FindKitFolder(kit)
+		if folder == "" {
+			log.Fatalln("Kit not found")
+		}
+
+		possibleFilenames := []string{"README.md", "README.txt", "README", "readme.md", "readme.txt", "readme"}
+		for _, filename := range possibleFilenames {
+			filepath := folder + "/" + filename
+			if _, err := os.Stat(filepath); err == nil {
+				printFile(filepath)
+				break
+			}
+		}
+	case "test-install":
+		testInstall(cwd)
+
+	case "test-run <tool>":
+		tool := CLI.TestRun.Tool
+		args := getArguments(os.Args, tool)
+
+		err := testInstall(cwd)
+		if err != nil {
+			log.Fatalln("Error installing kit:", err)
+		}
+
+		err = pt.RunKit("test", pt.Rundata{
+			Tool:         tool,
+			Arguments:    args,
+			RunDirectory: cwd,
+			Silent:       false,
+			Automated:    false,
+			MockInputs:   []string{},
+		})
+
 	default:
 		fmt.Println("Command not found. Try running 'pt --help' for a list of commands")
 	}
