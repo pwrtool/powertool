@@ -1,15 +1,32 @@
-package main
-
 import (
-	"fmt"
+  "fmt"
+  "go-arg"
+  "go-yaml"
 )
 
-func main() {
-	fmt.Println(`
-pwrtool/powertool is not an actual package. It needs to be a go module to make everything work properly
 
-If you're a new contributor, you're probably looking for:
-cli/main.go - contributing to the CLI
-core/lib.go - contributing to the core codebase for powertool
-	`)
+type Config struct {
+  ProjectsDirectory string `yaml:"projects_directory"`
+  PackagesDirectory string `yaml:"packages_directory"`
+  DeclarativeMode bool `yaml:"declarative_mode"`
+  Packages []string `yaml:"packages"`
+}
+
+type InstallCommand struct {
+  Package string `arg:"positional"`
+}
+
+type RemoveCommand struct {
+  Package string `arg:"positional"`
+}
+
+type CreateCommand struct {
+  Package string `arg:"positional"`
+  Directory string `arg:"positional"`
+  Scratch bool `arg:"-s,--scratch"`
+  Force bool `arg:"-f,--force"`
+}
+
+
+func main() {
 }
