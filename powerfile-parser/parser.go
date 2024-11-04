@@ -1,17 +1,18 @@
 package parser
 
 type Powerfile = struct {
-	Name     string
-	Owner    string
-	Options  []Option
-	Commands Command
+	Name    string
+	Owner   string
+	Options []Option
+	Tools   []Tool
 }
 
-type Command = struct {
-	Name        string
-	Description string
-	Options     []Option
-	Command     string
+type Tool = struct {
+	Name         string
+	Description  string
+	Options      []Option
+	Command      string
+	Requirements []string
 }
 
 type Option = struct {
