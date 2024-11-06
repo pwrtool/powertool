@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"strings"
 )
 
@@ -40,18 +41,18 @@ type Option struct {
 //   children = ... (you get the point)
 // }
 
-type header struct {
-	text     [][]rune // slice of lines of text
-	order    int      // number of octothorpes (#) preceding it
-	title    []rune  
-	children *[]header
+type Header struct {
+	Text     [][]rune // slice of lines of text
+	Order    int      // number of octothorpes (#) preceding it
+	Title    []rune  
+	Children *[]Header
 }
 
 // we want to:
 // - remove all \r
 // - split into [][]rune based on line (\n)
 // - remove any empty lines for convinience
-func washText(content string) [][]rune {
+func WashText(content string) [][]rune {
 	text := [][]rune{}
 
 	content = strings.ReplaceAll(content, "\r", "")
@@ -73,4 +74,37 @@ func washText(content string) [][]rune {
 	}
 
 	return text
+}
+
+func makeTree(lines [][]rune) {
+  
+}
+
+
+func ParseHeader(line []rune) (int, []rune, error) {
+  if len(line) < 1 {
+    // this should be unreachable
+    return 0, []rune{}, errors.New("Tried to parse line with length of 0")
+  }
+
+  octothorpes := 0
+  text := []rune{}
+
+  i := 0
+
+  for line[i] == '#' && i < len(line) {
+    octothorpes += 1
+
+    i += 1
+  }
+
+  for line[i] == ' ' && i < len(line) {
+    i += 1
+  }
+  
+  for i < len(line) {
+    text = append(text, line[i])
+  }
+
+  return octothorpes, text, nil
 }
