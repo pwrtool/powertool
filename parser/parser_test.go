@@ -1,9 +1,10 @@
 package parser
 
 import (
+	"fmt"
+	"reflect"
+	"strconv"
 	"testing"
-  "fmt"
-  "strconv"
 )
 
 func TestWashText(t *testing.T) {
@@ -49,8 +50,8 @@ func TestParseHeader(t *testing.T) {
 	}
 
 	cases := []struct {
-		input []rune
-		expected   expectation
+		input    []rune
+		expected expectation
 	}{
 		{
 			input: []rune("# My Header"),
@@ -86,47 +87,119 @@ func TestParseHeader(t *testing.T) {
 		},
 	}
 
+	for _, c := range cases {
+		order, text, err := ParseHeaderLine(c.input)
+		failedReason := ""
+		failed := false
+
+		if order != c.expected.order {
+			failedReason += "Order "
+			failed = true
+		}
+		if !runeslicesEqual(text, c.expected.text) {
+			failedReason += "Text "
+			failed = true
+		}
+		if err != c.expected.err {
+			failedReason += "Error "
+			failed = true
+		}
+
+		if failed {
+			fmt.Println("Failed test because: " + failedReason)
+			fmt.Println("Expected: order = " + strconv.Itoa(c.expected.order) + " text = |" + string(c.expected.text) + "|")
+			fmt.Println("Got     : order = " + strconv.Itoa(order) + " text = |" + string(text) + "|")
+			fmt.Println()
+			t.Fail()
+		}
+	}
+}
+
+func runeslicesEqual(r1 []rune, r2 []rune) bool {
+	if len(r1) != len(r2) {
+		return false
+	}
+
+	for i := range r1 {
+		if r1[i] != r2[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+func TestGetAllHeaders(t *testing.T) {
+	cases := []struct {
+		input    [][]rune
+		expected []Header
+		err      error
+	}{
+    {
+      input: [][]rune{
+        []rune("a thing"),
+        []rune("# a header"),
+        []rune("a thing"),
+        []rune("more stuff"),
+        []rune("## another header"),
+        []rune("even more stuff"),
+      },
+      expected: []Header{
+        {
+          Title: []rune("a header"),
+          Order: 1,
+          Text: [][]rune{
+            []rune("a thing"),
+            []rune("more stuff"),
+          },
+        },
+        {
+          Title: []rune("another header"),
+          Order: 2,
+          Text: [][]rune{
+            []rune("even more stuff"),
+          },
+        },
+      },
+    },
+  }
+
 
   for _, c := range cases {
-    order, text, err := ParseHeaderLine(c.input)
-    failedReason := ""
-    failed := false
-    
+    output, err := GetAllHeaders(c.input)
 
-    if (order != c.expected.order) {
-      failedReason += "Order "
-      failed = true
-    }
-    if (!runeslicesEqual(text, c.expected.text)) {
-      failedReason += "Text "
-      failed = true
-    }
-    if (err != c.expected.err) {
-      failedReason += "Error "
-      failed = true
-    }
 
-    if (failed) {
-      fmt.Println("Failed test because: " + failedReason)
-      fmt.Println("Expected: order = " + strconv.Itoa(c.expected.order) + " text = |" + string(c.expected.text) + "|")
-      fmt.Println("Got     : order = " + strconv.Itoa(order) + " text = |" + string(text) + "|")
-      fmt.Println()
+    if err != c.err {
+      fmt.Println("Mismatching errors: ")
+      fmt.Println("Expected: ", c.err)
+      fmt.Println("Got: ", err)
       t.Fail()
+      continue
+    }
+
+    if !reflect.DeepEqual(output, c.expected) {
+      fmt.Println("Expected: ")
+      printHeaders(c.expected)
+      fmt.Println("\nGot:")
+      printHeaders(output)
+      t.Fail()
+      continue
     }
   }
 }
 
 
-func runeslicesEqual(r1 []rune, r2 []rune) bool {
-  if (len(r1) != len(r2)) {
-    return false
-  }
+func printHeaders(headers []Header) {
+  for _, header := range headers {
+    fmt.Println("{")
+    fmt.Println("    Title: ", header.Title)
+    fmt.Println("    Order: ", header.Order)
+    fmt.Println("    Text: {")
 
-  for i := range r1 {
-    if r1[i] != r2[i] {
-      return false
+    for _, line := range header.Text {
+      fmt.Println("        ", line)
     }
+    fmt.Println("    },")
+    fmt.Println("},")
   }
-
-  return true
 }

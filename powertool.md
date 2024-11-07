@@ -7,17 +7,14 @@
 - bash
 
 ## Run
-### Requirements
-- go
-
 ### Description
 Blah blah blah the description can be as long as you want.
 
 It can span multiple lines. Just make sure that it is followed by `Options` or an error will be thrown
 
 Also note that the requirements section can be ignored, but it is still useful. In it you can list
-all of the extra executables your program expects to find and
 
+all of the extra executables your program expects to find and
 ### Options
 - `-o`, `--option` = `default` > "option"
     This is an argument with the default value of `default` if nothing better
@@ -36,7 +33,10 @@ all of the extra executables your program expects to find and
     will be interpreted as true, and will be false otherwise
 - `<1>` = `whatever` > "second"
     This is another positional argument, but it has a default value. This prevents it from
-    
+
+### Requirements
+- go
+
 ### Command
 ```bash
 #!/usr/bin/env bash
