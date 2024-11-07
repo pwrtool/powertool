@@ -98,12 +98,13 @@ func ParseHeader(line []rune) (int, []rune, error) {
     i += 1
   }
 
-  for line[i] == ' ' && i < len(line) {
+  for (line[i] == ' ' || line[i] == '\t') && i < len(line) {
     i += 1
   }
   
   for i < len(line) {
     text = append(text, line[i])
+    i += 1
   }
 
   return octothorpes, text, nil
