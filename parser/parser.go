@@ -45,7 +45,6 @@ type Header struct {
 	Text     [][]rune // slice of lines of text
 	Order    int      // number of octothorpes (#) preceding it
 	Title    []rune  
-	Children *[]Header
 }
 
 // we want to:
@@ -76,12 +75,61 @@ func WashText(content string) [][]rune {
 	return text
 }
 
-func makeTree(lines [][]rune) {
-  
+func GetAllHeaders(lines [][]rune) ([]Header, error) {
+  headers := []Header{}
+
+  header := Header{}
+  currentText := [][]rune{}
+
+  var i int = 0
+  // skip until we have a header
+  for i < len(lines){
+    hashes, title, err := ParseHeaderLine(lines[i])
+
+    if err != nil {
+      return nil, err
+    }
+    if hashes != 0 {
+      header.Order = hashes
+      header.Title = title
+      break
+    }
+
+    i += 1
+  }
+
+  for i < len(lines) {
+    hashes, title, err := ParseHeaderLine(lines[i])
+
+    if err != nil {
+      return nil, err
+    }
+
+    if hashes != 0 {
+      header.Text = currentText
+      headers = append(headers, header)
+
+      header = Header{}
+      header.Title = title
+      header.Order = hashes
+
+      currentText = [][]rune{}
+    } else {
+      currentText = append(currentText, lines[i])
+    }
+
+
+    i += 1
+  }
+
+  header.Text = currentText
+  headers = append(headers, header)
+
+  return headers, nil
 }
 
 
-func ParseHeader(line []rune) (int, []rune, error) {
+func ParseHeaderLine(line []rune) (int, []rune, error) {
   if len(line) < 1 {
     // this should be unreachable
     return 0, []rune{}, errors.New("Tried to parse line with length of 0")

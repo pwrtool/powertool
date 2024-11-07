@@ -76,11 +76,19 @@ func TestParseHeader(t *testing.T) {
 				err:   nil,
 			},
 		},
+		{
+			input: []rune("I should fail. Not a header."),
+			expected: expectation{
+				order: 0,
+				text:  []rune("I should fail. Not a header."),
+				err:   nil,
+			},
+		},
 	}
 
 
   for _, c := range cases {
-    order, text, err := ParseHeader(c.input)
+    order, text, err := ParseHeaderLine(c.input)
     failedReason := ""
     failed := false
     
