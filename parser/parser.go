@@ -59,7 +59,7 @@ func WashText(content string) [][]rune {
 	lines := strings.Split(content, "\n")
 
 	for _, line := range lines {
-    isWhitespace := false
+    isWhitespace := true
     
     for _, c := range line {
       if !(c == ' ' || c == '\t') {
