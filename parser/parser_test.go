@@ -135,71 +135,69 @@ func TestGetAllHeaders(t *testing.T) {
 		expected []Header
 		err      error
 	}{
-    {
-      input: [][]rune{
-        []rune("a thing"),
-        []rune("# a header"),
-        []rune("a thing"),
-        []rune("more stuff"),
-        []rune("## another header"),
-        []rune("even more stuff"),
-      },
-      expected: []Header{
-        {
-          Title: []rune("a header"),
-          Order: 1,
-          Text: [][]rune{
-            []rune("a thing"),
-            []rune("more stuff"),
-          },
-        },
-        {
-          Title: []rune("another header"),
-          Order: 2,
-          Text: [][]rune{
-            []rune("even more stuff"),
-          },
-        },
-      },
-    },
-  }
+		{
+			input: [][]rune{
+				[]rune("a thing"),
+				[]rune("# a header"),
+				[]rune("a thing"),
+				[]rune("more stuff"),
+				[]rune("## another header"),
+				[]rune("even more stuff"),
+			},
+			expected: []Header{
+				{
+					Title: []rune("a header"),
+					Order: 1,
+					Text: [][]rune{
+						[]rune("a thing"),
+						[]rune("more stuff"),
+					},
+				},
+				{
+					Title: []rune("another header"),
+					Order: 2,
+					Text: [][]rune{
+						[]rune("even more stuff"),
+					},
+				},
+			},
+		},
+	}
 
+	for _, c := range cases {
+		output, err := GetAllHeaders(c.input)
 
-  for _, c := range cases {
-    output, err := GetAllHeaders(c.input)
+		if err != c.err {
+			fmt.Println("Mismatching errors: ")
+			fmt.Println("Expected: ", c.err)
+			fmt.Println("Got: ", err)
+			t.Fail()
+			continue
+		}
 
-
-    if err != c.err {
-      fmt.Println("Mismatching errors: ")
-      fmt.Println("Expected: ", c.err)
-      fmt.Println("Got: ", err)
-      t.Fail()
-      continue
-    }
-
-    if !reflect.DeepEqual(output, c.expected) {
-      fmt.Println("Expected: ")
-      printHeaders(c.expected)
-      fmt.Println("\nGot:")
-      printHeaders(output)
-      t.Fail()
-      continue
-    }
-  }
+		if !reflect.DeepEqual(output, c.expected) {
+			fmt.Println("Expected: ")
+			printHeaders(c.expected)
+			fmt.Println("\nGot:")
+			printHeaders(output)
+			t.Fail()
+			continue
+		}
+	}
 }
-
 
 func printHeaders(headers []Header) {
-  for _, header := range headers {
-    fmt.Println("{")
-    fmt.Println("    Title: ", header.Title)
-    fmt.Println("    Order: ", header.Order)
-    fmt.Println("    Text: {")
+	for _, header := range headers {
+		fmt.Println("{")
+		fmt.Println("    Title: ", header.Title)
+		fmt.Println("    Order: ", header.Order)
+		fmt.Println("    Text: {")
 
-    for _, line := range header.Text {
-      fmt.Println("        ", line)
-    }
-    fmt.Println("    },")
-    fmt.Println("},")
-  }
+		for _, line := range header.Text {
+			fmt.Println("        ", line)
+		}
+		fmt.Println("    },")
+		fmt.Println("},")
+	}
 }
+

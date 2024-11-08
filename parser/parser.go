@@ -26,26 +26,29 @@ type Option struct {
 	Requried      bool
 }
 
-// ## My Cool Header
-// blah blah blah
-//
-// ### A cooler header
-// even more blah
-// 
-//
-// ^^^ should become:
-// header {
-//   text = blah blah blah
-//   order = 2
-//   title = My Cool Header
-//   children = ... (you get the point)
-// }
-
 type Header struct {
 	Text     [][]rune // slice of lines of text
 	Order    int      // number of octothorpes (#) preceding it
 	Title    []rune  
 }
+
+
+// func ParsePowerfile(content string) (Powerfile, []error) {
+//   lines := WashText(content)
+//   headers, err := GetAllHeaders(lines)
+//   
+//   if err != nil {
+//     return nil, []error{err}
+//   }
+//
+//   powerfile, errs := ParseHeaders(headers)
+//
+//   if errs != nil {
+//     return errs
+//   }
+//
+//   return powerfile, nil
+// }
 
 // we want to:
 // - remove all \r
@@ -158,3 +161,17 @@ func ParseHeaderLine(line []rune) (int, []rune, error) {
 
   return octothorpes, text, nil
 }
+
+
+// func ParseOptions(lines [][]rune) ([]Option, error) {
+//
+// }
+
+
+// func ParseRequirements(line [][]rune) ([][]rune, error) {
+//
+// }
+
+// func ParseHeaders(headers []Header) Powerfile {
+//
+// }
