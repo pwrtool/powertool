@@ -3,17 +3,32 @@ package runes
 
 func Split(text []rune, separator rune) [][]rune {
   sections := [][]rune{}
-  var last int = 0;
-  var i int = 0;
+  section := []rune{}
 
-
-  for i < len(text) {
-    if text[i] == separator {
-      sections = append(sections, text[last:i])
-      last = i
+  for _, c := range text {
+    if c == separator {
+      sections = append(sections, section)
+      section = []rune{}
+    } else {
+      section = append(section, c)
     }
-    i += 1
   }
 
+  sections = append(sections, section)
   return sections
+}
+
+
+func Equal(text []rune, other []rune) bool {
+  if len(text) != len(other) {
+    return false
+  }
+
+  for i := range text {
+    if text[i] != other[i] {
+      return false
+    }
+  }
+
+  return true
 }
