@@ -68,3 +68,22 @@ func RemoveWhitespace(text []rune) []rune {
   return parts
 }
 
+
+
+func TrimLeft(text []rune) []rune {
+  newText := []rune{}
+  outOfWhitespace := false
+
+  for _, c := range text {
+    if outOfWhitespace {
+      newText = append(newText, c)
+    } else {
+      if !(c == ' ' || c == '\t' || c == '\n') {
+        outOfWhitespace = true
+      }
+    }
+  }
+
+
+  return newText
+}
