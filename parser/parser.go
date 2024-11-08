@@ -23,7 +23,7 @@ type Tool struct {
 type Option struct {
 	Name          string
 	DefaultValue  string // this will be an empty string if the option is required
-	PossibleFlags string
+	PossibleFlags []string
 	Requried      bool
 }
 
@@ -164,19 +164,62 @@ func ParseHeaderLine(line []rune) (int, []rune, error) {
 }
 
 
+// TODO - this needs tests
 func ParseOptions(lines [][]rune) ([]Option, error) {
   options := []Option{}
 
-  for _, line := range lines {
-    split := runes.Split(line, '=')
+  // TODO - what about description lines?
+  // for _, line := range lines {
+  //
+  // }
 
-    if len(split) != 2 {
-      return nil, errors.New("More than one = sign on line: " + string(line))
+  return options, nil
+}
+
+
+// TODO - this needs tests
+func parseOptionLine(line []rune) (Option, error) {
+  option := Option{}
+  split := runes.Split(line, '=')
+
+  if len(split) != 2 {
+    return option, errors.New("More or less than one = sign on line: " + string(line))
+  }
+
+  option.PossibleFlags = parseFlags(split[0])
+  predicate := split[1]
+
+
+  nameSplit := runes.Split(predicate, '>')
+
+  return option, nil
+
+}
+
+
+func parseFlags(flagsText []rune) []string {
+  inside := false
+  current := ""
+  flags := []string{}
+
+  for _, c := range flagsText {
+    if inside {
+      if c == '`' {
+        inside = false
+        flags = append(flags, current)
+        current = ""
+      } else {
+        current += string(c)
+      }
+    } else {
+      if c == '`' {
+        inside = true
+      }
     }
 
   }
 
-  return options, nil
+  return flags
 }
 
 

@@ -1,6 +1,5 @@
 package runes
 
-
 func Split(text []rune, separator rune) [][]rune {
   sections := [][]rune{}
   section := []rune{}
