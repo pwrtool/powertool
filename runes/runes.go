@@ -71,19 +71,32 @@ func RemoveWhitespace(text []rune) []rune {
 
 
 func TrimLeft(text []rune) []rune {
-  newText := []rune{}
-  outOfWhitespace := false
+  i := 0
 
-  for _, c := range text {
-    if outOfWhitespace {
-      newText = append(newText, c)
-    } else {
-      if !(c == ' ' || c == '\t' || c == '\n') {
-        outOfWhitespace = true
-      }
+  for i < len(text) {
+    if !(i == ' ' || i == '\t' || i == '\n') {
+      break
     }
+
+    i += 1
+  }
+
+  // TODO - do I need to copy?
+  return text[i:len(text)]
+}
+
+
+func TrimRight(text []rune) []rune {
+  i := len(text) - 1
+
+  for i > 0 {
+    if !(i == ' ' || i == '\t' || i == '\n') {
+      break
+    }
+
+    i -= 1
   }
 
 
-  return newText
+  return text[0:i + 1]
 }
