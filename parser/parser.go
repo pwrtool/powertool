@@ -92,6 +92,7 @@ func GetAllHeaders(lines [][]rune) ([]Header, error) {
     if hashes != 0 {
       header.Order = hashes
       header.Title = title
+      i += 1
       break
     }
 
