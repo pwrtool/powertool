@@ -3,6 +3,7 @@ package parser
 import (
 	"errors"
 	"strings"
+  "github.com/pwrtool/powertool/runes"
 )
 
 type Powerfile struct {
@@ -163,15 +164,49 @@ func ParseHeaderLine(line []rune) (int, []rune, error) {
 }
 
 
-// func ParseOptions(lines [][]rune) ([]Option, error) {
-//
-// }
+func ParseOptions(lines [][]rune) ([]Option, error) {
+  options := []Option{}
+
+  for _, line := range lines {
+    split := runes.Split(line, '=')
+
+    if len(split) != 2 {
+      return nil, errors.New("More than one = sign on line: " + string(line))
+    }
+
+  }
+
+  return options, nil
+}
 
 
-// func ParseRequirements(line [][]rune) ([][]rune, error) {
-//
-// }
+func ParseRequirements(lines [][]rune) ([][]rune, error) {
+  requirements := [][]rune{}
+
+  for _, line := range lines {
+    if (line[0] != '-') {
+      return nil, errors.New("Invalid requirement line")
+    }
+
+    var i int = 1;
+
+    if i > len(line) {
+      return nil, errors.New("Unused requirements line")
+    }
+
+    for line[i] == ' ' || line[i] == '\t' {
+      i += 1
+    }
+
+    requirements = append(requirements, line[i:])
+  }
+
+  return requirements, nil
+}
 
 // func ParseHeaders(headers []Header) Powerfile {
 //
 // }
+
+
+
