@@ -186,11 +186,14 @@ func parseOptionLine(line []rune) (Option, error) {
     return option, errors.New("More or less than one = sign on line: " + string(line))
   }
 
-  option.PossibleFlags = parseFlags(split[0])
-  predicate := split[1]
+  // TODO - what about required
+  flags := runes.ExtractInside(split[0], '`')
+  name := runes.ExtractInside(split[1], '"')
 
+  for _, flag := range flags {
+    option.PossibleFlags = append(option.PossibleFlags, string(flag))
+  }
 
-  nameSplit := runes.Split(predicate, '>')
 
   return option, nil
 
