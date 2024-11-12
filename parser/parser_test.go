@@ -218,6 +218,28 @@ func TestParseOptionLine(t *testing.T) {
 				Position:     -1,
 			},
 		},
+		{
+			input: []rune("- `-o`, `--option` = | > \"option\" "),
+			expected: Option{
+				Name:         "option",
+				DefaultValue: "",
+        PossibleFlags: []string{"-o", "--option"},
+				IsBoolean:    true,
+				Description:  "",
+				Position:     -1,
+			},
+		},
+		{
+			input: []rune("- `-o`, `--option` = 1252 > \"option\" "),
+			expected: Option{
+				Name:         "option",
+				DefaultValue: "",
+        PossibleFlags: []string{"-o", "--option"},
+				IsBoolean:    false,
+				Description:  "",
+				Position:     1252,
+			},
+		},
 	}
 
   for _, c := range cases {
@@ -228,6 +250,8 @@ func TestParseOptionLine(t *testing.T) {
       printOption(c.expected)
       fmt.Println("----- Got: ")
       printOption(result)
+      fmt.Println("----- Had error: ")
+      fmt.Println(err)
 
       t.Fail()
     }

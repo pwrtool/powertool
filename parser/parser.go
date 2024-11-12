@@ -231,7 +231,7 @@ func ParseOptionLine(line []rune) (Option, error) {
   option.Position = result.position
   option.IsBoolean = result.isBoolean
 
-  return Option{}, nil
+  return option, nil
 }
 
 
@@ -287,21 +287,15 @@ func parseOptionHint(hint []rune) (hintResult, error) {
     return result, nil
   }
 
-  if hint[0] == '<' && hint[len(hint) - 1] == '>' {
-    numString := string(hint[1:len(hint) - 1])
-    num, err := strconv.Atoi(numString)
+  num, err := strconv.Atoi(string(hint))
 
-    if err != nil {
-      return result, errors.Join(
-        errors.New("error parsing positional option"), err)
-    }
-
-    result.position = num
-    return result, nil
+  if err != nil {
+    return result, errors.Join(
+      errors.New("error parsing positional option"), err)
   }
 
-
-  return result, errors.New("no pattern to recognize boolean, default, or positional option")
+  result.position = num
+  return result, nil
 }
 
 func parseOptionName(namePart []rune) (string, error) {
