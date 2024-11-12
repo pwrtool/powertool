@@ -201,3 +201,8 @@ func printHeaders(headers []Header) {
 	}
 }
 
+
+
+func TestParseOptionLine(t *testing.T) {
+
+}

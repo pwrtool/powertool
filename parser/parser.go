@@ -174,7 +174,7 @@ func ParseOptions(lines [][]rune) ([]Option, error) {
 }
 
 // TODO - this needs tests
-func parseOptionLine(line []rune) (Option, error) {
+func ParseOptionLine(line []rune) (Option, error) {
 	option := Option{
 		Position:      -1,
 		PossibleFlags: []string{},
