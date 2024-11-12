@@ -3,7 +3,7 @@ package parser
 import (
 	"errors"
 	"strings"
-
+  "strconv"
 	"github.com/pwrtool/powertool/runes"
 )
 
@@ -268,6 +268,9 @@ func parseOptionHint(hint []rune) (hintResult, error) {
     return result, errors.New("hint part was only whitespace")
   }
 
+  // debug print
+  // fmt.Println("Parsing hint:", string(hint))
+
   if len(hint) == 1 && hint[0] == '|' {
     result.isBoolean = true
     return result, nil
@@ -284,11 +287,32 @@ func parseOptionHint(hint []rune) (hintResult, error) {
     return result, nil
   }
 
-  return hintResult{}, nil
+  if hint[0] == '<' && hint[len(hint) - 1] == '>' {
+    numString := string(hint[1:len(hint) - 1])
+    num, err := strconv.Atoi(numString)
+
+    if err != nil {
+      return result, errors.Join(
+        errors.New("error parsing positional option"), err)
+    }
+
+    result.position = num
+    return result, nil
+  }
+
+
+  return result, errors.New("no pattern to recognize boolean, default, or positional option")
 }
 
 func parseOptionName(namePart []rune) (string, error) {
-  return "", nil
+  extraction := runes.ExtractInside(namePart, '"')
+
+  if len(extraction) != 1 {
+    return "", errors.New("None or many extracted names were found")
+  }
+  
+
+  return string(extraction[0]), nil
 }
 
 func parseFlags(flagsText []rune) []string {
