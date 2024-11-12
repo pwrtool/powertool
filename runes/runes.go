@@ -82,7 +82,7 @@ func TrimLeft(text []rune) []rune {
   }
 
   // TODO - do I need to copy?
-  return text[i:len(text)]
+  return text[i:]
 }
 
 
@@ -99,4 +99,10 @@ func TrimRight(text []rune) []rune {
 
 
   return text[0:i + 1]
+}
+
+
+func TrimAround(text []rune) []rune {
+  text = TrimRight(text)
+  return TrimLeft(text)
 }

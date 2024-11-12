@@ -236,7 +236,18 @@ func ParseOptionLine(line []rune) (Option, error) {
 
 
 func parseOptionNouns(nouns []rune) ([]string, error) {
-  return []string{}, nil
+  flagStrings := []string{}
+  flags := runes.ExtractInside(nouns, '`')
+
+  if len(flags) == 0 {
+    return flagStrings, errors.New("No flags found")
+  }
+
+  for _, flag := range flags {
+    flagStrings = append(flagStrings, string(flag))
+  }
+
+  return flagStrings, nil
 }
 
 // default value, isBoolean, or position
@@ -246,6 +257,33 @@ type hintResult = struct {
   position int
 }
 func parseOptionHint(hint []rune) (hintResult, error) {
+  hint = runes.TrimAround(hint)
+  result := hintResult{
+    isBoolean: false,
+    position: -1,
+    defaultValue: "",
+  }
+
+  if len(hint) == 0 {
+    return result, errors.New("hint part was only whitespace")
+  }
+
+  if len(hint) == 1 && hint[0] == '|' {
+    result.isBoolean = true
+    return result, nil
+  }
+
+  defaultExtraction := runes.ExtractInside(hint, '`')
+
+  if len(defaultExtraction) > 1 {
+    return result, errors.New("found more than one default value")
+  }
+
+  if len(defaultExtraction) == 1 {
+    result.defaultValue = string(defaultExtraction[0])
+    return result, nil
+  }
+
   return hintResult{}, nil
 }
 
