@@ -62,15 +62,25 @@ func TestTrim(t *testing.T) {
   }
 
   for _, c := range cases {
+    failed := false
+
     lRes := TrimLeft(c.input)
-    rRes := TrimRight(c.input)
-
     if !Equal(lRes, c.leftExpectation) {
-
-      t.Fail()
+      fmt.Println("Failed left trim:")
+      fmt.Println("Expected: |" + string(c.leftExpectation) + "|")
+      fmt.Println("Got: |" + string(lRes) + "|")
+      failed = true
     }
 
+    rRes := TrimRight(c.input)
     if !Equal(rRes, c.rightExpectation) {
+      fmt.Println("Failed right trim:")
+      fmt.Println("Expected: |" + string(c.rightExpectation) + "|")
+      fmt.Println("Got: |" + string(rRes) + "|")
+      failed = true
+    }
+
+    if failed {
       t.Fail()
     }
   }

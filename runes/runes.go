@@ -1,5 +1,7 @@
 package runes
 
+import "fmt"
+
 func Split(text []rune, separator rune) [][]rune {
 	sections := [][]rune{}
 	section := []rune{}
@@ -69,7 +71,8 @@ func TrimLeft(text []rune) []rune {
 	i := 0
 
 	for i < len(text) {
-		if !(i == ' ' || i == '\t' || i == '\n') {
+    if !IsWhitespace(text[i]) {
+      fmt.Println("found break at: ", i)
 			break
 		}
 
@@ -84,7 +87,8 @@ func TrimRight(text []rune) []rune {
 	i := len(text) - 1
 
 	for i > 0 {
-		if !(i == ' ' || i == '\t' || i == '\n') {
+    if !IsWhitespace(text[i]) {
+      fmt.Println("found break at: ", i)
 			break
 		}
 
@@ -97,4 +101,8 @@ func TrimRight(text []rune) []rune {
 func TrimAround(text []rune) []rune {
 	text = TrimRight(text)
 	return TrimLeft(text)
+}
+
+func IsWhitespace(c rune) bool {
+  return c == ' ' || c == '\t' || c == '\n'
 }
