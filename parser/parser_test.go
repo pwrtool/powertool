@@ -201,8 +201,55 @@ func printHeaders(headers []Header) {
 	}
 }
 
-
-
 func TestParseOptionLine(t *testing.T) {
+	cases := []struct {
+		input    []rune
+		expected Option
+		err      error
+	}{
+		{
+			input: []rune("- `-o`, `--option` = `default` > \"option\" "),
+			expected: Option{
+				Name:         "option",
+				DefaultValue: "default",
+        PossibleFlags: []string{"-o", "--option"},
+				IsBoolean:    false,
+				Description:  "",
+				Position:     -1,
+			},
+		},
+	}
+
+  for _, c := range cases {
+    result, err := ParseOptionLine(c.input);
+
+    if (!reflect.DeepEqual(result, c.expected)) {
+      fmt.Println("----- Expected: ")
+      printOption(c.expected)
+      fmt.Println("----- Got: ")
+      printOption(result)
+
+      t.Fail()
+    }
+
+    if (err != c.err) {
+      fmt.Println("Expected error: ")
+      fmt.Println(c.err)
+      fmt.Println("Got error: ")
+      fmt.Println(err)
+    }
+  }
 
 }
+
+
+func printOption(o Option) {
+  fmt.Println("Name: ", o.Name)
+  fmt.Println("Default: ", o.DefaultValue)
+  fmt.Println("PossibleFlags: ", o.PossibleFlags)
+  fmt.Println("IsBoolean: ", o.IsBoolean)
+  fmt.Println("Position: ", o.Position)
+  fmt.Println("Description: ", o.Description)
+}
+
+

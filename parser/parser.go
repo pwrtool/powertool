@@ -2,8 +2,9 @@ package parser
 
 import (
 	"errors"
-	"github.com/pwrtool/powertool/runes"
 	"strings"
+
+	"github.com/pwrtool/powertool/runes"
 )
 
 type Powerfile struct {
@@ -26,6 +27,7 @@ type Option struct {
 	PossibleFlags []string // empty if a positional option
 	IsBoolean     bool
 	Position      int // -1 if not a positional option
+	Description   string
 }
 
 type Header struct {
@@ -175,38 +177,18 @@ func ParseOptions(lines [][]rune) ([]Option, error) {
 
 // TODO - this needs tests
 func ParseOptionLine(line []rune) (Option, error) {
-	option := Option{
-		Position:      -1,
-		PossibleFlags: []string{},
-    IsBoolean: false,
-	}
-	split := runes.Split(line, '=')
-
-	if len(split) != 2 {
-		return option, errors.New("More or less than one = sign on line: " + string(line))
-	}
-
-	flags := runes.ExtractInside(split[0], '`')
-	name := runes.ExtractInside(split[1], '"')
+  option := Option{}
   
-  // TODO - could this fail?
-  firstChar := runes.RemoveWhitespace(split[1])[0]
+  line = runes.TrimLeft(line)
+  if len(line) == 0 {
+    return option, errors.New("Length of line is 0")
+  }
 
-  // this whole function is a mess. Need to rethink parsing the option line
-  // TODO - make the option line it's own thing with testing
+  if line[0] != '-' {
+    return option, errors.New("no dash at the start of the line")
+  }
 
-	if len(name) != 1 {
-		return option, errors.New("Couldn't figure out name of the option")
-	}
-
-	for _, flag := range flags {
-		option.PossibleFlags = append(option.PossibleFlags, string(flag))
-	}
-
-	option.Name = string(name[0])
-
-	return option, nil
-
+  return Option{}, nil
 }
 
 func parseFlags(flagsText []rune) []string {
