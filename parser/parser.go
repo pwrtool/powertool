@@ -188,7 +188,69 @@ func ParseOptionLine(line []rune) (Option, error) {
     return option, errors.New("no dash at the start of the line")
   }
 
+  firstSplit := runes.Split(line, '=')
+
+  if len(firstSplit) != 2 {
+    return option, errors.New("first split does not have a length of 2")
+  }
+
+  // option is in three parts:
+  // - `-o`, `--option` = `default` > "option"
+  //   [^ nouns]   [^ hint ]   [^ namePart]
+  //
+  // we have to split it into those parts
+  secondSplit := runes.Split(firstSplit[1], '>')
+
+  if len(secondSplit) != 2 {
+    return option, errors.New("No > to denote the name of the option")
+  }
+
+
+  nouns := firstSplit[0]
+  hint := secondSplit[0]
+  namePart := secondSplit[1]
+
+  // now, just parse accordingly
+
+  result, err := parseOptionHint(hint)
+  if err != nil {
+    return option, err
+  }
+  flags, err := parseOptionNouns(nouns)
+  if err != nil {
+    return option, err
+  }
+  name, err := parseOptionName(namePart)
+  if err != nil {
+    return option, err
+  }
+
+  option.Name = name
+  option.PossibleFlags = flags
+  option.DefaultValue = result.defaultValue
+  option.Position = result.position
+  option.IsBoolean = result.isBoolean
+
   return Option{}, nil
+}
+
+
+func parseOptionNouns(nouns []rune) ([]string, error) {
+  return []string{}, nil
+}
+
+// default value, isBoolean, or position
+type hintResult = struct {
+  defaultValue string
+  isBoolean bool
+  position int
+}
+func parseOptionHint(hint []rune) (hintResult, error) {
+  return hintResult{}, nil
+}
+
+func parseOptionName(namePart []rune) (string, error) {
+  return "", nil
 }
 
 func parseFlags(flagsText []rune) []string {
