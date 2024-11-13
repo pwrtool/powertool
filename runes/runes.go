@@ -1,6 +1,8 @@
 package runes
 
-import "fmt"
+import (
+  _ "fmt"  // sometimes used for debugging
+)
 
 func Split(text []rune, separator rune) [][]rune {
 	sections := [][]rune{}
@@ -72,7 +74,6 @@ func TrimLeft(text []rune) []rune {
 
 	for i < len(text) {
     if !IsWhitespace(text[i]) {
-      fmt.Println("found break at: ", i)
 			break
 		}
 
@@ -88,7 +89,6 @@ func TrimRight(text []rune) []rune {
 
 	for i > 0 {
     if !IsWhitespace(text[i]) {
-      fmt.Println("found break at: ", i)
 			break
 		}
 
@@ -108,3 +108,20 @@ func IsWhitespace(c rune) bool {
 }
 
 
+func HasPrefix(text []rune, prefix []rune) bool {
+  if len(prefix) > len(text) {
+    return false
+  }
+  
+  i := 0
+
+  for i < len(text) && i < len(prefix) {
+    if text[i] != prefix[i] {
+      return false
+    }
+
+    i += 1
+  }
+
+  return i == len(prefix)
+}

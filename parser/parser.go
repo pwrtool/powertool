@@ -60,6 +60,7 @@ func ParsePowerfile(content string) (Powerfile, []error) {
 // - remove all \r
 // - split into [][]rune based on line (\n)
 // - remove any empty lines for convinience
+// TODO - if inside a code block, stop removing empty lines
 func WashText(content string) [][]rune {
 	text := [][]rune{}
 
@@ -346,7 +347,10 @@ func parseFlags(flagsText []rune) []string {
 
 
 func ParseCodeblock(lines [][]rune) (Codeblock, error) {
-  codeblock := Codeblock{}
+  codeblock := Codeblock{
+    Text: "",
+    Language: "",
+  }
   
   return codeblock, errors.New("not implemented")
 }

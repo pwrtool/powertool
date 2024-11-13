@@ -2,8 +2,8 @@ package runes_test
 
 import (
 	"fmt"
+	. "github.com/pwrtool/powertool/runes"
 	"testing"
-  . "github.com/pwrtool/powertool/runes"
 )
 
 func TestSplit(t *testing.T) {
@@ -51,40 +51,40 @@ func TestSplit(t *testing.T) {
 
 func TestTrim(t *testing.T) {
 	cases := []struct {
-		input       []rune
-		leftExpectation []rune
-    rightExpectation []rune
+		input            []rune
+		leftExpectation  []rune
+		rightExpectation []rune
 	}{
-    {
-      input: []rune("   look at me!   "),
-      leftExpectation: []rune("look at me!   "),
-      rightExpectation: []rune("   look at me!"),
-    },
-  }
+		{
+			input:            []rune("   look at me!   "),
+			leftExpectation:  []rune("look at me!   "),
+			rightExpectation: []rune("   look at me!"),
+		},
+	}
 
-  for _, c := range cases {
-    failed := false
+	for _, c := range cases {
+		failed := false
 
-    lRes := TrimLeft(c.input)
-    if !Equal(lRes, c.leftExpectation) {
-      fmt.Println("Failed left trim:")
-      fmt.Println("Expected: |" + string(c.leftExpectation) + "|")
-      fmt.Println("Got: |" + string(lRes) + "|")
-      failed = true
-    }
+		lRes := TrimLeft(c.input)
+		if !Equal(lRes, c.leftExpectation) {
+			fmt.Println("Failed left trim:")
+			fmt.Println("Expected: |" + string(c.leftExpectation) + "|")
+			fmt.Println("Got: |" + string(lRes) + "|")
+			failed = true
+		}
 
-    rRes := TrimRight(c.input)
-    if !Equal(rRes, c.rightExpectation) {
-      fmt.Println("Failed right trim:")
-      fmt.Println("Expected: |" + string(c.rightExpectation) + "|")
-      fmt.Println("Got: |" + string(rRes) + "|")
-      failed = true
-    }
+		rRes := TrimRight(c.input)
+		if !Equal(rRes, c.rightExpectation) {
+			fmt.Println("Failed right trim:")
+			fmt.Println("Expected: |" + string(c.rightExpectation) + "|")
+			fmt.Println("Got: |" + string(rRes) + "|")
+			failed = true
+		}
 
-    if failed {
-      t.Fail()
-    }
-  }
+		if failed {
+			t.Fail()
+		}
+	}
 }
 
 func printSplitFailure(output [][]rune, expectation [][]rune) {
@@ -96,5 +96,43 @@ func printSplitFailure(output [][]rune, expectation [][]rune) {
 	fmt.Println("\nGot:")
 	for _, part := range output {
 		fmt.Println("|", part, "|")
+	}
+}
+
+func TestHasPrefix(t *testing.T) {
+	cases := []struct {
+		text     []rune
+		prefix   []rune
+		expected bool
+	}{
+		{
+			text:     []rune("```blah"),
+			prefix:   []rune("```"),
+			expected: true,
+		},
+		{
+			text:     []rune("```blah"),
+			prefix:   []rune("``````````"),
+			expected: false,
+		},
+		{
+			text:     []rune("this is a string"),
+			prefix:   []rune("this is a string"),
+			expected: true,
+		},
+		{
+			text:     []rune("this is a string"),
+			prefix:   []rune("this is a string 2"),
+			expected: false,
+		},
+	}
+
+	for _, c := range cases {
+		result := HasPrefix(c.text, c.prefix)
+
+		if result != c.expected {
+			fmt.Printf("Expected: %t, Got: %t for '%s' with prefix '%s'", result, c.expected, string(c.text), string(c.prefix))
+      t.Fail()
+		}
 	}
 }
