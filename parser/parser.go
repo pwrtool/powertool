@@ -343,3 +343,10 @@ func parseFlags(flagsText []rune) []string {
 
 	return flags
 }
+
+
+func ParseCodeblock(lines [][]rune) (Codeblock, error) {
+  codeblock := Codeblock{}
+  
+  return codeblock, errors.New("not implemented")
+}
