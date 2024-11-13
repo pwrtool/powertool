@@ -1,8 +1,9 @@
-package runes
+package runes_test
 
 import (
 	"fmt"
 	"testing"
+  . "github.com/pwrtool/powertool/runes"
 )
 
 func TestSplit(t *testing.T) {

@@ -106,3 +106,5 @@ func TrimAround(text []rune) []rune {
 func IsWhitespace(c rune) bool {
   return c == ' ' || c == '\t' || c == '\n'
 }
+
+
