@@ -10,14 +10,14 @@ import (
 type Powerfile struct {
 	Name    string
 	Options []Option
+	Setups  map[string]Codeblock
 	Tools   []Tool
 }
 
 type Tool struct {
-	Name        string
-	Options     []Option
-	Command     Codeblock
-	Setups      map[string]Codeblock
+	Name    string
+	Options []Option
+	Command Codeblock
 }
 
 type Codeblock struct {
@@ -39,22 +39,22 @@ type Header struct {
 	Title []rune
 }
 
-// func ParsePowerfile(content string) (Powerfile, []error) {
-//   lines := WashText(content)
-//   headers, err := GetAllHeaders(lines)
-//
-//   if err != nil {
-//     return nil, []error{err}
-//   }
-//
-//   powerfile, errs := ParseHeaders(headers)
-//
-//   if errs != nil {
-//     return errs
-//   }
-//
-//   return powerfile, nil
-// }
+func ParsePowerfile(content string) (Powerfile, []error) {
+  powerfile := Powerfile{}
+  lines := WashText(content)
+  headers, err := GetAllHeaders(lines)
+
+  if err != nil {
+    return powerfile, []error{err}
+  }
+
+  if len(headers) == 0 {
+    return powerfile, []error{errors.New("no headers in markdown file")}
+  }
+
+
+  return powerfile, nil
+}
 
 // we want to:
 // - remove all \r
@@ -170,19 +170,19 @@ func ParseOptions(lines [][]rune) ([]Option, error) {
 	options := []Option{}
 
 	for _, line := range lines {
-    if len(line) == 0 {
-      panic("Somehow got a line of length 0. Invalides a programmer assumption.")
-    }
+		if len(line) == 0 {
+			panic("Somehow got a line of length 0. Invalides a programmer assumption.")
+		}
 
-    if line[0] == '-' {
-      option, err := ParseOptionLine(line)
+		if line[0] == '-' {
+			option, err := ParseOptionLine(line)
 
-      if err != nil {
-        return options, errors.Join(errors.New("Error parsing options: "), err)
-      }
+			if err != nil {
+				return options, errors.Join(errors.New("Error parsing options: "), err)
+			}
 
-      options = append(options, option)
-    } 
+			options = append(options, option)
+		}
 	}
 
 	return options, nil
@@ -343,7 +343,3 @@ func parseFlags(flagsText []rune) []string {
 
 	return flags
 }
-
-// func ParseHeaders(headers []Header) Powerfile {
-//
-// }
