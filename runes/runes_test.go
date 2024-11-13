@@ -132,7 +132,45 @@ func TestHasPrefix(t *testing.T) {
 
 		if result != c.expected {
 			fmt.Printf("Expected: %t, Got: %t for '%s' with prefix '%s'", result, c.expected, string(c.text), string(c.prefix))
-      t.Fail()
+			t.Fail()
+		}
+	}
+}
+
+func TestHasPostfix(t *testing.T) {
+	cases := []struct {
+		text     []rune
+		postfix  []rune
+		expected bool
+	}{
+		{
+			text:     []rune("```blah"),
+			postfix:  []rune("blah"),
+			expected: true,
+		},
+		{
+			text:     []rune("```blah"),
+			postfix:  []rune("ah"),
+			expected: true,
+		},
+		{
+			text:     []rune("this is a string"),
+			postfix:  []rune("this is a string"),
+			expected: true,
+		},
+		{
+			text:     []rune("this is a string"),
+			postfix:  []rune("2 this is a string"),
+			expected: false,
+		},
+	}
+
+	for _, c := range cases {
+		result := HasPostfix(c.text, c.postfix)
+
+		if result != c.expected {
+			fmt.Printf("Expected: %t, Got: %t for '%s' with postfix '%s'", result, c.expected, string(c.text), string(c.postfix))
+			t.Fail()
 		}
 	}
 }

@@ -1,7 +1,7 @@
 package runes
 
 import (
-  _ "fmt"  // sometimes used for debugging
+	_ "fmt" // sometimes used for debugging
 )
 
 func Split(text []rune, separator rune) [][]rune {
@@ -73,7 +73,7 @@ func TrimLeft(text []rune) []rune {
 	i := 0
 
 	for i < len(text) {
-    if !IsWhitespace(text[i]) {
+		if !IsWhitespace(text[i]) {
 			break
 		}
 
@@ -88,7 +88,7 @@ func TrimRight(text []rune) []rune {
 	i := len(text) - 1
 
 	for i > 0 {
-    if !IsWhitespace(text[i]) {
+		if !IsWhitespace(text[i]) {
 			break
 		}
 
@@ -104,24 +104,42 @@ func TrimAround(text []rune) []rune {
 }
 
 func IsWhitespace(c rune) bool {
-  return c == ' ' || c == '\t' || c == '\n'
+	return c == ' ' || c == '\t' || c == '\n'
 }
 
-
 func HasPrefix(text []rune, prefix []rune) bool {
-  if len(prefix) > len(text) {
-    return false
-  }
-  
-  i := 0
+	if len(prefix) > len(text) {
+		return false
+	}
 
-  for i < len(text) && i < len(prefix) {
-    if text[i] != prefix[i] {
-      return false
-    }
+	i := 0
 
-    i += 1
-  }
+	for i < len(text) && i < len(prefix) {
+		if text[i] != prefix[i] {
+			return false
+		}
 
-  return i == len(prefix)
+		i += 1
+	}
+
+	return i == len(prefix)
+}
+
+func HasPostfix(text []rune, postfix []rune) bool {
+	if len(postfix) > len(text) {
+		return false
+	}
+
+	i := 1
+
+	for len(text)-i > 0 && len(postfix)-i > 0 {
+		if text[len(text)-i] != postfix[len(postfix)-i] {
+			return false
+		}
+
+		i += 1
+	}
+
+	return i == len(postfix)
+
 }
