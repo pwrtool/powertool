@@ -214,7 +214,6 @@ func TestParseOptionLine(t *testing.T) {
 				DefaultValue: "default",
         PossibleFlags: []string{"-o", "--option"},
 				IsBoolean:    false,
-				Description:  "",
 				Position:     -1,
 			},
 		},
@@ -225,7 +224,6 @@ func TestParseOptionLine(t *testing.T) {
 				DefaultValue: "",
         PossibleFlags: []string{"-o", "--option"},
 				IsBoolean:    true,
-				Description:  "",
 				Position:     -1,
 			},
 		},
@@ -236,7 +234,6 @@ func TestParseOptionLine(t *testing.T) {
 				DefaultValue: "",
         PossibleFlags: []string{"-o", "--option"},
 				IsBoolean:    false,
-				Description:  "",
 				Position:     1252,
 			},
 		},
@@ -273,7 +270,72 @@ func printOption(o Option) {
   fmt.Println("PossibleFlags: ", o.PossibleFlags)
   fmt.Println("IsBoolean: ", o.IsBoolean)
   fmt.Println("Position: ", o.Position)
-  fmt.Println("Description: ", o.Description)
 }
 
+func TestParseOptions(t *testing.T) {
+  cases := []struct{
+    input [][]rune
+    expected []Option
+  }{
+    {
+      input: [][]rune{
+        []rune("yap yap yap"),
+        []rune("- `-o`, `--option` = `default` > \"option\""),
+        []rune("yap yap yap"),
+        []rune("blah blah blah"),
+        []rune("- `-b` = | > \"boolean\" "),
+        []rune("blah blah blah"),
+      },
+      expected: []Option{
+        {
+          Name: "option",
+          DefaultValue: "default",
+          PossibleFlags: []string{"-o", "--option"},
+          IsBoolean: false,
+          Position: -1,
+        },
+        {
+          Name: "boolean",
+          DefaultValue: "",
+          PossibleFlags: []string{"-b"},
+          IsBoolean: true,
+          Position: -1,
+        },
+      },
+    },
+  }
 
+
+  for _, c := range cases {
+    result, err := ParseOptions(c.input)
+
+    if err != nil {
+      fmt.Println("Got an error:")
+      fmt.Println(err)
+      t.Fail()
+    }
+
+    if !reflect.DeepEqual(result, c.expected) {
+      fmt.Println("Test failed.")
+
+      fmt.Println("-------------------")
+      fmt.Println("Expected:")
+      fmt.Println("-------------------")
+      for _, o := range c.expected {
+        printOption(o)
+        fmt.Println("")
+      }
+
+      fmt.Println("-------------------")
+      fmt.Println("Got:")
+      fmt.Println("-------------------")
+      for _, o := range result {
+        printOption(o)
+        fmt.Println("")
+      }
+
+      t.Fail()
+    }
+
+  }
+}

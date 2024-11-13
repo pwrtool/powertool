@@ -3,8 +3,17 @@
 - `-s`, `--silent` = `silent` > "silent"
     this is a global option that applies to all tools and can be used in all of them
 
-## Requirements
-- bash
+## Setup
+### MacOS
+```bash
+brew install a bunch of stuff
+```
+
+### NixOS
+```bash
+echo "nixos works differently"
+nix-shell -p ...
+```
 
 ## Run
 ### Description
@@ -33,9 +42,6 @@ all of the extra executables your program expects to find and
     will be interpreted as true, and will be false otherwise
 - `<1>` = `whatever` > "second"
     This is another positional argument, but it has a default value. This prevents it from
-
-### Requirements
-- go
 
 ### Command
 ```bash

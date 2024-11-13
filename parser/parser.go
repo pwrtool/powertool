@@ -2,9 +2,9 @@ package parser
 
 import (
 	"errors"
-	"strings"
-  "strconv"
 	"github.com/pwrtool/powertool/runes"
+	"strconv"
+	"strings"
 )
 
 type Powerfile struct {
@@ -14,11 +14,15 @@ type Powerfile struct {
 }
 
 type Tool struct {
-	Name         string
-	Description  string
-	Options      []Option
-	Command      string
-	Requirements []string
+	Name        string
+	Options     []Option
+	Command     Codeblock
+	Setups      map[string]Codeblock
+}
+
+type Codeblock struct {
+	Text     string
+	Language string
 }
 
 type Option struct {
@@ -27,7 +31,6 @@ type Option struct {
 	PossibleFlags []string // empty if a positional option
 	IsBoolean     bool
 	Position      int // -1 if not a positional option
-	Description   string
 }
 
 type Header struct {
@@ -163,150 +166,157 @@ func ParseHeaderLine(line []rune) (int, []rune, error) {
 	return octothorpes, text, nil
 }
 
-// TODO - this needs tests
 func ParseOptions(lines [][]rune) ([]Option, error) {
 	options := []Option{}
 
-	// TODO - what about description lines?
-	// for _, line := range lines {
-	//
-	// }
+	for _, line := range lines {
+    if len(line) == 0 {
+      panic("Somehow got a line of length 0. Invalides a programmer assumption.")
+    }
+
+    if line[0] == '-' {
+      option, err := ParseOptionLine(line)
+
+      if err != nil {
+        return options, errors.Join(errors.New("Error parsing options: "), err)
+      }
+
+      options = append(options, option)
+    } 
+	}
 
 	return options, nil
 }
 
-// TODO - this needs tests
 func ParseOptionLine(line []rune) (Option, error) {
-  option := Option{}
-  
-  line = runes.TrimLeft(line)
-  if len(line) == 0 {
-    return option, errors.New("Length of line is 0")
-  }
+	option := Option{}
 
-  if line[0] != '-' {
-    return option, errors.New("no dash at the start of the line")
-  }
+	line = runes.TrimLeft(line)
+	if len(line) == 0 {
+		return option, errors.New("Length of line is 0")
+	}
 
-  firstSplit := runes.Split(line, '=')
+	if line[0] != '-' {
+		return option, errors.New("no dash at the start of the line")
+	}
 
-  if len(firstSplit) != 2 {
-    return option, errors.New("first split does not have a length of 2")
-  }
+	firstSplit := runes.Split(line, '=')
 
-  // option is in three parts:
-  // - `-o`, `--option` = `default` > "option"
-  //   [^ nouns]   [^ hint ]   [^ namePart]
-  //
-  // we have to split it into those parts
-  secondSplit := runes.Split(firstSplit[1], '>')
+	if len(firstSplit) != 2 {
+		return option, errors.New("first split does not have a length of 2")
+	}
 
-  if len(secondSplit) != 2 {
-    return option, errors.New("No > to denote the name of the option")
-  }
+	// option is in three parts:
+	// - `-o`, `--option` = `default` > "option"
+	//   [^ nouns]   [^ hint ]   [^ namePart]
+	//
+	// we have to split it into those parts
+	secondSplit := runes.Split(firstSplit[1], '>')
 
+	if len(secondSplit) != 2 {
+		return option, errors.New("No > to denote the name of the option")
+	}
 
-  nouns := firstSplit[0]
-  hint := secondSplit[0]
-  namePart := secondSplit[1]
+	nouns := firstSplit[0]
+	hint := secondSplit[0]
+	namePart := secondSplit[1]
 
-  // now, just parse accordingly
+	// now, just parse accordingly
 
-  result, err := parseOptionHint(hint)
-  if err != nil {
-    return option, err
-  }
-  flags, err := parseOptionNouns(nouns)
-  if err != nil {
-    return option, err
-  }
-  name, err := parseOptionName(namePart)
-  if err != nil {
-    return option, err
-  }
+	result, err := parseOptionHint(hint)
+	if err != nil {
+		return option, err
+	}
+	flags, err := parseOptionNouns(nouns)
+	if err != nil {
+		return option, err
+	}
+	name, err := parseOptionName(namePart)
+	if err != nil {
+		return option, err
+	}
 
-  option.Name = name
-  option.PossibleFlags = flags
-  option.DefaultValue = result.defaultValue
-  option.Position = result.position
-  option.IsBoolean = result.isBoolean
+	option.Name = name
+	option.PossibleFlags = flags
+	option.DefaultValue = result.defaultValue
+	option.Position = result.position
+	option.IsBoolean = result.isBoolean
 
-  return option, nil
+	return option, nil
 }
 
-
 func parseOptionNouns(nouns []rune) ([]string, error) {
-  flagStrings := []string{}
-  flags := runes.ExtractInside(nouns, '`')
+	flagStrings := []string{}
+	flags := runes.ExtractInside(nouns, '`')
 
-  if len(flags) == 0 {
-    return flagStrings, errors.New("No flags found")
-  }
+	if len(flags) == 0 {
+		return flagStrings, errors.New("No flags found")
+	}
 
-  for _, flag := range flags {
-    flagStrings = append(flagStrings, string(flag))
-  }
+	for _, flag := range flags {
+		flagStrings = append(flagStrings, string(flag))
+	}
 
-  return flagStrings, nil
+	return flagStrings, nil
 }
 
 // default value, isBoolean, or position
 type hintResult = struct {
-  defaultValue string
-  isBoolean bool
-  position int
+	defaultValue string
+	isBoolean    bool
+	position     int
 }
+
 func parseOptionHint(hint []rune) (hintResult, error) {
-  hint = runes.TrimAround(hint)
-  result := hintResult{
-    isBoolean: false,
-    position: -1,
-    defaultValue: "",
-  }
+	hint = runes.TrimAround(hint)
+	result := hintResult{
+		isBoolean:    false,
+		position:     -1,
+		defaultValue: "",
+	}
 
-  if len(hint) == 0 {
-    return result, errors.New("hint part was only whitespace")
-  }
+	if len(hint) == 0 {
+		return result, errors.New("hint part was only whitespace")
+	}
 
-  // debug print
-  // fmt.Println("Parsing hint:", string(hint))
+	// debug print
+	// fmt.Println("Parsing hint:", string(hint))
 
-  if len(hint) == 1 && hint[0] == '|' {
-    result.isBoolean = true
-    return result, nil
-  }
+	if len(hint) == 1 && hint[0] == '|' {
+		result.isBoolean = true
+		return result, nil
+	}
 
-  defaultExtraction := runes.ExtractInside(hint, '`')
+	defaultExtraction := runes.ExtractInside(hint, '`')
 
-  if len(defaultExtraction) > 1 {
-    return result, errors.New("found more than one default value")
-  }
+	if len(defaultExtraction) > 1 {
+		return result, errors.New("found more than one default value")
+	}
 
-  if len(defaultExtraction) == 1 {
-    result.defaultValue = string(defaultExtraction[0])
-    return result, nil
-  }
+	if len(defaultExtraction) == 1 {
+		result.defaultValue = string(defaultExtraction[0])
+		return result, nil
+	}
 
-  num, err := strconv.Atoi(string(hint))
+	num, err := strconv.Atoi(string(hint))
 
-  if err != nil {
-    return result, errors.Join(
-      errors.New("error parsing positional option"), err)
-  }
+	if err != nil {
+		return result, errors.Join(
+			errors.New("error parsing positional option"), err)
+	}
 
-  result.position = num
-  return result, nil
+	result.position = num
+	return result, nil
 }
 
 func parseOptionName(namePart []rune) (string, error) {
-  extraction := runes.ExtractInside(namePart, '"')
+	extraction := runes.ExtractInside(namePart, '"')
 
-  if len(extraction) != 1 {
-    return "", errors.New("None or many extracted names were found")
-  }
-  
+	if len(extraction) != 1 {
+		return "", errors.New("None or many extracted names were found")
+	}
 
-  return string(extraction[0]), nil
+	return string(extraction[0]), nil
 }
 
 func parseFlags(flagsText []rune) []string {
@@ -332,30 +342,6 @@ func parseFlags(flagsText []rune) []string {
 	}
 
 	return flags
-}
-
-func ParseRequirements(lines [][]rune) ([][]rune, error) {
-	requirements := [][]rune{}
-
-	for _, line := range lines {
-		if line[0] != '-' {
-			return nil, errors.New("Invalid requirement line")
-		}
-
-		var i int = 1
-
-		if i > len(line) {
-			return nil, errors.New("Unused requirements line")
-		}
-
-		for line[i] == ' ' || line[i] == '\t' {
-			i += 1
-		}
-
-		requirements = append(requirements, line[i:])
-	}
-
-	return requirements, nil
 }
 
 // func ParseHeaders(headers []Header) Powerfile {
