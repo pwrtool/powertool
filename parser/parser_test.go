@@ -1,9 +1,10 @@
-package parser
+package parser_test
 
 import (
 	"fmt"
 	"reflect"
 	"strconv"
+  . "github.com/pwrtool/powertool/parser"
 	"testing"
 )
 
@@ -339,3 +340,5 @@ func TestParseOptions(t *testing.T) {
 
   }
 }
+
+
