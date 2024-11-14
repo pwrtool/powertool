@@ -169,6 +169,9 @@ func ParseTool(name string, headers []Header) (Tool, error) {
     title := strings.ToLower(string(header.Title))
 
     if header.Order == 3 && title == "command" {
+      // TODO - finish this and write tests
+      // then finish the tests for the main powertool
+      //
       // codeblock, err := ParseCodeblock()
     }
   }

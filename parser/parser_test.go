@@ -2,10 +2,13 @@ package parser_test
 
 import (
 	"fmt"
-	. "github.com/pwrtool/powertool/parser"
+	"io"
+	"os"
 	"reflect"
 	"strconv"
 	"testing"
+
+	. "github.com/pwrtool/powertool/parser"
 )
 
 func TestWashText(t *testing.T) {
@@ -344,40 +347,98 @@ func TestParseCodeblock(t *testing.T) {
 		input    [][]rune
 		expected Codeblock
 	}{
+		{
+			input: [][]rune{
+				[]rune("hello!"),
+				[]rune("```lang"),
+				[]rune("code language"),
+				[]rune("more stuff"),
+				[]rune("```"),
+			},
+			expected: Codeblock{
+				Text:     "code language\nmore stuff\n",
+				Language: "lang",
+			},
+		},
+	}
+
+	for _, c := range cases {
+		result, err := ParseCodeblock(c.input)
+
+		if err != nil {
+			fmt.Println("Got error: ", err)
+			t.Fail()
+		}
+
+		if !reflect.DeepEqual(result, c.expected) {
+			fmt.Println("Expected: ")
+			printCodeblock(c.expected)
+			fmt.Println("Got: ")
+			printCodeblock(result)
+			t.Fail()
+		}
+	}
+}
+
+func printCodeblock(codeblock Codeblock) {
+	fmt.Println("     Text: ", codeblock.Text)
+	fmt.Println("     Lang: ", codeblock.Language)
+}
+
+func TestParsePowerfile(t *testing.T) {
+	cases := []struct {
+		inputFilename    string
+		expected Powerfile
+	}{
     {
-      input: [][]rune{
-        []rune("hello!"),
-        []rune("```lang"),
-        []rune("code language"),
-        []rune("more stuff"),
-        []rune("```"),
-      },
-      expected: Codeblock{
-        Text: "code language\nmore stuff\n",
-        Language: "lang",
+      inputFilename: "./powertool.md",
+      expected: Powerfile{
+        Name: "My Powerfile",
+        Options: []Option{
+           
+        },
       },
     },
   }
 
-  for _, c := range cases {
-    result, err := ParseCodeblock(c.input)
+	for _, c := range cases {
+    input := ""
+    file, err := os.Open(c.inputFilename)
 
     if err != nil {
-      fmt.Println("Got error: ", err)
-      t.Fail()
+      panic("file open error during testing")
+    }
+    defer file.Close()
+
+    bytes, err := io.ReadAll(file)
+    
+    if err != nil {
+      panic("file reading error")
     }
 
-    if !reflect.DeepEqual(result, c.expected) {
-      fmt.Println("Expected: ")
-      printCodeblock(c.expected)
-      fmt.Println("Got: ")
-      printCodeblock(result)
-      t.Fail()
-    }
-  }
+    input = string(bytes)
+
+		result, errs := ParsePowerfile(input)
+		if len(errs) > 0 {
+			fmt.Println("Failed with some errors:")
+
+			for _, err := range errs {
+				fmt.Println(err)
+			}
+
+			t.Fail()
+		}
+
+		if !reflect.DeepEqual(result, c.expected) {
+			fmt.Println("Expected:")
+			printPowerfile(c.expected)
+			fmt.Println("Got:")
+			printPowerfile(result)
+
+			t.Fail()
+		}
+
+	}
 }
 
-func printCodeblock(codeblock Codeblock) {
-  fmt.Println("     Text: ", codeblock.Text)
-  fmt.Println("     Lang: ", codeblock.Language)
-}
+func printPowerfile(p Powerfile) {}
