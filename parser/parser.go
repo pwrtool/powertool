@@ -119,6 +119,40 @@ func ParsePowerfile(content string) (Powerfile, []error) {
   // until find another order 2 header, then send all of those 
   // to be parsed by ParseTool
 
+  toolName := ""
+  toolHeaders := []Header{}
+  for _, header := range headers {
+    title := string(header.Title)
+    if strings.HasPrefix("command: ", strings.ToLower(title)) && header.Order == 2{
+      if toolName != "" {
+        tool, err := ParseTool(toolName, toolHeaders)
+
+        if err != nil {
+          errs = append(errs, err)
+        }
+
+        powerfile.Tools = append(powerfile.Tools, tool)
+      }
+
+      toolHeaders = []Header{}
+      split := strings.Split(strings.ToLower(title), ":")
+
+      if len(split) < 2 {
+        panic("super bad error: there is somehow not a : in a string that has one")
+      }
+
+      name := strings.Join(split[1:], "")
+      name = strings.TrimLeft(name, " ")
+      name = strings.TrimLeft(name, "\t")
+
+      toolName = name
+    }
+
+    if header.Order == 3 {
+      toolHeaders = append(toolHeaders, header)
+    }
+  }
+
   return powerfile, errs
 }
 
