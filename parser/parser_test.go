@@ -2,9 +2,9 @@ package parser_test
 
 import (
 	"fmt"
+	. "github.com/pwrtool/powertool/parser"
 	"reflect"
 	"strconv"
-  . "github.com/pwrtool/powertool/parser"
 	"testing"
 )
 
@@ -211,134 +211,173 @@ func TestParseOptionLine(t *testing.T) {
 		{
 			input: []rune("- `-o`, `--option` = `default` > \"option\" "),
 			expected: Option{
-				Name:         "option",
-				DefaultValue: "default",
-        PossibleFlags: []string{"-o", "--option"},
-				IsBoolean:    false,
-				Position:     -1,
+				Name:          "option",
+				DefaultValue:  "default",
+				PossibleFlags: []string{"-o", "--option"},
+				IsBoolean:     false,
+				Position:      -1,
 			},
 		},
 		{
 			input: []rune("- `-o`, `--option` = | > \"option\" "),
 			expected: Option{
-				Name:         "option",
-				DefaultValue: "",
-        PossibleFlags: []string{"-o", "--option"},
-				IsBoolean:    true,
-				Position:     -1,
+				Name:          "option",
+				DefaultValue:  "",
+				PossibleFlags: []string{"-o", "--option"},
+				IsBoolean:     true,
+				Position:      -1,
 			},
 		},
 		{
 			input: []rune("- `-o`, `--option` = 1252 > \"option\" "),
 			expected: Option{
-				Name:         "option",
-				DefaultValue: "",
-        PossibleFlags: []string{"-o", "--option"},
-				IsBoolean:    false,
-				Position:     1252,
+				Name:          "option",
+				DefaultValue:  "",
+				PossibleFlags: []string{"-o", "--option"},
+				IsBoolean:     false,
+				Position:      1252,
 			},
 		},
 	}
 
-  for _, c := range cases {
-    result, err := ParseOptionLine(c.input);
+	for _, c := range cases {
+		result, err := ParseOptionLine(c.input)
 
-    if (!reflect.DeepEqual(result, c.expected)) {
-      fmt.Println("----- Expected: ")
-      printOption(c.expected)
-      fmt.Println("----- Got: ")
-      printOption(result)
-      fmt.Println("----- Had error: ")
-      fmt.Println(err)
+		if !reflect.DeepEqual(result, c.expected) {
+			fmt.Println("----- Expected: ")
+			printOption(c.expected)
+			fmt.Println("----- Got: ")
+			printOption(result)
+			fmt.Println("----- Had error: ")
+			fmt.Println(err)
 
-      t.Fail()
-    }
+			t.Fail()
+		}
 
-    if (err != c.err) {
-      fmt.Println("Expected error: ")
-      fmt.Println(c.err)
-      fmt.Println("Got error: ")
-      fmt.Println(err)
-    }
-  }
+		if err != c.err {
+			fmt.Println("Expected error: ")
+			fmt.Println(c.err)
+			fmt.Println("Got error: ")
+			fmt.Println(err)
+		}
+	}
 
 }
 
-
 func printOption(o Option) {
-  fmt.Println("Name: ", o.Name)
-  fmt.Println("Default: ", o.DefaultValue)
-  fmt.Println("PossibleFlags: ", o.PossibleFlags)
-  fmt.Println("IsBoolean: ", o.IsBoolean)
-  fmt.Println("Position: ", o.Position)
+	fmt.Println("Name: ", o.Name)
+	fmt.Println("Default: ", o.DefaultValue)
+	fmt.Println("PossibleFlags: ", o.PossibleFlags)
+	fmt.Println("IsBoolean: ", o.IsBoolean)
+	fmt.Println("Position: ", o.Position)
 }
 
 func TestParseOptions(t *testing.T) {
-  cases := []struct{
-    input [][]rune
-    expected []Option
-  }{
+	cases := []struct {
+		input    [][]rune
+		expected []Option
+	}{
+		{
+			input: [][]rune{
+				[]rune("yap yap yap"),
+				[]rune("- `-o`, `--option` = `default` > \"option\""),
+				[]rune("yap yap yap"),
+				[]rune("blah blah blah"),
+				[]rune("- `-b` = | > \"boolean\" "),
+				[]rune("blah blah blah"),
+			},
+			expected: []Option{
+				{
+					Name:          "option",
+					DefaultValue:  "default",
+					PossibleFlags: []string{"-o", "--option"},
+					IsBoolean:     false,
+					Position:      -1,
+				},
+				{
+					Name:          "boolean",
+					DefaultValue:  "",
+					PossibleFlags: []string{"-b"},
+					IsBoolean:     true,
+					Position:      -1,
+				},
+			},
+		},
+	}
+
+	for _, c := range cases {
+		result, err := ParseOptions(c.input)
+
+		if err != nil {
+			fmt.Println("Got an error:")
+			fmt.Println(err)
+			t.Fail()
+		}
+
+		if !reflect.DeepEqual(result, c.expected) {
+			fmt.Println("Test failed.")
+
+			fmt.Println("-------------------")
+			fmt.Println("Expected:")
+			fmt.Println("-------------------")
+			for _, o := range c.expected {
+				printOption(o)
+				fmt.Println("")
+			}
+
+			fmt.Println("-------------------")
+			fmt.Println("Got:")
+			fmt.Println("-------------------")
+			for _, o := range result {
+				printOption(o)
+				fmt.Println("")
+			}
+
+			t.Fail()
+		}
+
+	}
+}
+
+func TestParseCodeblock(t *testing.T) {
+	cases := []struct {
+		input    [][]rune
+		expected Codeblock
+	}{
     {
       input: [][]rune{
-        []rune("yap yap yap"),
-        []rune("- `-o`, `--option` = `default` > \"option\""),
-        []rune("yap yap yap"),
-        []rune("blah blah blah"),
-        []rune("- `-b` = | > \"boolean\" "),
-        []rune("blah blah blah"),
+        []rune("hello!"),
+        []rune("```lang"),
+        []rune("code language"),
+        []rune("more stuff"),
+        []rune("```"),
       },
-      expected: []Option{
-        {
-          Name: "option",
-          DefaultValue: "default",
-          PossibleFlags: []string{"-o", "--option"},
-          IsBoolean: false,
-          Position: -1,
-        },
-        {
-          Name: "boolean",
-          DefaultValue: "",
-          PossibleFlags: []string{"-b"},
-          IsBoolean: true,
-          Position: -1,
-        },
+      expected: Codeblock{
+        Text: "code language\nmore stuff\n",
+        Language: "lang",
       },
     },
   }
 
-
   for _, c := range cases {
-    result, err := ParseOptions(c.input)
+    result, err := ParseCodeblock(c.input)
 
     if err != nil {
-      fmt.Println("Got an error:")
-      fmt.Println(err)
+      fmt.Println("Got error: ", err)
       t.Fail()
     }
 
     if !reflect.DeepEqual(result, c.expected) {
-      fmt.Println("Test failed.")
-
-      fmt.Println("-------------------")
-      fmt.Println("Expected:")
-      fmt.Println("-------------------")
-      for _, o := range c.expected {
-        printOption(o)
-        fmt.Println("")
-      }
-
-      fmt.Println("-------------------")
-      fmt.Println("Got:")
-      fmt.Println("-------------------")
-      for _, o := range result {
-        printOption(o)
-        fmt.Println("")
-      }
-
+      fmt.Println("Expected: ")
+      printCodeblock(c.expected)
+      fmt.Println("Got: ")
+      printCodeblock(result)
       t.Fail()
     }
-
   }
 }
 
-
+func printCodeblock(codeblock Codeblock) {
+  fmt.Println("     Text: ", codeblock.Text)
+  fmt.Println("     Lang: ", codeblock.Language)
+}

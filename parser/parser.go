@@ -464,10 +464,10 @@ func ParseCodeblock(lines [][]rune) (Codeblock, error) {
       if runes.HasPrefix(line, []rune("```")) {
         break
       }
-      codeblock.Text += string(line) + `\n`
+      codeblock.Text += string(line) + "\n"
     } else {
       if runes.HasPrefix(line, []rune("```")) {
-        codeblock.Language = string(line[2:])
+        codeblock.Language = string(line[3:])
         inside = true
       }
     }
