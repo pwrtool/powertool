@@ -456,6 +456,8 @@ func ParseCodeblock(lines [][]rune) (Codeblock, error) {
     Language: "",
   }
 
+  var err error = nil
+
   inside := false
   for _, line := range lines {
     if inside {
@@ -469,8 +471,11 @@ func ParseCodeblock(lines [][]rune) (Codeblock, error) {
         inside = true
       }
     }
-    
+  }
+
+  if inside == false {
+    err = errors.New("no codeblock found")
   }
   
-  return codeblock, errors.New("not implemented")
+  return codeblock, err
 }
