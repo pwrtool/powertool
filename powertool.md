@@ -15,7 +15,7 @@ echo "nixos works differently"
 nix-shell -p ...
 ```
 
-## Run
+## Command: Run
 ### Description
 Blah blah blah the description can be as long as you want.
 

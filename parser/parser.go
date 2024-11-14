@@ -1,4 +1,7 @@
 package parser
+// TODO - don't bother with any of this rune business
+// just parse strings and ignore most of the text
+// whole thing honestly needs a rewrite
 
 import (
 	"errors"
@@ -39,6 +42,9 @@ type Header struct {
 	Title []rune
 }
 
+// TODO - everything should have a "soft error"
+// if there's an error, we report it, but keep going to try to get
+// something useable
 func ParsePowerfile(content string) (Powerfile, []error) {
   powerfile := Powerfile{}
   lines := WashText(content)
@@ -52,8 +58,106 @@ func ParsePowerfile(content string) (Powerfile, []error) {
     return powerfile, []error{errors.New("no headers in markdown file")}
   }
 
+  titleHeader := headers[0]
 
-  return powerfile, nil
+  if titleHeader.Order != 1 {
+    return powerfile, []error{errors.New("powerfile does not start with a title")}
+  }
+
+  powerfile.Name = string(titleHeader.Title)
+
+  i := 1
+  errs := []error{}
+
+  // find the base options
+  for i < len(headers) {
+    header := headers[i]
+    title := string(header.Title)
+
+    if strings.ToLower(title) == "options" && header.Order == 2 {
+      powerfile.Options, err = ParseOptions(header.Text)
+
+      if err != nil {
+        errs = append(errs, err)
+      }
+    }
+
+    i += 1
+  }
+
+  // find the setup instructions
+  mode := "looking"
+  setupHeaders := []Header{}
+
+  for i < len(headers) {
+    header := headers[i]
+    if mode == "looking" {
+      title := string(header.Title)
+      if strings.ToLower(title) == "setup" && header.Order == 2 {
+        mode = "adding"
+      }
+
+    } else {
+      if header.Order != 3 {
+        break
+      }
+      setupHeaders = append(setupHeaders, header)
+    }
+
+    i += 1
+  }
+
+  setups, moreErrs := ParseSetup(setupHeaders)
+  for _, err := range moreErrs {
+    errs = append(errs, err)
+  }
+  powerfile.Setups = setups
+
+  // Go through it another time, finding any commands
+  //
+  // when we see something that starts with "Command:" iterate
+  // until find another order 2 header, then send all of those 
+  // to be parsed by ParseTool
+
+  return powerfile, errs
+}
+
+
+func ParseTool(name string, headers []Header) (Tool, error) {
+  tool := Tool{}
+  tool.Name = name
+
+  if len(headers) == 0 {
+    return tool, errors.New("no headers to parse tool from")
+  }
+
+  for _, header := range headers {
+    title := strings.ToLower(string(header.Title))
+
+    if header.Order == 3 && title == "command" {
+      // codeblock, err := ParseCodeblock()
+    }
+  }
+
+  return tool, nil
+}
+
+func ParseSetup(headers []Header) (map[string]Codeblock, []error) {
+  setup := map[string]Codeblock{}
+  errs := []error{}
+  
+  for _, header := range headers {
+    system := strings.ToLower(string(header.Title))
+    codeblock, err := ParseCodeblock(header.Text)
+
+    if err != nil {
+      errs = append(errs, err)
+    } else {
+      setup[system] = codeblock
+    }
+  }
+
+  return setup, errs
 }
 
 // we want to:
@@ -350,6 +454,22 @@ func ParseCodeblock(lines [][]rune) (Codeblock, error) {
   codeblock := Codeblock{
     Text: "",
     Language: "",
+  }
+
+  inside := false
+  for _, line := range lines {
+    if inside {
+      if runes.HasPrefix(line, []rune("```")) {
+        break
+      }
+      codeblock.Text += string(line) + `\n`
+    } else {
+      if runes.HasPrefix(line, []rune("```")) {
+        codeblock.Language = string(line[2:])
+        inside = true
+      }
+    }
+    
   }
   
   return codeblock, errors.New("not implemented")
