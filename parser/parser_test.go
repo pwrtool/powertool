@@ -24,6 +24,16 @@ func TestWashText(t *testing.T) {
 			},
 			input: "this is some text\n\rthis is some more text\n \t  \r \n \r \nthis is the last text",
 		},
+		{
+			expected: [][]rune{
+				[]rune("this is some text"),
+				[]rune("``` blah blah blah"),
+        []rune(""),
+				[]rune("this is the last text"),
+        []rune("```"),
+			},
+			input: "this is some text\n\n\n``` blah blah blah\n\nthis is the last text\n```\n\n",
+		},
 	}
 
 	for _, c := range cases {

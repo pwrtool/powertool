@@ -207,20 +207,29 @@ func WashText(content string) [][]rune {
 
 	content = strings.ReplaceAll(content, "\r", "")
 	lines := strings.Split(content, "\n")
+  inCodeblock := false
 
 	for _, line := range lines {
-		isWhitespace := true
+    if inCodeblock {
+      text = append(text, []rune(line))
+    } else {
+      isWhitespace := true
 
-		for _, c := range line {
-			if !(c == ' ' || c == '\t') {
-				isWhitespace = false
-				break
-			}
-		}
+      for _, c := range line {
+        if !(c == ' ' || c == '\t') {
+          isWhitespace = false
+          break
+        }
+      }
 
-		if !isWhitespace {
-			text = append(text, []rune(line))
-		}
+      if !isWhitespace {
+        text = append(text, []rune(line))
+      }
+    }
+
+    if strings.HasPrefix(line, "```") {
+      inCodeblock = !inCodeblock
+    }
 	}
 
 	return text
@@ -281,8 +290,8 @@ func GetAllHeaders(lines [][]rune) ([]Header, error) {
 
 func ParseHeaderLine(line []rune) (int, []rune, error) {
 	if len(line) < 1 {
-		// this should be unreachable
-		return 0, []rune{}, errors.New("Tried to parse line with length of 0")
+    // this is reachable. It means that it's not a header
+		return 0, []rune{}, nil
 	}
 
 	octothorpes := 0
