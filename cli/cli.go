@@ -1,6 +1,8 @@
 package cli
+
 import (
-  "github.com/pwrtool/powertool/parser"
+	"errors"
+	"github.com/pwrtool/powertool/parser"
 )
 
 const STRING_FALSE = "FALSE"
@@ -8,7 +10,7 @@ const STRING_TRUE = "TRUE"
 
 func ParseCommandArgs(args []string, options []parser.Option) (map[string]string, error) {
   argMap := map[string]string{}
-  requiredOptions := []string{}
+  unsatisfiedOptions := []string{}
 
   for _, option := range options {
     if option.IsBoolean {
@@ -17,8 +19,14 @@ func ParseCommandArgs(args []string, options []parser.Option) (map[string]string
       argMap[option.Name] = option.DefaultValue;
     } else {
       // option is required!
-      requiredOptions = append(requiredOptions, option.Name)
+      unsatisfiedOptions = append(unsatisfiedOptions, option.Name)
     }
+  }
+
+
+
+  if len(unsatisfiedOptions) > 0 {
+    return argMap, errors.New("Option " + unsatisfiedOptions[0] + " was not satisfied")
 
   }
 
