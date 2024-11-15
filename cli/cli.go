@@ -2,6 +2,7 @@ package cli
 
 import (
 	"errors"
+	"fmt"
 	"github.com/pwrtool/powertool/parser"
 	"strconv"
 	"strings"
@@ -29,8 +30,10 @@ func ParseCommandArgs(args []string, options []parser.Option) (map[string]string
 	var positional = 1
 
 	for i < len(args) {
+		fmt.Printf("Starting loop at %d\n", i)
 		if !(isFlag(args[i])) {
 			// it's a positional arg
+			fmt.Println("Found positional argument")
 			option, err := getOptionWithPosition(positional, options)
 
 			if err != nil {
@@ -40,38 +43,40 @@ func ParseCommandArgs(args []string, options []parser.Option) (map[string]string
 			argMap[option.Name] = args[i]
 
 			positional += 1
-			continue
-		}
-
-		option, err := getOptionWithArg(args[i], options)
-		if err != nil {
-			return argMap, err
-		}
-
-		if option.IsBoolean {
-			argMap[option.Name] = STRING_TRUE
 		} else {
-			if i+1 >= len(args) {
-				return argMap, errors.New("No value for flag " + args[i])
-			}
-			i += 1
-
-			value := args[i]
-
-			if isFlag(value) {
-				return argMap, errors.New("Expected value, got flag " + value)
+			option, err := getOptionWithArg(args[i], options)
+			if err != nil {
+				return argMap, err
 			}
 
-			argMap[option.Name] = value
+			if option.IsBoolean {
+				argMap[option.Name] = STRING_TRUE
+			} else {
+				if i+1 >= len(args) {
+					return argMap, errors.New("No value for flag " + args[i])
+				}
+				i += 1
+
+				value := args[i]
+
+				if isFlag(value) {
+					return argMap, errors.New("Expected value, got flag " + value)
+				}
+
+				argMap[option.Name] = value
+			}
+
 		}
-
 		i += 1
 	}
 
-	if len(unsatisfiedOptions) > 0 {
-		return argMap, errors.New("Option " + unsatisfiedOptions[0] + " was not satisfied")
+  for _, unsatisfiedOption := range unsatisfiedOptions {
+    _, ok := argMap[unsatisfiedOption]
 
-	}
+    if !ok {
+      return argMap, errors.New("Did not satisfy option " + unsatisfiedOption)
+    }
+  }
 
 	return argMap, nil
 
