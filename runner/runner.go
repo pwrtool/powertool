@@ -22,11 +22,37 @@ func TransformCodeblock(codeblock []parser.Codeblock, arguments map[string]strin
 }
 
 // this is for an expression already found between {{}}
-func ParseExpression(text string) {
+func ParseExpression(text string) (Expression, error) {
+  text = StripNonliteralWhitespace(text)
 	if strings.Contains(text, "?") {
 		// we are looking at a boolean expression
+    expression := BooleanExpression{}
 
-	}
+    split := strings.Split(text, "?")
+
+
+    // if this fails then something is very very wrong
+    // ther should be at least length 2 in the split 
+    // because we just checked that
+    expression.OptionName = split[0]
+    remainder := strings.Join(split[1:], "")
+
+    literals := ExtractInsideLiterals(remainder) 
+
+    if len(literals) != 2 {
+      return expression, errors.New("found more than 2 or less than 2 literals")
+    }
+
+    expression.TrueValue = literals[0]
+    expression.FalseValue = literals[1]
+
+    return expression, nil
+
+	} else {
+    expression := OptionExpression{}
+    expression.OptionName = text
+    return expression, nil
+  }
 }
 
 type Expression interface {
@@ -109,4 +135,34 @@ func StripNonliteralWhitespace(s string) string {
 	}
 
 	return string(newString)
+}
+
+func ExtractInsideLiterals(s string) []string {
+  strings := []string{}
+  inLiteral := false
+  literalTerminator := '"'
+  currentText := []rune{}
+
+	for _, c := range s {
+		if inLiteral {
+			if c == literalTerminator {
+				inLiteral = false
+        strings = append(strings, string(currentText))
+        currentText = []rune{}
+			} else {
+        currentText = append(currentText, c)
+      }
+		} else {
+			if c == '\'' {
+				inLiteral = true
+				literalTerminator = '\''
+			}
+			if c == '"' {
+				inLiteral = true
+				literalTerminator = '"'
+			}
+		}
+	}
+
+  return strings
 }

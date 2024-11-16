@@ -2,6 +2,7 @@ package runner_test
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 
 	. "github.com/pwrtool/powertool/runner"
@@ -36,4 +37,37 @@ func TestStripNonliteralWhitespace(t *testing.T) {
       t.Fail()
     }
   } 
+}
+
+
+func TestExtractInsideLiterals(t *testing.T) {
+  cases := []struct {
+    input string
+    expected []string
+  }{
+    {
+      input: "this is 'some stuff' and 'some other stuff' and \"some final stuff\"",
+      expected: []string{
+        "some stuff",
+        "some other stuff",
+        "some final stuff",
+      },
+    },
+  }
+
+
+  for _, c := range cases {
+    result := ExtractInsideLiterals(c.input)
+
+
+    if !reflect.DeepEqual(result, c.expected) {
+      fmt.Println("Expected: ")
+      fmt.Printf("%#v\n", c.expected)
+      fmt.Println("Got:")
+      fmt.Printf("%#v\n", result)
+
+      t.Fail()
+    }
+  }
+
 }
