@@ -2,9 +2,10 @@ package runner
 
 import (
 	"errors"
+	"strings"
 
+	"github.com/pwrtool/powertool/cli"
 	"github.com/pwrtool/powertool/parser"
-  "github.com/pwrtool/powertool/cli"
 )
 
 type Codefile struct {
@@ -19,20 +20,38 @@ func TransformCodeblock(codeblock []parser.Codeblock, arguments map[string]strin
 	return codefile, nil
 }
 
-type Token interface {
+
+// this is for an expression already found between {{}}
+func ParseExpression(text string) {
+  if strings.Contains(text, "?") {
+    // we are looking at a boolean expression
+  }
+}
+
+type Expression interface {
 	Evaluate(arguments map[string]string) (string, error)
 }
 
-type Text struct {
+type TextExpression struct {
 	Content string
 }
 
-func (t Text) Evaluate(_ map[string]string) (string, error) {
+func (t TextExpression) Evaluate(_ map[string]string) (string, error) {
 	return t.Content, nil
 }
 
 type OptionExpression struct {
 	OptionName string
+}
+
+func (t OptionExpression) Evaluate(args map[string]string) (string, error) {
+  value, ok := args[t.OptionName]
+
+  if !ok {
+    return "", errors.New("Arg " + t.OptionName + " not found when evaluating option expression")
+  }
+
+  return value, nil
 }
 
 type BooleanExpression struct {
@@ -57,3 +76,4 @@ func (t BooleanExpression) Evaluate(args map[string]string) (string, error) {
 
   return "", errors.New("Tried to evaluate non-boolean value " + t.OptionName + " as a boolean")
 }
+

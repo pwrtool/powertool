@@ -441,9 +441,9 @@ func TestParsePowerfile(t *testing.T) {
 
 		if !reflect.DeepEqual(result, c.expected) {
 			fmt.Println("Expected:")
-			printPowerfile(c.expected)
+			fmt.Printf("%#v\n", c.expected)
 			fmt.Println("Got:")
-			printPowerfile(result)
+			fmt.Printf("%#v\n", result)
 
 			t.Fail()
 		}
@@ -451,4 +451,3 @@ func TestParsePowerfile(t *testing.T) {
 	}
 }
 
-func printPowerfile(p Powerfile) {}

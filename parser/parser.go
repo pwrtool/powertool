@@ -1,13 +1,16 @@
 package parser
+
 // TODO - don't bother with any of this rune business
 // just parse strings and ignore most of the text
 // whole thing honestly needs a rewrite
 
 import (
 	"errors"
-	"github.com/pwrtool/powertool/runes"
+	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/pwrtool/powertool/runes"
 )
 
 type Powerfile struct {
@@ -82,6 +85,7 @@ func ParsePowerfile(content string) (Powerfile, []error) {
       }
     }
 
+  
     i += 1
   }
 
@@ -201,7 +205,6 @@ func ParseSetup(headers []Header) (map[string]Codeblock, []error) {
 // - remove all \r
 // - split into [][]rune based on line (\n)
 // - remove any empty lines for convinience
-// TODO - if inside a code block, stop removing empty lines
 func WashText(content string) [][]rune {
 	text := [][]rune{}
 
@@ -393,6 +396,10 @@ func ParseOptionLine(line []rune) (Option, error) {
 	option.Position = result.position
 	option.IsBoolean = result.isBoolean
 
+  if !isValidOptionName(option.Name) {
+    return option, errors.New("Invalid option name: " + option.Name)
+  }
+
 	return option, nil
 }
 
@@ -524,4 +531,17 @@ func ParseCodeblock(lines [][]rune) (Codeblock, error) {
   }
   
   return codeblock, err
+}
+
+
+// TODO - fix this
+func isValidOptionName(name string) bool {
+  validCharacters := []rune("abcdefghijklmnopqrstuvwxyz1234567890-_")
+  for _, c := range name {
+    if !slices.Contains(validCharacters, c) {
+      return false
+    }
+  }
+
+  return true
 }
