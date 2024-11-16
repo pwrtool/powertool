@@ -21,6 +21,7 @@ func TransformCodeblock(codeblock []parser.Codeblock, arguments map[string]strin
 	return codefile, nil
 }
 
+
 // this is for an expression already found between {{}}
 func ParseExpression(text string) (Expression, error) {
   text = StripNonliteralWhitespace(text)
@@ -110,7 +111,6 @@ func StripNonliteralWhitespace(s string) string {
 	inLiteral := false
 	literalTerminator := '"'
 
-	// TODO - what about escape characters?
 	for _, c := range s {
 		if inLiteral {
 			if c == literalTerminator {
