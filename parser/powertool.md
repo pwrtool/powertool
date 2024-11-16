@@ -21,9 +21,6 @@ Blah blah blah the description can be as long as you want.
 
 It can span multiple lines. Just make sure that it is followed by `Options` or an error will be thrown
 
-Also note that the requirements section can be ignored, but it is still useful. In it you can list
-
-all of the extra executables your program expects to find and
 ### Options
 - `-o`, `--option` = `default` > "option"
     This is an argument with the default value of `default` if nothing better
@@ -54,18 +51,9 @@ echo {{option}}
 echo {{first}}
 
 # we can also use booleans:
-echo {{!boolean ? "true!" : "false :("}}
+echo {{boolean ? "true!" : "false :("}}
 # the above would insert "true" if the boolean is found, and
 # false otherwise. The ! before the boolean is crucial
 
 # if we need to do a bit more, we can use an if statement
-{{!ifblock boolean}}
-
-echo "This stuff will inserted if boolean is true"
-
-{{!}}
-
-echo "This stuff will be inserted if boolean is false"
-
-{{!endif}}
 ```
