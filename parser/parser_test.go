@@ -414,11 +414,11 @@ func TestParsePowerfile(t *testing.T) {
 					},
 				},
 				Setups: map[string]Codeblock{
-					"MacOS": {
+					"macos": {
 						Language: "bash",
 						Text:     "brew install a bunch of stuff\n",
 					},
-					"NixOS": {
+					"nixos": {
 						Language: "bash",
 						Text:     "echo \"nixos works differently\"\nnix-shell -p ...\n",
 					},
@@ -576,7 +576,7 @@ func TestParseSetups(t *testing.T) {
           Order: 3,
           Text: [][]rune{
             []rune("```bash"),
-            []rune("blah blah balh"),
+            []rune("blah blah blah"),
             []rune("```"),
           },
         },
@@ -593,34 +593,39 @@ func TestParseSetups(t *testing.T) {
           Title: []rune("Windows"),
           Order: 3,
           Text: [][]rune{
-            []rune("```bash"),
+            []rune("```powershell"),
             []rune("GO FUCK YOURSELF!!!!"),
             []rune("```"),
           },
         },
       },
       expected: map[string]Codeblock{
-        "MacOS": {
+        "macos": {
           Language: "bash",
-          Text: "blah blah blah",
+          Text: "blah blah blah\n",
         },
-        "Linux": {
+        "linux": {
           Language: "bash",
-          Text: "more linux stuff",
+          Text: "more linux stuff\n",
         },
-        "Windows": {
+        "windows": {
           Language: "powershell",
-          Text: "GO FUCK YOURSELF!!!!",
+          Text: "GO FUCK YOURSELF!!!!\n",
         },
       },
     },
   }
 
   for _, c := range cases {
-    result, err := ParseSetup(c.input)
+    result, errs := ParseSetup(c.input)
 
-    if err != nil {
-      fmt.Println("Got error: ", err)
+    if len(errs) != 0 {
+      fmt.Println("Got errors: ")
+
+      for _, err := range errs {
+        fmt.Println(err)
+      }
+
       t.Fail()
     }
 
