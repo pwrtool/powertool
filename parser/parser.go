@@ -9,7 +9,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-
+  "fmt"
 	"github.com/pwrtool/powertool/runes"
 )
 
@@ -53,6 +53,7 @@ func ParsePowerfile(content string) (Powerfile, []error) {
   lines := WashText(content)
   headers, err := GetAllHeaders(lines)
 
+
   if err != nil {
     return powerfile, []error{err}
   }
@@ -69,6 +70,7 @@ func ParsePowerfile(content string) (Powerfile, []error) {
 
   powerfile.Name = string(titleHeader.Title)
 
+
   i := 1
   errs := []error{}
 
@@ -78,14 +80,15 @@ func ParsePowerfile(content string) (Powerfile, []error) {
     title := string(header.Title)
 
     if strings.ToLower(title) == "options" && header.Order == 2 {
-      powerfile.Options, err = ParseOptions(header.Text)
+      fmt.Println("Found options header")
+      options, err := ParseOptions(header.Text)
+      fmt.Printf("%#v\n",options)
+      powerfile.Options = options
 
       if err != nil {
         errs = append(errs, err)
       }
     }
-
-  
     i += 1
   }
 
@@ -112,16 +115,11 @@ func ParsePowerfile(content string) (Powerfile, []error) {
   }
 
   setups, moreErrs := ParseSetup(setupHeaders)
+  fmt.Printf("%#v\n", setups)
   for _, err := range moreErrs {
     errs = append(errs, err)
   }
   powerfile.Setups = setups
-
-  // Go through it another time, finding any commands
-  //
-  // when we see something that starts with "Command:" iterate
-  // until find another order 2 header, then send all of those 
-  // to be parsed by ParseTool
 
   toolName := ""
   toolHeaders := []Header{}

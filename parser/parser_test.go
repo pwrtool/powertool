@@ -403,8 +403,79 @@ func TestParsePowerfile(t *testing.T) {
 		{
 			inputFilename: "./powertool.md",
 			expected: Powerfile{
-				Name:    "My Powerfile",
-				Options: []Option{},
+				Name: "My Powerfile",
+				Options: []Option{
+					{
+						Name:          "silent",
+						DefaultValue:  "silent",
+						PossibleFlags: []string{"-s", "--silent"},
+						IsBoolean:     false,
+						Position:      -1,
+					},
+				},
+				Setups: map[string]Codeblock{
+					"MacOS": {
+						Language: "bash",
+						Text:     "brew install a bunch of stuff\n",
+					},
+					"NixOS": {
+						Language: "bash",
+						Text:     "echo \"nixos works differently\"\nnix-shell -p ...\n",
+					},
+				},
+				Tools: []Tool{
+					{
+						Name: "run",
+						Options: []Option{
+							{
+								Name:          "option",
+								DefaultValue:  "default",
+								PossibleFlags: []string{"-o", "--option"},
+								IsBoolean:     false,
+								Position:      -1,
+							},
+							{
+								Name:          "first",
+								DefaultValue:  "",
+								PossibleFlags: []string{},
+								Position:      1,
+								IsBoolean:     false,
+							},
+							{
+								Name:          "boolean",
+								DefaultValue:  "",
+								IsBoolean:     true,
+								Position:      -1,
+								PossibleFlags: []string{"-b", "--boolean"},
+							},
+							{
+								Name:          "second",
+								DefaultValue:  "whatever",
+								IsBoolean:     false,
+								Position:      2,
+								PossibleFlags: []string{},
+							},
+						},
+						Command: Codeblock{
+							Language: "bash",
+							Text: `#!/usr/bin/env bash
+# a shebang is necessary at the top of the command
+go run .
+
+# we can insert normal options from the command like so:
+echo {{option}}
+echo {{first}}
+
+# we can also use booleans:
+echo {{boolean ? "true!" : "false :("}}
+# the above would insert "true" if the boolean is found, and
+# false otherwise. The ! before the boolean is crucial
+
+# if we need to do a bit more, we can use an if statement
+              `,
+						},
+					},
+				},
 			},
 		},
 	}
@@ -492,3 +563,75 @@ func TestParsePowerfile(t *testing.T) {
 //     }
 //   }
 // }
+
+func TestParseSetups(t *testing.T) {
+  cases := []struct{
+    input []Header
+    expected map[string]Codeblock
+  }{
+    {
+      input: []Header{
+        {
+          Title: []rune("MacOS"),
+          Order: 3,
+          Text: [][]rune{
+            []rune("```bash"),
+            []rune("blah blah balh"),
+            []rune("```"),
+          },
+        },
+        {
+          Title: []rune("Linux"),
+          Order: 3,
+          Text: [][]rune{
+            []rune("```bash"),
+            []rune("more linux stuff"),
+            []rune("```"),
+          },
+        },
+        {
+          Title: []rune("Windows"),
+          Order: 3,
+          Text: [][]rune{
+            []rune("```bash"),
+            []rune("GO FUCK YOURSELF!!!!"),
+            []rune("```"),
+          },
+        },
+      },
+      expected: map[string]Codeblock{
+        "MacOS": {
+          Language: "bash",
+          Text: "blah blah blah",
+        },
+        "Linux": {
+          Language: "bash",
+          Text: "more linux stuff",
+        },
+        "Windows": {
+          Language: "powershell",
+          Text: "GO FUCK YOURSELF!!!!",
+        },
+      },
+    },
+  }
+
+  for _, c := range cases {
+    result, err := ParseSetup(c.input)
+
+    if err != nil {
+      fmt.Println("Got error: ", err)
+      t.Fail()
+    }
+
+    if !reflect.DeepEqual(result, c.expected) {
+      fmt.Println("Expected:")
+      fmt.Printf("%#v\n", c.expected)
+      fmt.Println("Got:")
+      fmt.Printf("%#v\n", result)
+      
+      t.Fail()
+    }
+  }
+}
+
