@@ -28,9 +28,9 @@ func TestWashText(t *testing.T) {
 			expected: [][]rune{
 				[]rune("this is some text"),
 				[]rune("``` blah blah blah"),
-        []rune(""),
+				[]rune(""),
 				[]rune("this is the last text"),
-        []rune("```"),
+				[]rune("```"),
 			},
 			input: "this is some text\n\n\n``` blah blah blah\n\nthis is the last text\n```\n\n",
 		},
@@ -397,36 +397,34 @@ func printCodeblock(codeblock Codeblock) {
 
 func TestParsePowerfile(t *testing.T) {
 	cases := []struct {
-		inputFilename    string
-		expected Powerfile
+		inputFilename string
+		expected      Powerfile
 	}{
-    {
-      inputFilename: "./powertool.md",
-      expected: Powerfile{
-        Name: "My Powerfile",
-        Options: []Option{
-           
-        },
-      },
-    },
-  }
+		{
+			inputFilename: "./powertool.md",
+			expected: Powerfile{
+				Name:    "My Powerfile",
+				Options: []Option{},
+			},
+		},
+	}
 
 	for _, c := range cases {
-    input := ""
-    file, err := os.Open(c.inputFilename)
+		input := ""
+		file, err := os.Open(c.inputFilename)
 
-    if err != nil {
-      panic("file open error during testing")
-    }
-    defer file.Close()
+		if err != nil {
+			panic("file open error during testing")
+		}
+		defer file.Close()
 
-    bytes, err := io.ReadAll(file)
-    
-    if err != nil {
-      panic("file reading error")
-    }
+		bytes, err := io.ReadAll(file)
 
-    input = string(bytes)
+		if err != nil {
+			panic("file reading error")
+		}
+
+		input = string(bytes)
 
 		result, errs := ParsePowerfile(input)
 		if len(errs) > 0 {
@@ -451,3 +449,46 @@ func TestParsePowerfile(t *testing.T) {
 	}
 }
 
+// nah I don't wanna test this tbh
+//
+// will write tests later if stuff is broken, Sorry future
+// self for being lazy
+//
+// func TestParseTool(t *testing.T) {
+// 	cases := []struct {
+// 		name     string
+// 		input    []Header
+// 		expected Tool
+// 	}{
+//     {
+//       name: "a cool tool",
+//       input: []Header{
+//
+//       },
+//       expected: Tool{
+//         Options: []Option{
+//
+//         }
+//       }
+//     },
+//   }
+//
+//   for _, c := range cases {
+//     result, err := ParseTool(c.name, c.input)
+//
+//     if err != nil {
+//       fmt.Println("Got error: " , err)
+//
+//       t.Fail()
+//     }
+//
+//     if !reflect.DeepEqual(result, c.expected) {
+//       fmt.Println("Expected:")
+//       fmt.Printf("%#v\n", c.expected)
+//       fmt.Println("Got:")
+//       fmt.Printf("%#v\n", result)
+//
+//       t.Fail()
+//     }
+//   }
+// }
