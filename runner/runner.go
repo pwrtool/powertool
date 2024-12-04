@@ -21,39 +21,37 @@ func TransformCodeblock(codeblock []parser.Codeblock, arguments map[string]strin
 	return codefile, nil
 }
 
-
 // this is for an expression already found between {{}}
 func ParseExpression(text string) (Expression, error) {
-  text = StripNonliteralWhitespace(text)
+	text = StripNonliteralWhitespace(text)
 	if strings.Contains(text, "?") {
 		// we are looking at a boolean expression
-    expression := BooleanExpression{}
+		expression := BooleanExpression{}
 
-    split := strings.Split(text, "?")
+		split := strings.Split(text, "?")
 
+		// if this fails then something is very very wrong
+		// ther should be at least length 2 in the split
+		// because we just checked that
+		expression.OptionName = split[0]
+		remainder := strings.Join(split[1:], "")
 
-    // if this fails then something is very very wrong
-    // ther should be at least length 2 in the split 
-    // because we just checked that
-    expression.OptionName = split[0]
-    remainder := strings.Join(split[1:], "")
+		literals := ExtractInsideLiterals(remainder)
 
-    literals := ExtractInsideLiterals(remainder) 
+		if len(literals) != 2 {
+			return expression, errors.New("found more than 2 or less than 2 literals")
+		}
 
-    if len(literals) != 2 {
-      return expression, errors.New("found more than 2 or less than 2 literals")
-    }
+		expression.TrueValue = literals[0]
+		expression.FalseValue = literals[1]
 
-    expression.TrueValue = literals[0]
-    expression.FalseValue = literals[1]
-
-    return expression, nil
+		return expression, nil
 
 	} else {
-    expression := OptionExpression{}
-    expression.OptionName = text
-    return expression, nil
-  }
+		expression := OptionExpression{}
+		expression.OptionName = text
+		return expression, nil
+	}
 }
 
 type Expression interface {
@@ -138,20 +136,20 @@ func StripNonliteralWhitespace(s string) string {
 }
 
 func ExtractInsideLiterals(s string) []string {
-  strings := []string{}
-  inLiteral := false
-  literalTerminator := '"'
-  currentText := []rune{}
+	strings := []string{}
+	inLiteral := false
+	literalTerminator := '"'
+	currentText := []rune{}
 
 	for _, c := range s {
 		if inLiteral {
 			if c == literalTerminator {
 				inLiteral = false
-        strings = append(strings, string(currentText))
-        currentText = []rune{}
+				strings = append(strings, string(currentText))
+				currentText = []rune{}
 			} else {
-        currentText = append(currentText, c)
-      }
+				currentText = append(currentText, c)
+			}
 		} else {
 			if c == '\'' {
 				inLiteral = true
@@ -164,5 +162,28 @@ func ExtractInsideLiterals(s string) []string {
 		}
 	}
 
-  return strings
+	return strings
 }
+
+func TokenizeText(text string) []Token {
+	tokens := []Token{}
+
+	for _, c := range text {
+
+	}
+
+	return tokens
+}
+
+type Token struct {
+	kind    TokenKind
+	literal string
+}
+
+type TokenKind int
+
+const (
+	TEXT TokenKind = iota
+	L_BRACKET
+	R_BRACKET
+)
