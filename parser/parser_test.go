@@ -13,24 +13,24 @@ import (
 
 func TestWashText(t *testing.T) {
 	cases := []struct {
-		expected [][]rune
+		expected []string
 		input    string
 	}{
 		{
-			expected: [][]rune{
-				[]rune("this is some text"),
-				[]rune("this is some more text"),
-				[]rune("this is the last text"),
+			expected: []string{
+				"this is some text",
+				"this is some more text",
+				"this is the last text",
 			},
 			input: "this is some text\n\rthis is some more text\n \t  \r \n \r \nthis is the last text",
 		},
 		{
-			expected: [][]rune{
-				[]rune("this is some text"),
-				[]rune("``` blah blah blah"),
-				[]rune(""),
-				[]rune("this is the last text"),
-				[]rune("```"),
+			expected: []string{
+				"this is some text",
+				"``` blah blah blah",
+				"",
+				"this is the last text",
+				"```",
 			},
 			input: "this is some text\n\n\n``` blah blah blah\n\nthis is the last text\n```\n\n",
 		},
@@ -41,9 +41,9 @@ func TestWashText(t *testing.T) {
 
 		if len(result) != len(c.expected) {
 			println("Expected:")
-			printRunes(c.expected)
+			println(c.expected)
 			println("\nGot:")
-			printRunes(result)
+			println(result)
 
 			t.Fail()
 		}
@@ -59,43 +59,43 @@ func printRunes(data [][]rune) {
 func TestParseHeader(t *testing.T) {
 	type expectation = struct {
 		order int
-		text  []rune
+		text  string
 		err   error
 	}
 
 	cases := []struct {
-		input    []rune
+		input    string
 		expected expectation
 	}{
 		{
-			input: []rune("# My Header"),
+			input: "# My Header",
 			expected: expectation{
 				order: 1,
-				text:  []rune("My Header"),
+				text:  "My Header",
 				err:   nil,
 			},
 		},
 		{
-			input: []rune("##      \t   Another Header"),
+			input: "##      \t   Another Header",
 			expected: expectation{
 				order: 2,
-				text:  []rune("Another Header"),
+				text:  "Another Header",
 				err:   nil,
 			},
 		},
 		{
-			input: []rune("###Final Header \t     \t "),
+			input: "###Final Header \t     \t ",
 			expected: expectation{
 				order: 3,
-				text:  []rune("Final Header \t     \t "),
+				text:  "Final Header \t     \t ",
 				err:   nil,
 			},
 		},
 		{
-			input: []rune("I should fail. Not a header."),
+			input: "I should fail. Not a header.",
 			expected: expectation{
 				order: 0,
-				text:  []rune("I should fail. Not a header."),
+				text:  "I should fail. Not a header.",
 				err:   nil,
 			},
 		},
@@ -110,7 +110,7 @@ func TestParseHeader(t *testing.T) {
 			failedReason += "Order "
 			failed = true
 		}
-		if !runeslicesEqual(text, c.expected.text) {
+		if text != c.expected.text {
 			failedReason += "Text "
 			failed = true
 		}
@@ -145,33 +145,33 @@ func runeslicesEqual(r1 []rune, r2 []rune) bool {
 
 func TestGetAllHeaders(t *testing.T) {
 	cases := []struct {
-		input    [][]rune
+		input    []string
 		expected []Header
 		err      error
 	}{
 		{
-			input: [][]rune{
-				[]rune("a thing"),
-				[]rune("# a header"),
-				[]rune("a thing"),
-				[]rune("more stuff"),
-				[]rune("## another header"),
-				[]rune("even more stuff"),
+			input: []string{
+				"a thing",
+				"# a header",
+				"a thing",
+				"more stuff",
+				"## another header",
+				"even more stuff",
 			},
 			expected: []Header{
 				{
-					Title: []rune("a header"),
+					Title: "a header",
 					Order: 1,
-					Text: [][]rune{
-						[]rune("a thing"),
-						[]rune("more stuff"),
+					Text: []string{
+						"a thing",
+						"more stuff",
 					},
 				},
 				{
-					Title: []rune("another header"),
+					Title: "another header",
 					Order: 2,
-					Text: [][]rune{
-						[]rune("even more stuff"),
+					Text: []string{
+						"even more stuff",
 					},
 				},
 			},
@@ -217,12 +217,12 @@ func printHeaders(headers []Header) {
 
 func TestParseOptionLine(t *testing.T) {
 	cases := []struct {
-		input    []rune
+		input    string
 		expected Option
 		err      error
 	}{
 		{
-			input: []rune("- `-o`, `--option` = `default` > \"option\" "),
+			input: "- `-o`, `--option` = `default` > \"option\" ",
 			expected: Option{
 				Name:          "option",
 				DefaultValue:  "default",
@@ -232,7 +232,7 @@ func TestParseOptionLine(t *testing.T) {
 			},
 		},
 		{
-			input: []rune("- `-o`, `--option` = | > \"option\" "),
+			input: "- `-o`, `--option` = | > \"option\" ",
 			expected: Option{
 				Name:          "option",
 				DefaultValue:  "",
@@ -242,7 +242,7 @@ func TestParseOptionLine(t *testing.T) {
 			},
 		},
 		{
-			input: []rune("- `-o`, `--option` = 1252 > \"option\" "),
+			input: "- `-o`, `--option` = 1252 > \"option\" ",
 			expected: Option{
 				Name:          "option",
 				DefaultValue:  "",
@@ -287,17 +287,17 @@ func printOption(o Option) {
 
 func TestParseOptions(t *testing.T) {
 	cases := []struct {
-		input    [][]rune
+		input    []string
 		expected []Option
 	}{
 		{
-			input: [][]rune{
-				[]rune("yap yap yap"),
-				[]rune("- `-o`, `--option` = `default` > \"option\""),
-				[]rune("yap yap yap"),
-				[]rune("blah blah blah"),
-				[]rune("- `-b` = | > \"boolean\" "),
-				[]rune("blah blah blah"),
+			input: []string{
+				"yap yap yap",
+				"- `-o`, `--option` = `default` > \"option\"",
+				"yap yap yap",
+				"blah blah blah",
+				"- `-b` = | > \"boolean\" ",
+				"blah blah blah",
 			},
 			expected: []Option{
 				{
@@ -354,16 +354,16 @@ func TestParseOptions(t *testing.T) {
 
 func TestParseCodeblock(t *testing.T) {
 	cases := []struct {
-		input    [][]rune
+		input    []string
 		expected Codeblock
 	}{
 		{
-			input: [][]rune{
-				[]rune("hello!"),
-				[]rune("```lang"),
-				[]rune("code language"),
-				[]rune("more stuff"),
-				[]rune("```"),
+			input: []string{
+				"hello!",
+				"```lang",
+				"code language",
+				"more stuff",
+				"```",
 			},
 			expected: Codeblock{
 				Text:     "code language\nmore stuff\n",
@@ -572,30 +572,30 @@ func TestParseSetups(t *testing.T) {
     {
       input: []Header{
         {
-          Title: []rune("MacOS"),
+          Title: "MacOS",
           Order: 3,
-          Text: [][]rune{
-            []rune("```bash"),
-            []rune("blah blah blah"),
-            []rune("```"),
+          Text: []string{
+            "```bash",
+            "blah blah blah",
+            "```",
           },
         },
         {
-          Title: []rune("Linux"),
+          Title: "Linux",
           Order: 3,
-          Text: [][]rune{
-            []rune("```bash"),
-            []rune("more linux stuff"),
-            []rune("```"),
+          Text: []string{
+            "```bash",
+            "more linux stuff",
+            "```",
           },
         },
         {
-          Title: []rune("Windows"),
+          Title: "Windows",
           Order: 3,
-          Text: [][]rune{
-            []rune("```powershell"),
-            []rune("GO FUCK YOURSELF!!!!"),
-            []rune("```"),
+          Text: []string{
+            "```powershell",
+            "GO FUCK YOURSELF!!!!",
+            "```",
           },
         },
       },

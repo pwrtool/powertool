@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
   "fmt"
-	"github.com/pwrtool/powertool/runes"
 )
 
 type Powerfile struct {
@@ -40,9 +39,9 @@ type Option struct {
 }
 
 type Header struct {
-	Text  [][]rune // slice of lines of text
+	Text  []string // slice of lines of text
 	Order int      // number of octothorpes (#) preceding it
-	Title []rune
+	Title string
 }
 
 // TODO - everything should have a "soft error"
@@ -114,8 +113,10 @@ func ParsePowerfile(content string) (Powerfile, []error) {
     i += 1
   }
 
+  fmt.Println("Setup headers: ")
+  fmt.Printf("%#v\n", setupHeaders)
+
   setups, moreErrs := ParseSetup(setupHeaders)
-  fmt.Printf("%#v\n", setups)
   for _, err := range moreErrs {
     errs = append(errs, err)
   }
@@ -213,10 +214,9 @@ func ParseSetup(headers []Header) (map[string]Codeblock, []error) {
 
 // we want to:
 // - remove all \r
-// - split into [][]rune based on line (\n)
 // - remove any empty lines for convinience
-func WashText(content string) [][]rune {
-	text := [][]rune{}
+func WashText(content string) []string {
+	text := []string{}
 
 	content = strings.ReplaceAll(content, "\r", "")
 	lines := strings.Split(content, "\n")
@@ -224,7 +224,7 @@ func WashText(content string) [][]rune {
 
 	for _, line := range lines {
     if inCodeblock {
-      text = append(text, []rune(line))
+      text = append(text, line)
     } else {
       isWhitespace := true
 
@@ -236,7 +236,7 @@ func WashText(content string) [][]rune {
       }
 
       if !isWhitespace {
-        text = append(text, []rune(line))
+        text = append(text, line)
       }
     }
 
@@ -248,11 +248,11 @@ func WashText(content string) [][]rune {
 	return text
 }
 
-func GetAllHeaders(lines [][]rune) ([]Header, error) {
+func GetAllHeaders(lines []string) ([]Header, error) {
 	headers := []Header{}
 
 	header := Header{}
-	currentText := [][]rune{}
+	currentText := []string{}
 
 	var i int = 0
 	// skip until we have a header
@@ -287,7 +287,7 @@ func GetAllHeaders(lines [][]rune) ([]Header, error) {
 			header.Title = title
 			header.Order = hashes
 
-			currentText = [][]rune{}
+			currentText = []string{}
 		} else {
 			currentText = append(currentText, lines[i])
 		}
@@ -301,14 +301,14 @@ func GetAllHeaders(lines [][]rune) ([]Header, error) {
 	return headers, nil
 }
 
-func ParseHeaderLine(line []rune) (int, []rune, error) {
+func ParseHeaderLine(line string) (int, string, error) {
 	if len(line) < 1 {
     // this is reachable. It means that it's not a header
-		return 0, []rune{}, nil
+		return 0, "", nil
 	}
 
 	octothorpes := 0
-	text := []rune{}
+	text := ""
 
 	i := 0
 
@@ -322,15 +322,16 @@ func ParseHeaderLine(line []rune) (int, []rune, error) {
 		i += 1
 	}
 
-	for i < len(line) {
-		text = append(text, line[i])
-		i += 1
-	}
+  for j, c := range line {
+    if i - 1 < j {
+      text += string(c)
+    }
+  }
 
 	return octothorpes, text, nil
 }
 
-func ParseOptions(lines [][]rune) ([]Option, error) {
+func ParseOptions(lines []string) ([]Option, error) {
 	options := []Option{}
 
 	for _, line := range lines {
@@ -352,10 +353,11 @@ func ParseOptions(lines [][]rune) ([]Option, error) {
 	return options, nil
 }
 
-func ParseOptionLine(line []rune) (Option, error) {
+func ParseOptionLine(line string) (Option, error) {
 	option := Option{}
 
-	line = runes.TrimLeft(line)
+
+	line = strings.TrimLeft(line, " \t\n")
 	if len(line) == 0 {
 		return option, errors.New("Length of line is 0")
 	}
@@ -364,7 +366,7 @@ func ParseOptionLine(line []rune) (Option, error) {
 		return option, errors.New("no dash at the start of the line")
 	}
 
-	firstSplit := runes.Split(line, '=')
+	firstSplit := strings.Split(line, "=")
 
 	if len(firstSplit) != 2 {
 		return option, errors.New("first split does not have a length of 2")
@@ -375,7 +377,7 @@ func ParseOptionLine(line []rune) (Option, error) {
 	//   [^ nouns]   [^ hint ]   [^ namePart]
 	//
 	// we have to split it into those parts
-	secondSplit := runes.Split(firstSplit[1], '>')
+	secondSplit := strings.Split(firstSplit[1], ">")
 
 	if len(secondSplit) != 2 {
 		return option, errors.New("No > to denote the name of the option")
@@ -413,9 +415,9 @@ func ParseOptionLine(line []rune) (Option, error) {
 	return option, nil
 }
 
-func parseOptionNouns(nouns []rune) ([]string, error) {
+func parseOptionNouns(nouns string) ([]string, error) {
 	flagStrings := []string{}
-	flags := runes.ExtractInside(nouns, '`')
+	flags := ExtractInsideString(nouns, '`')
 
 	if len(flags) == 0 {
 		return flagStrings, errors.New("No flags found")
@@ -435,8 +437,8 @@ type hintResult = struct {
 	position     int
 }
 
-func parseOptionHint(hint []rune) (hintResult, error) {
-	hint = runes.TrimAround(hint)
+func parseOptionHint(hint string) (hintResult, error) {
+	hint = strings.Trim(hint, " \n\t")
 	result := hintResult{
 		isBoolean:    false,
 		position:     -1,
@@ -455,7 +457,7 @@ func parseOptionHint(hint []rune) (hintResult, error) {
 		return result, nil
 	}
 
-	defaultExtraction := runes.ExtractInside(hint, '`')
+	defaultExtraction := ExtractInsideString(hint, '`')
 
 	if len(defaultExtraction) > 1 {
 		return result, errors.New("found more than one default value")
@@ -477,8 +479,8 @@ func parseOptionHint(hint []rune) (hintResult, error) {
 	return result, nil
 }
 
-func parseOptionName(namePart []rune) (string, error) {
-	extraction := runes.ExtractInside(namePart, '"')
+func parseOptionName(namePart string) (string, error) {
+	extraction := ExtractInsideString(namePart, '"')
 
 	if len(extraction) != 1 {
 		return "", errors.New("None or many extracted names were found")
@@ -487,7 +489,7 @@ func parseOptionName(namePart []rune) (string, error) {
 	return string(extraction[0]), nil
 }
 
-func parseFlags(flagsText []rune) []string {
+func parseFlags(flagsText string) []string {
 	inside := false
 	current := ""
 	flags := []string{}
@@ -513,7 +515,7 @@ func parseFlags(flagsText []rune) []string {
 }
 
 
-func ParseCodeblock(lines [][]rune) (Codeblock, error) {
+func ParseCodeblock(lines []string) (Codeblock, error) {
   codeblock := Codeblock{
     Text: "",
     Language: "",
@@ -524,12 +526,12 @@ func ParseCodeblock(lines [][]rune) (Codeblock, error) {
   inside := false
   for _, line := range lines {
     if inside {
-      if runes.HasPrefix(line, []rune("```")) {
+      if strings.HasPrefix(line, "```") {
         break
       }
       codeblock.Text += string(line) + "\n"
     } else {
-      if runes.HasPrefix(line, []rune("```")) {
+      if strings.HasPrefix(line, "```") {
         codeblock.Language = string(line[3:])
         inside = true
       }
@@ -541,6 +543,30 @@ func ParseCodeblock(lines [][]rune) (Codeblock, error) {
   }
   
   return codeblock, err
+}
+
+func ExtractInsideString(text string, delimeter rune) []string {
+  parts := []string{}
+  current := ""
+  inside := false
+
+  for _, c := range text {
+    if inside {
+      if c == delimeter {
+        inside = false
+        parts = append(parts, current)
+        current = ""
+      } else {
+        current += string(c)
+      }
+    } else {
+      if c == delimeter {
+        inside = true
+      }
+    }
+  }
+
+  return parts
 }
 
 
@@ -555,3 +581,5 @@ func isValidOptionName(name string) bool {
 
   return true
 }
+
+
