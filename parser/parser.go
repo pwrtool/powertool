@@ -9,7 +9,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-  "fmt"
 )
 
 type Powerfile struct {
@@ -48,168 +47,181 @@ type Header struct {
 // if there's an error, we report it, but keep going to try to get
 // something useable
 func ParsePowerfile(content string) (Powerfile, []error) {
-  powerfile := Powerfile{}
-  lines := WashText(content)
-  headers, err := GetAllHeaders(lines)
+	powerfile := Powerfile{}
+	lines := WashText(content)
+	headers, err := GetAllHeaders(lines)
 
+	if err != nil {
+		return powerfile, []error{err}
+	}
 
-  if err != nil {
-    return powerfile, []error{err}
-  }
+	if len(headers) == 0 {
+		return powerfile, []error{errors.New("no headers in markdown file")}
+	}
 
-  if len(headers) == 0 {
-    return powerfile, []error{errors.New("no headers in markdown file")}
-  }
+	titleHeader := headers[0]
 
-  titleHeader := headers[0]
+	if titleHeader.Order != 1 {
+		return powerfile, []error{errors.New("powerfile does not start with a title")}
+	}
 
-  if titleHeader.Order != 1 {
-    return powerfile, []error{errors.New("powerfile does not start with a title")}
-  }
+	powerfile.Name = string(titleHeader.Title)
 
-  powerfile.Name = string(titleHeader.Title)
+	i := 1
+	errs := []error{}
 
+	// find the base options
+	for i < len(headers) {
+		header := headers[i]
+		title := string(header.Title)
 
-  i := 1
-  errs := []error{}
+		if strings.ToLower(title) == "options" && header.Order == 2 {
+			options, err := ParseOptions(header.Text)
+			powerfile.Options = options
 
-  // find the base options
-  for i < len(headers) {
-    header := headers[i]
-    title := string(header.Title)
+			if err != nil {
+				errs = append(errs, err)
+			}
+		}
+		i += 1
+	}
 
-    if strings.ToLower(title) == "options" && header.Order == 2 {
-      fmt.Println("Found options header")
-      options, err := ParseOptions(header.Text)
-      fmt.Printf("%#v\n",options)
-      powerfile.Options = options
+	// find the setup instructions
+	i = 1
+	mode := "looking"
+	setupHeaders := []Header{}
 
-      if err != nil {
-        errs = append(errs, err)
-      }
-    }
-    i += 1
-  }
+	for i < len(headers) {
+		header := headers[i]
+		if mode == "looking" {
+			title := string(header.Title)
+			if strings.ToLower(title) == "setup" && header.Order == 2 {
+				mode = "adding"
+			}
 
-  // find the setup instructions
-  mode := "looking"
-  setupHeaders := []Header{}
+		} else {
+			if header.Order != 3 {
+				break
+			}
+			setupHeaders = append(setupHeaders, header)
+		}
 
-  for i < len(headers) {
-    header := headers[i]
-    if mode == "looking" {
-      title := string(header.Title)
-      if strings.ToLower(title) == "setup" && header.Order == 2 {
+		i += 1
+	}
+
+	setups, moreErrs := ParseSetup(setupHeaders)
+	for _, err := range moreErrs {
+		errs = append(errs, err)
+	}
+	powerfile.Setups = setups
+
+	headerSplits := []struct {
+		name       string
+		subHeaders []Header
+	}{}
+
+	currentName := ""
+	currentHeaders := []Header{}
+	mode = "searching"
+
+	i = 1
+
+	// TODO - split headers
+	// mode "searching" and "adding"
+	for i < len(headers) {
+		header := headers[i]
+
+		if mode == "searching" {
+      lowerName := strings.ToLower(header.Title)
+      if header.Order == 2 && strings.HasPrefix(lowerName, "command: ") {
+        currentName = header.Title[9:]
         mode = "adding"
       }
 
-    } else {
-      if header.Order != 3 {
-        break
+		} else if mode == "adding" {
+			if header.Order != 3 {
+				headerSplits = append(headerSplits, struct {
+					name       string
+					subHeaders []Header
+				}{
+					name:       currentName,
+					subHeaders: currentHeaders,
+				})
+
+				mode = "searching"
+				i -= 1
+				currentHeaders = []Header{}
+			} else {
+        currentHeaders = append(currentHeaders, header)
       }
-      setupHeaders = append(setupHeaders, header)
-    }
+		}
 
-    i += 1
-  }
+		i += 1
+	}
 
-  fmt.Println("Setup headers: ")
-  fmt.Printf("%#v\n", setupHeaders)
-
-  setups, moreErrs := ParseSetup(setupHeaders)
-  for _, err := range moreErrs {
-    errs = append(errs, err)
-  }
-  powerfile.Setups = setups
-
-  toolName := ""
-  toolHeaders := []Header{}
-  for _, header := range headers {
-    title := string(header.Title)
-    if strings.HasPrefix("command: ", strings.ToLower(title)) && header.Order == 2{
-      if toolName != "" {
-        tool, err := ParseTool(toolName, toolHeaders)
-
-        if err != nil {
-          errs = append(errs, err)
-        }
-
-        powerfile.Tools = append(powerfile.Tools, tool)
-      }
-
-      toolHeaders = []Header{}
-      split := strings.Split(strings.ToLower(title), ":")
-
-      if len(split) < 2 {
-        panic("super bad error: there is somehow not a : in a string that has one")
-      }
-
-      name := strings.Join(split[1:], "")
-      name = strings.TrimLeft(name, " ")
-      name = strings.TrimLeft(name, "\t")
-
-      toolName = name
-    }
-
-    if header.Order == 3 {
-      toolHeaders = append(toolHeaders, header)
-    }
-  }
-
-  return powerfile, errs
-}
-
-
-func ParseTool(name string, headers []Header) (Tool, error) {
-  tool := Tool{}
-  tool.Name = name
-
-  if len(headers) == 0 {
-    return tool, errors.New("no headers to parse tool from")
-  }
-
-  for _, header := range headers {
-    title := strings.ToLower(string(header.Title))
-
-    if header.Order == 3 && title == "command" {
-      codeblock, err := ParseCodeblock(header.Text)
-      tool.Command = codeblock
-
-      if err != nil {
-        return tool, err
-      }
-    }
-    
-    if header.Order == 3 && title == "options" {
-      options, err := ParseOptions(header.Text)
-      tool.Options = options
-
-      if err != nil {
-        return tool, err
-      }
-    }
-  }
-
-  // TODO - what if we didn't see a codeblock or options?
-  return tool, nil
-}
-
-func ParseSetup(headers []Header) (map[string]Codeblock, []error) {
-  setup := map[string]Codeblock{}
-  errs := []error{}
-  
-  for _, header := range headers {
-    system := strings.ToLower(string(header.Title))
-    codeblock, err := ParseCodeblock(header.Text)
+  for _, headerSplit := range headerSplits {
+    tool, err := ParseTool(headerSplit.name, headerSplit.subHeaders)
 
     if err != nil {
       errs = append(errs, err)
-    } else {
-      setup[system] = codeblock
     }
+
+    powerfile.Tools = append(powerfile.Tools, tool)
   }
 
-  return setup, errs
+	return powerfile, errs
+}
+
+func ParseTool(name string, headers []Header) (Tool, error) {
+	tool := Tool{}
+	tool.Name = name
+
+	if len(headers) == 0 {
+		return tool, errors.New("no headers to parse tool from")
+	}
+
+	for _, header := range headers {
+		title := strings.ToLower(string(header.Title))
+
+		if header.Order == 3 && title == "command" {
+			codeblock, err := ParseCodeblock(header.Text)
+			tool.Command = codeblock
+
+			if err != nil {
+				return tool, err
+			}
+		}
+
+		if header.Order == 3 && title == "options" {
+			options, err := ParseOptions(header.Text)
+			tool.Options = options
+
+			if err != nil {
+				return tool, err
+			}
+		}
+	}
+
+	// TODO - what if we didn't see a codeblock or options?
+	return tool, nil
+}
+
+func ParseSetup(headers []Header) (map[string]Codeblock, []error) {
+	setup := map[string]Codeblock{}
+	errs := []error{}
+
+	for _, header := range headers {
+		system := strings.ToLower(string(header.Title))
+		codeblock, err := ParseCodeblock(header.Text)
+
+		if err != nil {
+			errs = append(errs, err)
+		} else {
+			setup[system] = codeblock
+		}
+	}
+
+	return setup, errs
 }
 
 // we want to:
@@ -220,29 +232,29 @@ func WashText(content string) []string {
 
 	content = strings.ReplaceAll(content, "\r", "")
 	lines := strings.Split(content, "\n")
-  inCodeblock := false
+	inCodeblock := false
 
 	for _, line := range lines {
-    if inCodeblock {
-      text = append(text, line)
-    } else {
-      isWhitespace := true
+		if inCodeblock {
+			text = append(text, line)
+		} else {
+			isWhitespace := true
 
-      for _, c := range line {
-        if !(c == ' ' || c == '\t') {
-          isWhitespace = false
-          break
-        }
-      }
+			for _, c := range line {
+				if !(c == ' ' || c == '\t') {
+					isWhitespace = false
+					break
+				}
+			}
 
-      if !isWhitespace {
-        text = append(text, line)
-      }
-    }
+			if !isWhitespace {
+				text = append(text, line)
+			}
+		}
 
-    if strings.HasPrefix(line, "```") {
-      inCodeblock = !inCodeblock
-    }
+		if strings.HasPrefix(line, "```") {
+			inCodeblock = !inCodeblock
+		}
 	}
 
 	return text
@@ -303,7 +315,7 @@ func GetAllHeaders(lines []string) ([]Header, error) {
 
 func ParseHeaderLine(line string) (int, string, error) {
 	if len(line) < 1 {
-    // this is reachable. It means that it's not a header
+		// this is reachable. It means that it's not a header
 		return 0, "", nil
 	}
 
@@ -322,11 +334,11 @@ func ParseHeaderLine(line string) (int, string, error) {
 		i += 1
 	}
 
-  for j, c := range line {
-    if i - 1 < j {
-      text += string(c)
-    }
-  }
+	for j, c := range line {
+		if i-1 < j {
+			text += string(c)
+		}
+	}
 
 	return octothorpes, text, nil
 }
@@ -355,7 +367,6 @@ func ParseOptions(lines []string) ([]Option, error) {
 
 func ParseOptionLine(line string) (Option, error) {
 	option := Option{}
-
 
 	line = strings.TrimLeft(line, " \t\n")
 	if len(line) == 0 {
@@ -408,9 +419,9 @@ func ParseOptionLine(line string) (Option, error) {
 	option.Position = result.position
 	option.IsBoolean = result.isBoolean
 
-  if !isValidOptionName(option.Name) {
-    return option, errors.New("Invalid option name: " + option.Name)
-  }
+	if !isValidOptionName(option.Name) {
+		return option, errors.New("Invalid option name: " + option.Name)
+	}
 
 	return option, nil
 }
@@ -514,72 +525,68 @@ func parseFlags(flagsText string) []string {
 	return flags
 }
 
-
 func ParseCodeblock(lines []string) (Codeblock, error) {
-  codeblock := Codeblock{
-    Text: "",
-    Language: "",
-  }
+	codeblock := Codeblock{
+		Text:     "",
+		Language: "",
+	}
 
-  var err error = nil
+	var err error = nil
 
-  inside := false
-  for _, line := range lines {
-    if inside {
-      if strings.HasPrefix(line, "```") {
-        break
-      }
-      codeblock.Text += string(line) + "\n"
-    } else {
-      if strings.HasPrefix(line, "```") {
-        codeblock.Language = string(line[3:])
-        inside = true
-      }
-    }
-  }
+	inside := false
+	for _, line := range lines {
+		if inside {
+			if strings.HasPrefix(line, "```") {
+				break
+			}
+			codeblock.Text += string(line) + "\n"
+		} else {
+			if strings.HasPrefix(line, "```") {
+				codeblock.Language = string(line[3:])
+				inside = true
+			}
+		}
+	}
 
-  if inside == false {
-    err = errors.New("no codeblock found")
-  }
-  
-  return codeblock, err
+	if inside == false {
+		err = errors.New("no codeblock found")
+	}
+
+	return codeblock, err
 }
 
 func ExtractInsideString(text string, delimeter rune) []string {
-  parts := []string{}
-  current := ""
-  inside := false
+	parts := []string{}
+	current := ""
+	inside := false
 
-  for _, c := range text {
-    if inside {
-      if c == delimeter {
-        inside = false
-        parts = append(parts, current)
-        current = ""
-      } else {
-        current += string(c)
-      }
-    } else {
-      if c == delimeter {
-        inside = true
-      }
-    }
-  }
+	for _, c := range text {
+		if inside {
+			if c == delimeter {
+				inside = false
+				parts = append(parts, current)
+				current = ""
+			} else {
+				current += string(c)
+			}
+		} else {
+			if c == delimeter {
+				inside = true
+			}
+		}
+	}
 
-  return parts
+	return parts
 }
-
 
 // TODO - fix this
 func isValidOptionName(name string) bool {
-  validCharacters := []rune("abcdefghijklmnopqrstuvwxyz1234567890-_")
-  for _, c := range name {
-    if !slices.Contains(validCharacters, c) {
-      return false
-    }
-  }
+	validCharacters := []rune("abcdefghijklmnopqrstuvwxyz1234567890-_")
+	for _, c := range name {
+		if !slices.Contains(validCharacters, c) {
+			return false
+		}
+	}
 
-  return true
+	return true
 }
-
-
