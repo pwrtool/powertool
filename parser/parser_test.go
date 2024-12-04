@@ -176,6 +176,36 @@ func TestGetAllHeaders(t *testing.T) {
 				},
 			},
 		},
+    {
+      input: []string{
+        "# some text",
+        "blah blah blah",
+        "```",
+        "## this is inside of a codeblock",
+        "```",
+        "## this is some more text",
+        "and there's some stuff below it",
+      },
+      expected: []Header{
+        {
+          Title: "some text",
+          Order: 1,
+          Text: []string{
+            "blah blah blah",
+            "```",
+            "## this is inside of a codeblock",
+            "```",
+          },
+        },
+        {
+          Title: "this is some more text",
+          Order: 2,
+          Text: []string{
+            "and there's some stuff below it",
+          },
+        },
+      },
+    },
 	}
 
 	for _, c := range cases {
@@ -639,4 +669,3 @@ func TestParseSetups(t *testing.T) {
     }
   }
 }
-

@@ -6,6 +6,7 @@ package parser
 
 import (
 	"errors"
+	"fmt"
 	"slices"
 	"strconv"
 	"strings"
@@ -126,19 +127,19 @@ func ParsePowerfile(content string) (Powerfile, []error) {
 
 	i = 1
 
-	// TODO - split headers
-	// mode "searching" and "adding"
 	for i < len(headers) {
 		header := headers[i]
 
 		if mode == "searching" {
-      lowerName := strings.ToLower(header.Title)
-      if header.Order == 2 && strings.HasPrefix(lowerName, "command: ") {
-        currentName = header.Title[9:]
-        mode = "adding"
-      }
+			lowerName := strings.ToLower(header.Title)
+			fmt.Println(lowerName)
+			if header.Order == 2 && strings.HasPrefix(lowerName, "command: ") {
+				currentName = header.Title[9:]
+				mode = "adding"
+			}
 
 		} else if mode == "adding" {
+			fmt.Println("Adding: ", header.Title)
 			if header.Order != 3 {
 				headerSplits = append(headerSplits, struct {
 					name       string
@@ -152,22 +153,32 @@ func ParsePowerfile(content string) (Powerfile, []error) {
 				i -= 1
 				currentHeaders = []Header{}
 			} else {
-        currentHeaders = append(currentHeaders, header)
-      }
+				currentHeaders = append(currentHeaders, header)
+			}
 		}
 
 		i += 1
 	}
 
-  for _, headerSplit := range headerSplits {
-    tool, err := ParseTool(headerSplit.name, headerSplit.subHeaders)
+	if mode == "adding" {
+		headerSplits = append(headerSplits, struct {
+			name       string
+			subHeaders []Header
+		}{
+			name:       currentName,
+			subHeaders: currentHeaders,
+		})
+	}
 
-    if err != nil {
-      errs = append(errs, err)
-    }
+	for _, headerSplit := range headerSplits {
+		tool, err := ParseTool(headerSplit.name, headerSplit.subHeaders)
 
-    powerfile.Tools = append(powerfile.Tools, tool)
-  }
+		if err != nil {
+			errs = append(errs, err)
+		}
+
+		powerfile.Tools = append(powerfile.Tools, tool)
+	}
 
 	return powerfile, errs
 }
@@ -260,11 +271,29 @@ func WashText(content string) []string {
 	return text
 }
 
+func GetCodeblockLines(lines []string) map[int]bool {
+	codeblocks := map[int]bool{}
+	inCodeblock := false
+
+	for i, line := range lines {
+		if strings.HasPrefix(line, "```") {
+			inCodeblock = !inCodeblock
+		} else if inCodeblock {
+			codeblocks[i] = true
+		} else {
+			codeblocks[i] = false
+		}
+	}
+
+	return codeblocks
+}
+
 func GetAllHeaders(lines []string) ([]Header, error) {
 	headers := []Header{}
 
 	header := Header{}
 	currentText := []string{}
+	codeblocks := GetCodeblockLines(lines)
 
 	var i int = 0
 	// skip until we have a header
@@ -274,7 +303,7 @@ func GetAllHeaders(lines []string) ([]Header, error) {
 		if err != nil {
 			return nil, err
 		}
-		if hashes != 0 {
+		if hashes != 0 && codeblocks[i] == false {
 			header.Order = hashes
 			header.Title = title
 			i += 1
@@ -291,7 +320,7 @@ func GetAllHeaders(lines []string) ([]Header, error) {
 			return nil, err
 		}
 
-		if hashes != 0 {
+		if hashes != 0 && codeblocks[i] == false {
 			header.Text = currentText
 			headers = append(headers, header)
 
